@@ -28,6 +28,8 @@ e.exports=function(e){return null!=e&&(n(e)||r(e)||!!e._isBuffer)}},function(e,t
 	<div id="a"></div>
 	<input type="text" value="" id="dd1">
 	<div id="a1"></div>
+	<div id="a3">111</div>
+	<div id="a4">444</div>
 	<script>
 		$(function(){
 			$("#dd").on("input", function(){
@@ -102,7 +104,9 @@ e.exports=function(e){return null!=e&&(n(e)||r(e)||!!e._isBuffer)}},function(e,t
 						call.cancel();
 					}
 					call = axios.CancelToken.source();
-					return axios.get(url, { cancelToken: call.token }).then((response) => {
+					return axios.get(url, { cancelToken: call.token, withCredentials: true }).then((response) => {
+					 console.count('postForm'); 
+					console.log('2222')
 						console.log(response.title)
 					}).catch(function(thrown) {
 						if (axios.isCancel(thrown)) {
@@ -114,9 +118,15 @@ e.exports=function(e){return null!=e&&(n(e)||r(e)||!!e._isBuffer)}},function(e,t
 				}
 			}
 			var get = makeRequestCreator();
-			get('a.php?name=1');
-			get('a.php?name=2');
-			get('a.php?name=3');
+			$('#a3').on('click', function(){
+			get('http://192.168.88.117/a.php?name=1');
+			})
+			$('#a4').on('click', function(){
+			get('http://192.168.88.117/a.php?name=2');
+			})
+			//get('a.php?name=1');
+			//get('a.php?name=2');
+			//get('a.php?name=3');
 			
 			/*const makeRequestCreator = () => {
 			  let call;
@@ -146,14 +156,14 @@ e.exports=function(e){return null!=e&&(n(e)||r(e)||!!e._isBuffer)}},function(e,t
 			getSomething(2);
 			getSomething(3);
 			getSomething(4);*/
-			function dd1(i){console.log('222',i)}
+			/*function dd1(i){console.log('222',i)}
 			async function  dd(i){
 				await dd1(i)
 			}
 			dd(1)
 			dd(2)
-			dd(3);
-			
+			dd(3);*/
+			/*
 			if($_REQUEST['name'] === '1'){
 			//time_sleep_until(time()+1);
 		$json = '{
@@ -180,6 +190,7 @@ e.exports=function(e){return null!=e&&(n(e)||r(e)||!!e._isBuffer)}},function(e,t
 		echo json_decode(json_encode($json));	
 			
 		}
+		*/
 		})
 	</script>
   </body>
