@@ -3,7 +3,7 @@ title: js指向问题
 description: 'apply、call、bind、箭头函数'
 sidebar: 'auto'
 time: '2015-01-06'
-prev: ''
+prev: './js-parseint'
 next: './js-function-prototype'
 ---
 
