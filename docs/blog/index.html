@@ -32,6 +32,16 @@ e.exports=function(e){return null!=e&&(n(e)||r(e)||!!e._isBuffer)}},function(e,t
 	<div id="a4">444</div>
 	<script>
 		$(function(){
+		var numbers = {  
+  array: [3, 5, 10],
+  getNumbers: function() {
+  console.log(this)
+    return this.array;    
+  }
+};
+// Create a bound function
+var boundGetNumbers = numbers.getNumbers.bind(numbers);  
+boundGetNumbers(); // => [3, 5, 10]  
 			$("#dd").on("input", function(){
 				$.ajax({
 					url: 'a.php',
