@@ -3,7 +3,7 @@
     class="sidebar-group"
     :class="{ first, collapsable }"
   >
-    <p
+    <!--<p
       class="sidebar-heading"
       :class="{ open }"
       @click="$emit('toggle')"
@@ -14,7 +14,7 @@
         v-if="collapsable"
         :class="open ? 'down' : 'right'">
       </span>
-    </p>
+    </p>-->
 
     <DropdownTransition>
       <ul

@@ -1,9 +1,9 @@
 ---
-title: Gentle explanation of 'this' keyword in JavaScript
+title: 了解一下this
 description: '来了解一下this'
 sidebar: 'auto'
 time: '2015-01-06'
-prev: './js-parseint'
+prev: './js-variable-lift'
 next: './js-function-prototype'
 ---
 

@@ -2,9 +2,9 @@
 title: axios 源码解析--canceltoken 取消请求
 description: '目前只适用于请求响应时间过长导致'
 sidebar: 'auto'
-time: '2018-01-01'
+time: '2015-01-09'
 prev: ''
-next: './js-this-call'
+next: './js-variable-lift'
 ---
 
 
@@ -187,7 +187,7 @@ cancel();
 
 ## 使用方法
 
-![引用 github iusse上面](https://github.com/axios/axios/issues/1361)
+[引用 github iusse上面](https://github.com/axios/axios/issues/1361)
 
 ``` js
 var iteration = 10;

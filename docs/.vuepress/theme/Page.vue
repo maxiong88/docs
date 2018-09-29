@@ -1,7 +1,7 @@
 <template>
   <div class="page">
     <slot name="top"/>
-
+	<h1 v-if="title" style="margin-top: 100px;padding:0 2rem;">{{title}}</h1>
     <Content :custom="false"/>
 
     <div class="page-edit">
@@ -68,6 +68,9 @@ export default {
   props: ['sidebarItems'],
 
   computed: {
+	title(){
+		return this.$page.title
+	},
     lastUpdated () {
       if (this.$page.lastUpdated) {
         return new Date(this.$page.lastUpdated).toLocaleString(this.$lang)
