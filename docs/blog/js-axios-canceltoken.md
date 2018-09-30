@@ -3,7 +3,7 @@ title: axios 源码解析--canceltoken 取消请求
 description: '目前只适用于请求响应时间过长导致'
 sidebar: 'auto'
 time: '2015-01-09'
-prev: ''
+prev: './js-vue-observer-1'
 next: './js-variable-lift'
 ---
 
