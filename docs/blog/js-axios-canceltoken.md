@@ -29,15 +29,34 @@ axios.isCancel = require('./cancel/isCancel');
 
 ####  Cancel
 
-::: tip
+::: tip  
 A `Cancel` is an object that is thrown when an operation is canceled.
 当触发取消操作的时候 抛出一个 cancel对象
 :::
+
+``` JS
+// Cancel类 干嘛的咱不知道
+// 构造函数 Cancel在原型上添加了 toString、__CANCEL__两个方法
+function Cancel(message) {
+  this.message = message;
+}
+
+Cancel.prototype.toString = function toString() {
+  return 'Cancel' + (this.message ? ': ' + this.message : '');
+};
+
+Cancel.prototype.__CANCEL__ = true;
+
+module.exports = Cancel;
+
+```
 
 
 #### CancelToken
 
 ``` js
+// CancelToken
+// executor 执行函数
 function CancelToken(executor) {
   if (typeof executor !== 'function') {
     throw new TypeError('executor must be a function.');
@@ -116,6 +135,13 @@ module.exports = CancelToken;
 ```
 
 #### isCancel
+
+``` js
+// 强制转boolean
+module.exports = function isCancel(value) {
+  return !!(value && value.__CANCEL__);
+};
+```
 
 #### xhr.js
 

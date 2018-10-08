@@ -689,6 +689,31 @@ new one(); // => Object
 
 只new one()更改绑定函数的上下文，其他类型的调用总是this等于1。
 
+### polyfillBind
+
+``` js
+function polyfillBind (fn, ctx) {
+  function boundFn (a) {
+    var l = arguments.length;
+    return l
+      ? l > 1
+        ? fn.apply(ctx, arguments)
+        : fn.call(ctx, a)
+      : fn.call(ctx)
+  }
+
+  boundFn._length = fn.length;
+  return boundFn
+}
+function nativeBind (fn, ctx) {
+  return fn.bind(ctx)
+}
+
+var bind = Function.prototype.bind
+  ? nativeBind
+  : polyfillBind;
+```
+
 ## 箭头函数
 
 引入箭头函数有两个方面的作用：更简短的函数并且不绑定this。
