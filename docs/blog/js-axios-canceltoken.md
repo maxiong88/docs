@@ -8,16 +8,120 @@ next: './js-variable-lift'
 ---
 
 
+``` js
+const makeRequestCreator = () => { ##[1]
+    let call;
+    return url => {
+		if (call) {  ##[2]
+			call.cancel("Only one request allowed at a time.");
+		}
+		call = axios.CancelToken.source(); ##[3]
+		return axios.get(url, {  ##[4]	
+			cancelToken: call.token  ##[5]
+		});
+    };
+};
+const get = makeRequestCreator();
 
-## 起因
+const getSomething = async id => {
+    try {
+        const res = await get(`http://a.php?name=${id}`);
+        // do something with res
+    } catch(err) {
+        if (axios.isCancel(err)) {  ##[6]
+            console.error(`Cancelling previous request: ${err.message}`);
+        }
+    }
+}
+getSomething(1);
+getSomething(2);
+getSomething(3);
+getSomething(4);
+```
 
-问题，我想在每次进入路由前清除之前的所有请求;
-问题，如果您发出第一个请求然后发出第二个请求，则首先返回第二个请求，然后返回第一个请求。这会使搜索结果不准确，具体取决于完成查询所需的时间;
+我们从上面的js讲起：
 
-::: tip
-如果数据响应很快，canceltoken就无效了；
-只是适应于上一次的请求时长比当前请求时长 长。。。
-:::
+我们先看##3他表示了我们使用axios的静态方法来调用构造函数(CancelToken),代码如下
+
+``` js
+// CancelToken
+
+function CancelToken(executor) {
+	// executor 执行函数
+	if (typeof executor !== 'function') {
+		throw new TypeError('executor must be a function.');
+	}
+	/*
+	 canceltoken 构造函数 定义了一个属性promise 这个一个只有开始状态的promise对象
+	  var s;
+		var promise = new Promise(function s1(resolve){
+			s = resolve;
+		})
+		Promise {<pending>}
+			__proto__: 
+				Promise[[PromiseStatus]]: "pending"
+				[[PromiseValue]]: undefined
+	*/
+	var resolvePromise;
+	this.promise = new Promise(function promiseExecutor(resolve) {
+		// ???
+		resolvePromise = resolve;
+	});
+	// 将作用域赋给token
+	var token = this;
+	// 开始执行 promise 
+	// executor()函数中执行的代码就是子程序需要完成的事。
+	//在executor()函数内如果调用了resolve()，resolve()则会把Promise对象的状态PromiseStatus修改为fulfilled，
+	//把resolve(value)中的value值赋给Promise对象的PromiseValue。
+	//然后再依次执行由then()方法构成的回调链中的回调函数。
+	// 同样，在executor()中调用reject()的过程也是类似的
+	executor(function cancel(message) {
+		// 如果上下文存在reason则取消请求
+		if (token.reason) {
+		  // Cancellation has already been requested
+		  return;
+		}
+		// 创建一个 取消操作对象
+		token.reason = new Cancel(message);
+		// 将reason传给下一个环节 resolve  then
+		resolvePromise(token.reason);
+	});
+}
+
+/**
+ * Throws a `Cancel` if cancellation has been requested.
+ 如果请求取消 则抛出 取消
+ */
+CancelToken.prototype.throwIfRequested = function throwIfRequested() {
+  if (this.reason) {
+    throw this.reason;
+  }
+};
+
+/**
+创建一个新的取消标记对象 与 一个函数 这个函数就是我们传入的信息
+ * Returns an object that contains a new `CancelToken` and a function that, when called,
+ * cancels the `CancelToken`.
+ */
+CancelToken.source = function source() {
+  var cancel;
+  var token = new CancelToken(function executor(c) {
+    cancel = c; 
+  });
+  return {
+    token: token, // 实例化对象
+    cancel: cancel // 是一个cancel函数 包含 new  Cancel（message），
+    // 调用的时候如果 source.cancel不存在则，resolvePromise函数执行了，
+    // 那么token.promise对象，这个原本pedding，变成了resolve，
+    // 并且将token.reason对象传递过去了
+    // 执行new CancelToken ，就是让token的promise的状态变成了成功；
+  };
+};
+
+module.exports = CancelToken;
+```
+
+
 
 ## 源码
 
@@ -74,16 +178,14 @@ function CancelToken(executor) {
 				Promise[[PromiseStatus]]: "pending"
 				[[PromiseValue]]: undefined
 	*/
-  // 调用canceltoken 则promise属性 表示生成的promise对象设置为开始
   var resolvePromise;
-  // promise对象完成 赋值给resolvePromise
   this.promise = new Promise(function promiseExecutor(resolve) {
     resolvePromise = resolve;
   });
-
+	// 将作用域赋给token
   var token = this;
 	   // 开始执行 promise 
-	  // executor()函数中执行的代码就是子程序需要完成事。
+	  // executor()函数中执行的代码就是子程序需要完成的事。
 	  //在executor()函数内如果调用了resolve()，resolve()则会把Promise对象的状态PromiseStatus修改为fulfilled，
 	  //把resolve(value)中的value值赋给Promise对象的PromiseValue。
 	  //然后再依次执行由then()方法构成的回调链中的回调函数。
@@ -119,11 +221,11 @@ CancelToken.prototype.throwIfRequested = function throwIfRequested() {
 CancelToken.source = function source() {
   var cancel;
   var token = new CancelToken(function executor(c) {
-    cancel = c;
+    cancel = c; 
   });
   return {
     token: token, // 实例化对象
-    cancel: cancel // 是一个函数 包含 new  Cancel（message），
+    cancel: cancel // 是一个cancel函数 包含 new  Cancel（message），
     // 调用的时候如果 source.cancel不存在则，resolvePromise函数执行了，
     // 那么token.promise对象，这个原本pedding，变成了resolve，
     // 并且将token.reason对象传递过去了
