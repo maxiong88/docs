@@ -1,21 +1,117 @@
 ---
-title: Vue 响应式原理（三）
+title: 
 description: ''
 sidebar: 'auto'
-time: '2015-01-12'
-prev: './js-debounce-throttle'
-next: './js-vue-observer-2'
+time: '2015-01-13'
+prev: ''
+next: './js-vue-observer-3'
 ---
 
 
 
 
-http://zhouweicsu.github.io/blog/2017/03/07/vue-2-0-reactivity/
 
 
 
 
-https://blog.csdn.net/sir1241/article/details/79208038
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+debounce 
+
+Imagine you are in an elevator. The doors begin to close, and suddenly another person tries to get on. The elevator doesn't begin its function to change floors, the doors open again. Now it happens again with another person. The elevator is delaying its function (moving floors), but optimizing its resources.
+想象一下你在电梯里。门开始关闭，突然另一个人试图上车。电梯没有开始改变楼层的功能，门又打开了。现在它又发生在另一个人身上。电梯延迟了它的功能（移动楼层），但是优化了它的资源。
+
+
+
+
+``` js
+
+function debounce(
+	
+){
+	
+		
+	
+	return debounced;
+}
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+throttle
+
+不管用户点击多少次，我只坚持唯我独尊，说间隔几秒执行就间隔几秒，不为外界所动
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

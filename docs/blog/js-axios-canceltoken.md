@@ -7,120 +7,100 @@ prev: './js-vue-observer-1'
 next: './js-variable-lift'
 ---
 
+我们从一个简单的例子开始
 
 ``` js
-const makeRequestCreator = () => { ##[1]
-    let call;
-    return url => {
-		if (call) {  ##[2]
-			call.cancel("Only one request allowed at a time.");
-		}
-		call = axios.CancelToken.source(); ##[3]
-		return axios.get(url, {  ##[4]	
-			cancelToken: call.token  ##[5]
-		});
-    };
-};
-const get = makeRequestCreator();
+const CancelToken = axios.CancelToken; ##1
+let cancel; ##1
 
-const getSomething = async id => {
-    try {
-        const res = await get(`http://a.php?name=${id}`);
-        // do something with res
-    } catch(err) {
-        if (axios.isCancel(err)) {  ##[6]
-            console.error(`Cancelling previous request: ${err.message}`);
-        }
-    }
-}
-getSomething(1);
-getSomething(2);
-getSomething(3);
-getSomething(4);
+axios.get('/user/12345', { ##3
+  cancelToken: new CancelToken(function executor(c) { ##4
+    // An executor function receives a cancel function as a parameter
+    cancel = c; ##5
+  })
+});
+
+// cancel the request
+cancel(); ##6
 ```
 
 我们从上面的js讲起：
 
-我们先看##3他表示了我们使用axios的静态方法来调用构造函数(CancelToken),代码如下
+A `CancelToken` is an object that can be used to request cancellation of an operation.
+“取消标记”是可以用来请求取消操作的对象。
+
+·##1· 是将axios的CancelToken静态方法赋给变量
+
+·##4· axios配置config中cancelToken：是实例化取消标记（CancelToken）构造函数
+从源码获知如果axios配置了cancelToken那么他就会有一个不一样的机遇；
+当我们实例化构造函数`CancelToken`以后我们发生了什么
+
+1. canceltoken函数定义了一个promise属性，指向只有开始状态的promise对象，resolvePromise = resolve函数
+2. 将上下文this作用域赋给token变量
+3. 有一个执行者函数executor(),他会执行传过来的参数函数
+4. executor参数中函数就是通过reslove函数将token.reason传给下一个环节 resolve  then
+
+·##5· 这个就是把构造函数cancelToken中的executor(参数)函数中的参数赋给了 cancel变量
+
+·##6· 函数声明存在提升 哈哈哈  [具体看下面的源码](./js-axios-canceltoken#CancelToken)
+构造函数cancelToken被实例化以后this做出了改变 promise对象的状态 pending ==》resolved，多出了一个reason属性值为Cancel构造函数实例化的对象
 
 ``` js
-// CancelToken
-
-function CancelToken(executor) {
-	// executor 执行函数
-	if (typeof executor !== 'function') {
-		throw new TypeError('executor must be a function.');
-	}
-	/*
-	 canceltoken 构造函数 定义了一个属性promise 这个一个只有开始状态的promise对象
-	  var s;
-		var promise = new Promise(function s1(resolve){
-			s = resolve;
-		})
-		Promise {<pending>}
-			__proto__: 
-				Promise[[PromiseStatus]]: "pending"
-				[[PromiseValue]]: undefined
-	*/
-	var resolvePromise;
-	this.promise = new Promise(function promiseExecutor(resolve) {
-		// ???
-		resolvePromise = resolve;
-	});
-	// 将作用域赋给token
-	var token = this;
-	// 开始执行 promise 
-	// executor()函数中执行的代码就是子程序需要完成的事。
-	//在executor()函数内如果调用了resolve()，resolve()则会把Promise对象的状态PromiseStatus修改为fulfilled，
-	//把resolve(value)中的value值赋给Promise对象的PromiseValue。
-	//然后再依次执行由then()方法构成的回调链中的回调函数。
-	// 同样，在executor()中调用reject()的过程也是类似的
-	executor(function cancel(message) {
-		// 如果上下文存在reason则取消请求
-		if (token.reason) {
-		  // Cancellation has already been requested
-		  return;
-		}
-		// 创建一个 取消操作对象
-		token.reason = new Cancel(message);
-		// 将reason传给下一个环节 resolve  then
-		resolvePromise(token.reason);
-	});
-}
-
-/**
- * Throws a `Cancel` if cancellation has been requested.
- 如果请求取消 则抛出 取消
- */
-CancelToken.prototype.throwIfRequested = function throwIfRequested() {
-  if (this.reason) {
-    throw this.reason;
-  }
-};
-
-/**
-创建一个新的取消标记对象 与 一个函数 这个函数就是我们传入的信息
- * Returns an object that contains a new `CancelToken` and a function that, when called,
- * cancels the `CancelToken`.
- */
-CancelToken.source = function source() {
-  var cancel;
-  var token = new CancelToken(function executor(c) {
-    cancel = c; 
-  });
-  return {
-    token: token, // 实例化对象
-    cancel: cancel // 是一个cancel函数 包含 new  Cancel（message），
-    // 调用的时候如果 source.cancel不存在则，resolvePromise函数执行了，
-    // 那么token.promise对象，这个原本pedding，变成了resolve，
-    // 并且将token.reason对象传递过去了
-    // 执行new CancelToken ，就是让token的promise的状态变成了成功；
-  };
-};
-
-module.exports = CancelToken;
+CancelToken {promise: Promise}
+promise: Promise {<resolved>: Cancel}
+reason: Cancel {message: undefined}
 ```
 
+接下来就是开始发送请求了`Axios.prototype.request`
+此函数会返回一个promise对象
+``` js
+Axios.prototype.request = function request(config) {
+	// ....省略...
+	// Hook up interceptors middleware
+	var chain = [dispatchRequest, undefined];
+	// 方法会将这个对象转为 Promise 对象，然后就立即执行thenable对象的then方法。
+	var promise = Promise.resolve(config);
+
+	// ...省略...
+
+	while (chain.length) {
+		// .then就是Promise 实例添加状态改变时的回调函数，我们注册then状态方法
+		promise = promise.then(chain.shift(), chain.shift());
+	}
+	// 由于取消了请求 `dispatchRequest`抛出乐意异常 所以此promise对象状态变成了rejected
+	return promise;
+};
+```
+
+再来看一下`dispatchRequest`函数
+Dispatch a request to the server using the configured adapter.
+使用配置的适配器向服务器发送请求。
+
+``` js
+module.exports = function dispatchRequest(config) {
+	throwIfCancellationRequested(config);
+	// ... 省略
+}
+function throwIfCancellationRequested(config) {
+	if (config.cancelToken) {
+	    config.cancelToken.throwIfRequested();
+	}
+}
+// 这里抛出一个异常
+// 此reason就是 构造函数 Cancel()实例化后的对象
+CancelToken.prototype.throwIfRequested = function throwIfRequested() {
+	if (this.reason) {
+	    throw this.reason;
+	}
+};
+```
+
+以上就是·##6·发生的事情
+
+总结一下：当一个请求调用了cancel以后将 在取消标记函数canceltoken中 将promise状态从peding变成了resolve
+发出请求Axios.prototype.request返回promise对象（此promise对象状态变成了rejected因为取消了请求）
+
+当我们把·##6·去掉以后就会越过`throwIfCancellationRequested`这个函数往下走进入`xhrAdapter`函数来处理
 
 
 ## 源码
@@ -184,12 +164,6 @@ function CancelToken(executor) {
   });
 	// 将作用域赋给token
   var token = this;
-	   // 开始执行 promise 
-	  // executor()函数中执行的代码就是子程序需要完成的事。
-	  //在executor()函数内如果调用了resolve()，resolve()则会把Promise对象的状态PromiseStatus修改为fulfilled，
-	  //把resolve(value)中的value值赋给Promise对象的PromiseValue。
-	  //然后再依次执行由then()方法构成的回调链中的回调函数。
-	  // 同样，在executor()中调用reject()的过程也是类似的
   executor(function cancel(message) {
   // 如果上下文存在reason则取消请求
     if (token.reason) {
