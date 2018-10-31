@@ -642,7 +642,7 @@ Watcher.prototype.teardown = function teardown () {
 依赖收集完成后，当属性变化会执行被 Observer 对象的 dep.notify() 方法，
 这个方法会遍历订阅者（Watcher）列表向其发送消息， Watcher 会执行 run 方法去更新视图，我们再来看一张图总结一下：
 
-![vue](../.vuepress/public/assets/img/ovserve-4.jpg)
+![vue](../.vuepress/public/assets/img/observe-4.jpg)
 
 在 Vue 中模板编译过程中的指令或者数据绑定都会实例化一个 Watcher 实例，实例化过程中会触发 get() 将自身指向 Dep.target;
 

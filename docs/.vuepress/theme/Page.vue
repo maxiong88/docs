@@ -1,7 +1,7 @@
 <template>
   <div class="page">
     <slot name="top"/>
-	<h1 v-if="title" style="margin-top: 100px;padding:0 2rem;">{{title}}</h1>
+	<h1 v-if="title" style="margin: 100px auto 0;max-width:740px;padding:0 2rem;">{{title}}</h1>
     <Content :custom="false"/>
 
     <div class="page-edit">
