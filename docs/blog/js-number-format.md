@@ -47,3 +47,85 @@ console.log(new Intl.NumberFormat().format(number)); // 3,500
 
 衍生：
 Number.prototype.toLocalString(locales,options)
+
+### 普通js实现
+
+数字精度
+
+``` js
+/**
+@ value 需要处理的值
+@ precision 精准度
+@ isRoundUp 是否需要四舍五入
+*/
+function doPrecision(value, precision, isRoundUp){
+    // 指数格式化，通过精准度与指数，将value变成乘以10的N次方的倍数的值
+    const exponentialForm = Number(`${value}e${precision}`);
+    // 如果需要四舍五入 通过 Math.round函数处理 ，否则使用floor函数向下取整（不会四舍五入）
+    const rounded = isRoundUp ? Math.round(exponentialForm) : Math.floor(exponentialForm);
+    // 指数格式化 通过精准度与指数，将value变成除以10的N次方的倍数的值
+    return Number(`${round}e-${precision}`).toFixed(precision);
+}
+```
+
+金额千分符
+
+``` js
+/**
+@ value 处理的值
+@ hasSeparator  数字是否有千位分隔符
+@ separator 数字千分符符号
+*/
+function doFormat(value, hasSeparator, separator){
+    if(!hasSeparator){
+        return value;
+    }
+    // 数字部分
+    const numberParts = value.split('.');
+    // 整数部分
+    const integerValue = numberParts[0];
+    // 小数部分
+    const decimalValue = numberParts[1];
+    // 格式化赋值
+    const formateValue = formatValueByGapStep(3, integerValue, separator, 'right', 0, 1);
+    return `${formateValue.value}.${decimalValue}`
+}
+/**
+@ step 分隔几位数字
+@ value 处理的value
+@ gap 分隔符
+@ direction 开始位置
+@ range
+@ isAdd
+@ oldValue 整数部分
+*/
+function formatValueByGapStep(step, value, gap = '', direction = 'right', range, isAdd = 1, oldValue = ''){
+    if(value.length === 0){
+        return {value,range}
+    }
+    // 把字符串分割成字符串数组
+    const arr = value && value.split('');
+    let _range = range;
+    let showValue = '';
+
+    if(dircetion === 'right'){
+        // 格式化是从右边开始
+        for(let j = arr.length-1,k = 0;j>=0;j--,k++){
+            const m = arr[j];
+            // 当前初始变量的值 必须是step的倍数
+            showValue = k > 0 && k % step === 0 ? m + gap + showValue : m + '' + showValue;
+        }
+        if(isAdd === 1){
+            if(oldValue.length - showValue.length === -2){
+                
+            }
+        }else{
+
+        }
+        
+    }else{
+
+    }
+    return {value: showValue, range: _range}
+}
+```
