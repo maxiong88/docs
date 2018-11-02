@@ -115,10 +115,12 @@ function formatValueByGapStep(step, value, gap = '', direction = 'right', range,
             // 当前初始变量的值 必须是step的倍数
             showValue = k > 0 && k % step === 0 ? m + gap + showValue : m + '' + showValue;
         }
+        // 值增加的时候
         if(isAdd === 1){
             if(oldValue.length - showValue.length === -2){
-                
+                _range = range - 1;
             }
+            // isAdd -1 删除的时候
         }else{
 
         }
