@@ -7,6 +7,11 @@ prev: './js-vue-observer-1'
 next: './js-variable-lift'
 ---
 
+读音
+
+cancel 堪搜 
+token 套肯
+
 我们从一个简单的例子开始
 
 ``` js

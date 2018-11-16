@@ -95,8 +95,8 @@ function doFormat(value, hasSeparator, separator){
 @ value 处理的value
 @ gap 分隔符
 @ direction 开始位置
-@ range
-@ isAdd
+@ range 光标位置
+@ isAdd 
 @ oldValue 整数部分
 */
 function formatValueByGapStep(step, value, gap = '', direction = 'right', range, isAdd = 1, oldValue = ''){
@@ -114,20 +114,16 @@ function formatValueByGapStep(step, value, gap = '', direction = 'right', range,
             const m = arr[j];
             // 当前初始变量的值 必须是step的倍数
             showValue = k > 0 && k % step === 0 ? m + gap + showValue : m + '' + showValue;
-        }
-        // 值增加的时候
-        if(isAdd === 1){
-            if(oldValue.length - showValue.length === -2){
-                _range = range - 1;
-            }
-            // isAdd -1 删除的时候
-        }else{
-
-        }
-        
+        } 
     }else{
-
+		arr.some((n, i) => {
+			showValue = i > 0 && i % step === 0 ? showValue + gap + n : showValue + '' + n
+		})
     }
     return {value: showValue, range: _range}
 }
 ```
+
+### 手动输入 格式化
+
+。。。 持续
