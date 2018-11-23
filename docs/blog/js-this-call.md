@@ -1,6 +1,6 @@
 ---
-title: 了解一下this
-description: '来了解一下this'
+title: 了解一下call apply bind
+description: '来了解一下call apply bind'
 sidebar: 'auto'
 time: '2015-01-06'
 prev: './js-variable-lift'
@@ -9,28 +9,26 @@ next: './js-function-prototype'
 
 ## 神秘的 this
 
-从像Java，PHP或其他标准语言这样的背景，this被视为类方法中当前对象的一个​​实例：不多也不少。大多数情况下，它不能在方法之外使用，这种简单的方法不会造成混淆。
-
-在JavaScript中，情况是不同的：this是函数的当前执行上下文。该语言有4种函数调用类型：
+在JavaScript中：this是函数的当前执行上下文。该语言有4种函数调用类型：
 
 函数调用： alert('Hello World!')
 方法调用： console.log('Hello World!')
 构造函数调用： new RegExp('\\d')
-间接调用： alert.call(undefined, 'Hello World!')
+间接调用： alert.call(undefined, 'Hello World!') alert.apply(null, ['helloe']) alert.bind(null, 'helloe')
 
 每种调用类型都以自己的方式定义上下文，因此this行为与开发人员期望的略有不同。
 
 ## 函数
 
-函数是由事件驱动的或者当它被调用时执行的可重复使用的代码块。
+函数是由(js事件onclick onload等)事件驱动的或者当它被调用(function a(){} a()调用)时执行的可重复使用的代码块。
 
 ## 构造函数
 
-需要使用new运算符初始化
+需要使用new运算符
 
 ## 普通函数
 
-不适用new运算符的函数
+不适用new运算符
 
 
 ## 区别
