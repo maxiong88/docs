@@ -62,26 +62,7 @@ var p1 = Persion1();
 
 4.构造函数首字母建议大写；普通函数首字母建议小写
 
-### 课外
 
-new 做了什么
-
-``` bash
-var obj = {} 创建一个空对象obj
-
-obj.__proto__ = co.prototype 将这个空对象的__proto__成员指向了构造函数对象的prototype成员对象，这是最关键的一步，具体细节将在下文描述。
-
-co.call(obj) 将构造函数的作用域赋给新对象，因此co对象中的this指向了新对象obj，然后再调用co函数。
-
-return obj 返回新对象obj
-```
-
-
-我都到一篇文章 用了一个很通俗易懂的 方法解释的，
-
-js 给java打了一个电话告诉了它的住址让他过来吃饭，java就知道了js地址，java到了js家里不管怎么改动家里的布局，js、java都在js的家里面
-
-引用类型的赋值其实是对象保存在栈区地址指针的赋值，所以两个变量指向同一个对象，任何的操作都会互相影响.
 
 
 ## 函数调用
@@ -820,6 +801,56 @@ Period.prototype.format = function() {
 };
 var walkPeriod = new Period(2, 30);  
 walkPeriod.format(); // => '2 hours and 30 minutes'  
+```
+
+## new运算符
+
+MDN中的讲解
+`new运算符创建一个用户定义(Foo、Car等自定义)的对象类型的实例或具有构造函数的内置对象(Function、Object、String等)的实例`
+
+我们从浏览器控制台中可以看出来
+``` js
+function Car(){}
+
+let myCar = new Car(); //
+
+let myObj = new Object(); //
+`
+
+分别console出myCar、myObj可以看出来，他们两个生成的对象不同的是myCar生成的对象中间还嵌套了一层__proto__,它的属性constructor是指向Car这个函数的引用。
+也就是说
+myCar.constructor === Car;
+Car.prototype.constructor === Car；
+
+> 通过上面我们可以得出
+>> 创建了一个全新的对象。
+>> 继承了构造函数的原型对象,即Foo.prototype,obj.__proto__ = Foo.prototype
+
+
+描述
+> 创建一个用户自定义的对象需要两步
+>> 通过编写函数来定义对象类型（比如创建一个汽车的对象类型，这个类型叫做Car,function Car(){}）
+>> 通过new来创建对象实例(比如 let mycar = new Car())
+
+当代码new Foo(){}执行时，会发生：
+> 一个继承自Foo.prototype的新对象被创建；（一个新对象被创建并且继承了构造函数的原型对象,即Foo.prototype,obj.__proto__ = Foo.prototype）
+> 使用指定的参数调用构造函数Foo,并将this绑定到新创建的对象。（使用call函数即可完成,）
+> 有构造函数返回的对象就是new表达式的结果。如果构造函数没有显示返回一个对象，则使用步骤1创建的对象
+
+### 课外
+
+new 做了什么
+
+``` bash
+
+
+var obj = {} 创建一个空对象obj
+
+obj.__proto__ = co.prototype 将这个空对象的__proto__成员指向了构造函数对象的prototype成员对象，这是最关键的一步，具体细节将在下文描述。
+
+co.call(obj) 将构造函数的作用域赋给新对象，因此co函数中的this指向了新对象obj，立即执行co函数。[实例会对构造函数的这些属性进行拷贝出一份副本，然后将其归属为当前实例]
+
+return obj 返回新对象obj
 ```
 
 ## 结论
