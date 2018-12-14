@@ -424,18 +424,30 @@ if (isNode) {
 }
 
 function then(onFulfillment, onRejection) {
-  var parent = this;
 
-  var child = new this.constructor(noop);
+  var parent = this;// 实例化对象
+  // 根据promiseA+规范 then 需要返回一个新的promise对象
+  // 而这个新promise对象我们是根据 当前对象的constructor属性 来构造
+  // @ts-ignore
+  // 出现了new操作符 表示实例化一个对象，new操作出现比会出现构造函数
+  // this表示当前promise对象，当前promise对象（this）的constructor属性指向当前promise对象（this）的构造函数
+  // this.constructor指向 当前promise对象（this）的构造函数
+  // 而Promise构造函数的入参一个函数，这里我们传入一个空函数
+  // 即then方法返回一个promise对象，所以就可以链式调用
+  // 为什么不返回this，因为promise改变是单向的只能改变一次pending-fulfilled  pending-rejected
+  // 次生成的promise对象无需再次实例化 tongguo noop控制
+  var child = new this.constructor(noop);// 实例化一次promise 就会生成一个promiseid
+  
 
   if (child[PROMISE_ID] === undefined) {
     makePromise(child);
   }
 
-  var _state = parent._state;
+  var _state = parent._state;// 第一次promise的状态默认
 
 
   if (_state) {
+  // 获取传入的函数 resolve  reject
     var callback = arguments[_state - 1];
     asap(function () {
       return invokeCallback(_state, child, callback, parent._result);
@@ -726,8 +738,14 @@ function invokeCallback(settled, promise, callback, detail) {
 }
 // 初始化promise，
 // 参数：实例化对象/执行函数
+// 这里要明白resolver是什么 执行器
+// resolver 是我们promise一开始传入的参数
+// new Promise((resolve, rejected) => {resolve(1)}) 1-1
+// resolver 就是 (resolve, rejected) => {resolve(1)}
+// 在初始化promise的时候内部执行了 resolver 
+// 也就是我在1-1 写入了resolve(1)的时候他执行的是resolver的第一个入参数resolvePromise(),然后执行resolve()
 function initializePromise(promise, resolver) {
-	// 如果执行函数过程中出现错误抛出 
+	// 如果执行函数过程中出现错误抛出
   try {
     resolver(function resolvePromise(value) {
       resolve(promise, value);

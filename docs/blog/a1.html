@@ -935,8 +935,10 @@ var Promise$1 = function () {
     this._subscribers = [];
 
     if (noop !== resolver) {
+	// 如果参数不是函数抛出异常
       typeof resolver !== 'function' && needsResolver();
 	  console.log(this instanceof Promise)
+	  // 如果当前实例是promise对象，那就初始化promise对象
       this instanceof Promise ? initializePromise(this, resolver) : needsNew();
     }
   }
@@ -1263,7 +1265,7 @@ new ES6Promise((resolve, reject) => {
 	resolve('fg')
 	//return resolve('fg')
 	//resolve(new Promise(() => {}))
-}).then()
+}).then((res)=>{console.log(res)})
 
 // 当then函数执行完毕输出结果以后 在执行resolve方法，改变promise状态 走到fullfil 如果事件池还有事件接着 asap(publish, promise); 继续执行 循环
 //Promise.resolve().then((res)=>{console.log('11')})

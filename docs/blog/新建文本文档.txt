@@ -2,3 +2,5 @@
 2. 事件完成在重绘重排
 3. 移除dom 不会移除dom事件 所以代理事件
 4. onclick  addEventListener
+5. event.srcElement与event.target的区别
+6. !important 会发生什么
