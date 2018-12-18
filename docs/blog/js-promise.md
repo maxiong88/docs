@@ -7,39 +7,9 @@ prev: ''
 next: ''
 ---
 
+![部分promise解析](../.vuepress/public/assets/img/promise-1.jpg)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Promise
-
-### 含义
+### 了解promise
 
 英文翻译：许诺，希望，期望
 
