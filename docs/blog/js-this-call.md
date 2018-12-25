@@ -186,8 +186,8 @@ strictSum(8, 12); // => 20
 
 
 ### 陷阱：this内在的功能
-函数调用的常见陷阱认为this内部函数与外部函数中的相同。
-正确地说，内部函数的上下文仅取决于调用，而不取决于外部函数的上下文。
+
+`内部函数的上下文仅取决于调用，而不取决于外部函数的上下文。`
 
 为了获得预期this，使用间接调用修改内部函数的上下文（使用.call()或.apply()）或创建绑定函数（使用.bind()）。
 
@@ -582,6 +582,60 @@ Fun变化就是：修改了自己的this，并且执行一遍
 
 ## Bound function
 
+
+bind() 函数会创建一个新绑定函数(bound function, BF).
+	绑定函数是一个exotic function object 怪异函数对象，他包装了原函数对象。
+	调用绑定函数通常会导致执行包装函数。
+	
+	绑定函数具有以下内部属性
+		1、[[BoundTargetFunction]] 包装的函数对象
+		2、[[BoundThis]] 在调用包装函数时始终作为this值传递的值
+		3、[[BoundArguments]] 参数列表
+		4、[[Call]] 执行与此对象关联的代码
+		
+	当调用绑定函数时，它调用[[BoundTagrtFunction]]上的内部方法[[Call]],
+	就像这个样Call(bounfThis, args).其中，boundThis是[[BoundThis]],args是[[BoundArguments]]加上通过函数调用传入的参数列表
+	
+![bind-1](../.vuepress/public/assets/img/bind-1.png)
+![bind-2](../.vuepress/public/assets/img/bind-2.png)
+
+从上面console中可以看到c就是我们创建的一个新绑定函数bound function
+
+### ployfill
+
+``` js
+
+if(!Function.prototype.bind){
+	Function.prototype.bind = function(oThis){
+		if(typeof this !== 'function'){
+			throw new TypeError('绑定者必须是函数')
+		}
+		var aArgs = Array.prototype.slice.call(arguments, 1), // 通过slice方法返回指定数组元素，不包括this
+		fToBind = this,
+		fNOP = function(){}, // noop = function(){}
+		fBound = function(){
+			// this instanceof fBound === true 说明返回的fBound被当做new的构造函数调用  当前this是不是fBound的实例
+			return fToBind.apply(this instanceof fBound ? this : oThis,
+				aArgs.concat(Array.prototype.slice.call(arguments))
+				// 获取调用时 fBound的传参 bind返回的函数入参往往是这么传递的
+			)
+		}
+		// 维护原型
+		if(this.prototype){
+			fNOP.prototype = this.prototype
+		}
+		// 下行代码使fBound.prototype是fNOP的实例
+		// 返回的fBound若作为new的构造函数，new生成的新对象作为this传入fBound，新对象的__proto__就是fNOP的实例
+		fBound.prototype = new fNOP();
+		return fBound;
+	}
+}
+
+// https://github.com/lodash/lodash/blob/4.17.11/dist/lodash.js
+// https://github.com/ramda/ramda/blob/master/dist/ramda.js
+```
+	
+		
 绑定函数是与对象连接的函数。
 通常它是由原始函数使用.bind()方法创建的。
 原始和绑定函数共享相同的代码和范围，但执行时的上下文不同。
@@ -859,6 +913,61 @@ return obj 返回新对象obj
 参考资料
 
 [https://dmitripavlutin.com/gentle-explanation-of-this-in-javascript/](https://dmitripavlutin.com/gentle-explanation-of-this-in-javascript/)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
