@@ -7,31 +7,33 @@ prev: './js-variable-lift'
 next: './js-function-prototype'
 ---
 
+![bind-3](../.vuepress/public/assets/img/bind-3.png)
+
 ## 神秘的 this
 
 在JavaScript中：this是函数的当前执行上下文。该语言有4种函数调用类型：
 
-函数调用： alert('Hello World!')
-方法调用： console.log('Hello World!')
-构造函数调用： new RegExp('\\d')
-间接调用： alert.call(undefined, 'Hello World!') alert.apply(null, ['helloe']) alert.bind(null, 'helloe')
+> 函数调用： alert('Hello World!')
+> 方法调用： console.log('Hello World!')
+> 构造函数调用： new RegExp('\\d')
+> 间接调用： alert.call(undefined, 'Hello World!') alert.apply(null, ['helloe']) alert.bind(null, 'helloe')
 
-每种调用类型都以自己的方式定义上下文，因此this行为与开发人员期望的略有不同。
+每种调用类型都可以用自己的方式定义上下文
 
 ## 函数
 
 函数是由(js事件onclick onload等)事件驱动的或者当它被调用(function a(){} a()调用)时执行的可重复使用的代码块。
 
-## 构造函数
+### 构造函数
 
 需要使用new运算符
 
-## 普通函数
+### 普通函数
 
 不适用new运算符
 
 
-## 区别
+### 构造函数与普通函数区别
 
 1. 构造函数使用new运算符调用；普通函数不使用new运算符调用；
 
@@ -63,9 +65,7 @@ var p1 = Persion1();
 4.构造函数首字母建议大写；普通函数首字母建议小写
 
 
-
-
-## 函数调用
+### 函数调用
 
 ``` js 
 function hello(name) {  
@@ -83,28 +83,24 @@ console.log(message) // => 'Hello World!'
 
 ### this在函数调用中
 
-this是函数调用中的全局对象.
-全局对象由执行环境决定。在浏览器中，它是window对象。
-
-在函数调用中，执行上下文是全局对象。
+在函数调用中，执行上下文(this)是全局对象。`全局对象由执行环境决定。在浏览器中，它是window对象。`
 
 让我们检查以下函数中的上下文：
 
 ``` js
 function sum(a, b) {  
    console.log(this === window); // => true
-   this.myNumber = 20; // add 'myNumber' property to global object
+   this.myNumber = 20; // 添加myNumber属性到全局对象中
    return a + b;
 }
-// sum() is invoked as a function
-// this in sum() is a global object (window)
+// sum() 作为一个函数调用，内的this是一个全局对象 window
 sum(15, 16);     // => 31  
 window.myNumber; // => 20  
 ```
 
 在sum(15, 16)调用时，JavaScript自动设置this为全局对象，在浏览器中window。
 
-当this在任何函数作用域之外使用时（最顶层的作用域：全局执行上下文），它还引用全局对象：
+当this在任何函数作用域之外使用时（最顶层的作用域：全局执行上下文），它还是引用全局对象：
 
 ``` js
 console.log(this === window); // => true  
@@ -123,11 +119,6 @@ this是undefined在严格模式下的函数调用
 
 严格模式是在ECMAScript 5.1中引入的，它是JavaScript的限制变体。它提供更好的安全性和更强的错误检查。
 
-要启用严格模式，请将指令'use strict'放在函数体的顶部。
-
-启用后，严格模式模式会影响执行上下文，从而this使其undefined处于常规函数调用中。与上述情况2.1相反，执行上下文不再是全局对象。
-
-这在JavaScript函数调用，严格模式下
 以严格模式执行的函数示例：
 
 ``` js
@@ -159,8 +150,6 @@ function execute() {
 }
 execute(); 
 ```
- 
-'use strict'插入到executebody 的顶部，在其范围内启用严格模式。因为concat在execute范围内声明，所以它继承了严格模式。并调用concat('Hello', ' World!')使得this要undefined。
 
 单个JavaScript文件可能包含严格和非严格模式。因此，对于相同的调用类型，可以在单个脚本中具有不同的上下文行为：
 
@@ -187,7 +176,11 @@ strictSum(8, 12); // => 20
 
 ### 陷阱：this内在的功能
 
-`内部函数的上下文仅取决于调用，而不取决于外部函数的上下文。`
+``` tip
+
+	内部函数的上下文仅取决于调用，而不取决于外部函数的上下文
+
+```
 
 为了获得预期this，使用间接调用修改内部函数的上下文（使用.call()或.apply()）或创建绑定函数（使用.bind()）。
 
@@ -210,7 +203,9 @@ var numbers = {
 numbers.sum(); // => NaN or throws TypeError in strict mode  
 ```
 
-numbers.sum()是对象的方法调用），因此sum()上下文是numbers对象。calculate函数是在里面定义的sum，所以你可能也希望calculate的上下文也是sum。
+numbers.sum()是对象的方法调用，因此sum()上下文是numbers对象。
+
+calculate函数是在sum函数内定义，所以你可能也希望calculate的上下文也是sum。
 
 然而，它calculate()是一个函数调用（但不是方法调用），它具有this全局对象window或undefined严格模式。即使外部函数sum将上下文作为numbers对象，它也没有影响。
 
@@ -331,10 +326,21 @@ earth.getName(); // => 'Earth'
 
 ### 将方法与其对象分离
 
-可以将来自对象的方法提取为分离的变量var alone = myObj.myMethod。
-单独调用该方法时，与原始对象分离alone()，您可能会认为this该方法是定义该方法的对象。
+``` js
+var myObj = {
+	myMethod:function(){
+		console.log(this)
+	}
+}
+```
 
-正确地，如果在没有对象的情况下调用该方法，则会发生函数调用：其中this是全局对象window或undefined严格模式.
+将myObj对象的方法myMethod提取为分离的变量alone；
+
+`var alone = myObj.myMethod`;
+
+单独调用alone方法，您可能会认为myMethod()内部的this是myObj对象。这是不对的
+
+而this是全局对象window或undefined严格模式.
 
 创建绑定函数var alone = myObj.myMethod.bind(myObj)（使用.bind()，）可以修复上下文，使其成为拥有该方法的对象。
 
@@ -361,11 +367,11 @@ setTimeout(myCat.logInfo, 1000);
 ``` js
 setTimout(myCat.logInfo);  
 // is equivalent to:
-var extractedLogInfo = myCat.logInfo;  
+var extractedLogInfo = myCat.logInfo;  // extractedLogInfo相当于函数调用而不是对象调用，执行上下文改变了
 setTimout(extractedLogInfo);  
 ```
 
-当logInfosplit作为函数调用时，this是全局对象还是undefined严格模式（但不是 myCat对象）。因此对象信息无法正确记录。
+当logInfosplit作为函数调用时，this是全局对象或者undefined严格模式（但不是 myCat对象）。因此对象信息无法正确记录。
 
 函数可以使用.bind()方法与对象绑定。如果分离的方法与myCatobject 绑定，则解决了上下文问题：
 
@@ -386,7 +392,7 @@ setTimeout(myCat.logInfo.bind(myCat), 1000);
 myCat.logInfo.bind(myCat)返回一个新函数，该函数执行起来与logInfo一样，它的this是myCat。
 
 
-## Constructor invocation 构造函数调用：
+### Constructor invocation 构造函数调用：
 
 这个例子声明了一个函数Country，然后将它作为构造函数调用：
 
@@ -469,7 +475,7 @@ reg1.source === reg2.source; // => true
 
 执行时new RegExp('\\w+')，RegExp('\\w+')JavaScript会创建等效的正则表达式对象。
 
-使用函数调用来创建对象是一个潜在的问题（不包括工厂模式），因为一些构造函数可能会忽略在new缺少关键字时初始化对象的逻辑。
+使用函数调用来创建对象是一个潜在的问题（不包括工厂模式），因为一些构造函数可能会忽略在new缺少关键字初始化对象的逻辑。
 
 ``` js
 function Vehicle(type, wheelsCount) {  
@@ -510,9 +516,13 @@ var brokenCar = Vehicle('Broken Car', 3);
 
 new Vehicle('Car', 4) 效果很好：创建并初始化一个新对象，因为new 关键字存在于构造函数调用中。
 
-在构造函数中添加了验证：this instanceof Vehicle以确保执行上下文是正确的对象类型。如果this不是a Vehicle，则生成错误。每当Vehicle('Broken Car', 3)执行（没有new）时抛出异常：Error: Incorrect invocation。
+在构造函数中添加了验证：this instanceof Vehicle以确保执行上下文是正确的对象类型。
 
-## Indirect invocation 间接调用
+如果this不是 Vehicle实例，则生成错误。
+
+每当Vehicle('Broken Car', 3)执行（没有new）时抛出异常：Error: Incorrect invocation。
+
+### Indirect invocation 间接调用
 
 `使用 call() 、 apply()方法调用函数时执行间接调用`
 
@@ -554,7 +564,7 @@ concatName.call(rabbit, 'Hello ');  // => 'Hello White Rabbit'
 concatName.apply(rabbit, ['Bye ']); // => 'Bye White Rabbit'  
 ```
 
-当函数应该用特定的上下文执行时，间接调用是有用的。
+当函数作用在特定的上下文执行时，间接调用是有用的。
 例如，用于解决函数调用的上下文问题，其中在严格模式下，它总是window或undefined 
 
 ``` js
@@ -573,14 +583,14 @@ var myRabbit = new Rabbit('White Rabbit', 4);
 myRabbit; // { name: 'White Rabbit', countLegs: 4 } 
 ```
 
-在Rabbit内部调用Runer.call(this, name)间接调用父函数(Runer)来初始化对象。
+在Rabbit内部调用Runer.call(this, name)间接调用函数(Runer)来初始化对象。
 
 ::: tip 总结：大白话
 Fun.call()、Fun.apply()种的第一个参数就是当前的上下文，
 Fun变化就是：修改了自己的this，并且执行一遍
 :::
 
-## Bound function
+### Bound function
 
 
 bind() 函数会创建一个新绑定函数(bound function, BF).
@@ -636,8 +646,8 @@ if(!Function.prototype.bind){
 ```
 	
 		
-绑定函数是与对象连接的函数。
-通常它是由原始函数使用.bind()方法创建的。
+绑定函数通常它是由原始函数使用.bind()方法创建的。
+
 原始和绑定函数共享相同的代码和范围，但执行时的上下文不同。
 
 bind方法（thisArg[，arg1[，arg2[，...]]]）接受第一个参数thisArg作为调用时绑定函数的上下文
@@ -747,7 +757,7 @@ var bind = Function.prototype.bind
   : polyfillBind;
 ```
 
-## 箭头函数
+### 箭头函数
 
 引入箭头函数有两个方面的作用：更简短的函数并且不绑定this。
 
@@ -796,7 +806,9 @@ var myPoint = new Point(95, 165);
 myPoint.log();  
 ```
 
-如果在此示例中尝试使用常规函数，则会创建自己的上下文（window或undefined在严格模式下）。因此，要使相同的代码与函数表达式一起正常工作，必须手动绑定上下文：setTimeout(function() {...}.bind(this))。这很冗长，使用箭头功能是一种更简洁的解决方案。
+如果在此示例中尝试使用常规函数，则会创建自己的上下文（window或undefined在严格模式下）。
+
+因此，要使相同的代码与函数表达式一起正常工作，必须手动绑定上下文：setTimeout(function() {...}.bind(this))。这很冗长，使用箭头功能是一种更简洁的解决方案。
 
 箭头函数一劳永逸地与词汇上下文绑定。this 即使使用上下文修改方法也无法修改：
 
@@ -856,6 +868,15 @@ Period.prototype.format = function() {
 var walkPeriod = new Period(2, 30);  
 walkPeriod.format(); // => '2 hours and 30 minutes'  
 ```
+
+``` tip
+
+	函数体内的this对象，就是定义时所在的对象，而不是使用时所在的对象。
+
+		this指向的固定化,导致内部的this就是外层代码块的this
+```
+
+// http://es6.ruanyifeng.com/#docs/function#%E7%AE%AD%E5%A4%B4%E5%87%BD%E6%95%B0
 
 ## new运算符
 
