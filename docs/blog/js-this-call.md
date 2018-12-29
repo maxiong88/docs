@@ -610,12 +610,13 @@ if(!Function.prototype.bind){
 		if(typeof this !== 'function'){
 			throw new TypeError('绑定者必须是函数')
 		}
-		var aArgs = Array.prototype.slice.call(arguments, 1), // 通过slice方法返回指定数组元素，不包括this
-		fToBind = this,
+		var aArgs = Array.prototype.slice.call(arguments, 1), // 通过slice方法返回指定数组元素，不包括this 获取参数数组化
+		fToBind = this, 
 		fNOP = function(){}, // noop = function(){}
 		fBound = function(){
 			// this instanceof fBound === true 说明返回的fBound被当做new的构造函数调用  当前this是不是fBound的实例
-			return fToBind.apply(this instanceof fBound ? this : oThis,
+			return fToBind.apply(
+        this instanceof fBound ? this : oThis,
 				aArgs.concat(Array.prototype.slice.call(arguments))
 				// 获取调用时 fBound的传参 bind返回的函数入参往往是这么传递的
 			)
