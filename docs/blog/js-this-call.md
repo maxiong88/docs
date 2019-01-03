@@ -7,7 +7,7 @@ prev: './js-variable-lift'
 next: './js-function-prototype'
 ---
 
-![bind-3](../.vuepress/public/assets/img/bind-3.png)
+![bind-3](../.vuepress/public/assets/img/bind-3.jpg)
 
 ## 神秘的 this
 
@@ -915,14 +915,18 @@ Car.prototype.constructor === Car；
 
 ### 课外
 
-new 做了什么
+new” 关键字在 JavaScript 中有什么作用
 
 ``` bash
 
 
 var obj = {} 创建一个空对象obj
 
-obj.__proto__ = co.prototype 将这个空对象的__proto__成员指向了构造函数对象的prototype成员对象，这是最关键的一步，具体细节将在下文描述。
+obj.__proto__ = co.prototype 将这个空对象的隐式原型__proto__成员指向了构造函数对象的prototype成员对象，这是最关键的一步，具体细节将在下文描述。
+此时变建立的obj对象的原型链
+obj.__proto__ === co.prototype
+co.prototype.__proto__ === Object.prototype
+Object.prototype.__proto__ = null
 
 co.call(obj) 将构造函数的作用域赋给新对象，因此co函数中的this指向了新对象obj，立即执行co函数。[实例会对构造函数的这些属性进行拷贝出一份副本，然后将其归属为当前实例]
 

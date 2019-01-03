@@ -1,3 +1,12 @@
+---
+title: h5存储
+description: 'h5存储'
+sidebar: 'auto'
+time: '2015-01-06'
+prev: ''
+next: ''
+---
+
 1.html5中的web storage（司涛蕊之）（网络存储）两种方式：sessionStorage，localStorage
  sessionStorage用于本地存储一个会话session中的数据，这些数据只有在同一个会话中的页面才能访问当会话结束（页面关闭时）数据也随之消失
  sessionstorage不是一种持久化的本地存储，仅仅是会话级别的存储
@@ -86,38 +95,6 @@ Modernizr(毛豆奶子)是一个检测浏览器对HTML5和CSS3特性默认触摸事件 */
 
   -ms-touch-action: none;  /* 阻止windows Phone 的默认触摸事件 */
 
-IE  自适应  respond.js 必须在服务器上运行https://github.com/scottjehl/Respond（比较好）
-            https://github.com/livingston/css3-mediaqueries-js/blob/master/css3-mediaqueries.js（）
-            引入http://libs.useso.com/js/html5shiv/3.7/html5shiv.min.js
-
-自定义滚动条http://areaaperta.com/nicescroll/demo.html--------------------jquery.mousewheel.js-----https://github.com/malihu/malihu-custom-scrollbar-plugin(http://manos.malihu.gr/repository/custom-scrollbar/demo/examples/complete_examples.html)
-	=========jquery.mCustomScrollbar.concat.min.js
-                   ===theme(选择css主题)
-                   ===
-
-<!--/*让IE8以下支持html5*/-->
-<!--[if lt IE 9]><script src="http://libs.useso.com/js/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
-
-<script src="http://libs.useso.com/js/modernizr/2.8.2/modernizr.min.js"></script>
-
-IE兼容模式
-
-  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
-
-
-html与html5区别
-
- 1.语法
-    1.不要在自闭和元素的尾部添加斜线
-     2.不要省略可选的结束标签
-      3.对于属性的定义确保全部使用双引号，绝不要使用单引号
 
 
 box-shadw阴影 上（负） 右（正）下（正）左（负） 当为0 0 的时候四周都有阴影  第三个参数就是模糊距离 第四个参数模糊长度
-
-animation.css  hover.css
-
-1.自适应导航
-
-2.图片轮播
-	flexslider
