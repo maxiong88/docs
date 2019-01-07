@@ -77,7 +77,7 @@ console.log(app, Ho, <Ho />)
 也就是说我们引入的React负责ReactElement组件相关的东西，渲染层面抽出来交给，ReactDOM、 ReactNative，这种分离这也赋予了React跨终端渲染的能力。
 
 
-首先我们看一下 React.render(<T />, document.getElementById('container'))，这里面的<T />首先会被babel调用 React.createElement生成为ReactElement
+首先我们看一下 `React.render(<T />, document.getElementById('container'))`，这里面的`<T />`首先会被babel调用 React.createElement生成为ReactElement
 
 第一阶段 准备ReactRoot和后续需要的基本属性
 
