@@ -70,93 +70,6 @@ console.log(app, Ho, <Ho />)
 `到这一步，我们只是做了从jsx语法到React Element的转换，但基本上React库的部分就到这里了。`
 
 
-## ReactDOM.render
-
-在开始之前，我们要先知道一个事情就是：平时我们写React，都要引入多一个 'react-dom'，用 ReactDOM.render来把React生成的ReactElement渲染到 DOM Tree 中。
-
-也就是说我们引入的React负责ReactElement组件相关的东西，渲染层面抽出来交给，ReactDOM、 ReactNative，这种分离这也赋予了React跨终端渲染的能力。
-
-
-首先我们看一下 React.render(<T />, document.getElementById('container'))，这里面的<T />首先会被babel调用 React.createElement生成为ReactElement
-
-第一阶段 准备ReactRoot和后续需要的基本属性
-
-ReactRoot
-
-ReactDOM.render 首先会调用 legacyCreateRootFromDOMContainer 创建一个ReactRoot的实例，我们叫他root。
-
-
-
-```
-
-const App = (<h2>Hello World!</h2>)
-ReactDOM.render(App, document.querySelector('#app'))
-
-或者
-
-class App extends React.Component {
-  render(){
-    return (
-      <div>
-        <h2>Hello World!</h2>
-      </div>
-    )
-  }
-}
-ReactDOM.render(<App />, document.querySelector('#app'))
-
-```
-
-我们知道上面两个例子中ReactDOM.render第一个参数传入的都是ReactElement的“实例”。
-
-如果传入了字符串 提示
-
-ReactDOM.render(): Invalid component element. Instead of passing a string like 'div', pass React.createElement('div') or <div />
-
-查看ReactDOM.js文件，可以看到ReactDOM.render引用ReactMount.js的render方法,如下：
-
-src/renders/dom/ReactDOM.js
-
-ReactDOM.render = ReactMount.render
-
-src/renders/dom/client/Reactmount.js
-
-Reactmount = {
-render: => _renderSubtreeIntoContainer
-}
-
-当调用ReactDOM.render时，使用TopLevelWrapper对element进行包装，
-
-
-Render函数在什么情况下会被调用，当且仅当下面三种情况：
-组件初始化
-组件的props和state发生改变
-组件内调用forceUpdate函数
-
-
-
-
-
-// https://zhuanlan.zhihu.com/p/45091185
-
-
-// https://github.com/jsonz1993/react-source-learn/issues/3
-
-
-
-
-
-jsx只是为 React.createElement(component, props, ...other)方法提供的语法糖
-
-
-#### 本文用到的文件
-
-> src/isomorphic/React.js  `React.createElement`入口83行
-
-> src/isomorphic/classic/element/ReactElement.js `ReactElement.createElement()`具体实现 181行
-
-> src/renderers/dom/ReactDOM.js: `ReactDOM.render()`的入口
-
 
 
 ##### 从JSX到React.createElement()
@@ -214,9 +127,12 @@ ReactDOM.render(React.createElement(
 
 	>> 调用renderNewRootComponent渲染（将新组件呈现到dom中）
 
-	>> 调用instantiateReactComponent这是初始化组件的入口函数，它通过判断node类型来区分不同组件入口（【node类型null】空组件、【node类型对象】DOM标签组件（ReactDOMComponent）或自定义组件（ReactCompositeComponent）、【node类型字符串或数字】文本组件（ReactDOMTextComponent）、【node其他情况】不做处理）
+	>> 调用instantiateReactComponent这是初始化组件的入口函数，
+
+> 执行instantiateReactComponent  `src\renderers\shared\stack\reconciler\instantiateReactComponent.js`
+  
+  >> 它通过判断node类型来区分不同组件入口（【node类型null】空组件、【node类型对象】DOM标签组件（ReactDOMComponent）或自定义组件（ReactCompositeComponent）、【node类型字符串或数字】文本组件（ReactDOMTextComponent）、【node其他情况】不做处理）
 	
-	==== src\renderers\shared\stack\reconciler\instantiateReactComponent.js
 
 	
 
