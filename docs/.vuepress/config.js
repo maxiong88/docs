@@ -16,6 +16,7 @@ module.exports = {
   markdown: {
     lineNumbers: true
   },
+  plugins: ['@vuepress/medium-zoom'],
 //   theme: 'vue',
   themeConfig: {
     repo: 'maxiong88',

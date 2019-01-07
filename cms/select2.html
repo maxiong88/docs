@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+    <style>
+        *{
+            padding:0;
+            margin:0;
+        }
+        body,html{
+            background: #333
+        }
+        select{
+            appearance:none;
+            -moz-appearance:none;
+            -webkit-appearance:none;
+        }
+        .select-e1{
+            display: inline-block;
+            width: 200px;
+            font-size: 14px;
+        }
+        .select-e1 select{
+            width: 100%;
+        }
+        .select-e1 .select2-container{
+            /* border: 1px solid #666; */
+            color: #fff!important;
+            
+        }
+        .select-e1 .select2-container--default .select2-selection--single{
+            background: transparent!important;
+        }
+        .select-e1 .select2-container .select2-selection--single{
+            height: 33px;
+        }
+        .select-e1 .select2-container--default .select2-selection--single .select2-selection__rendered{
+            color: #fff;
+            line-height: 33px;
+        }
+        .select-e1 .select2-container--default .select2-selection--single{
+            border: 1px solid #666;
+        }
+        .select-e1 .select2-container--default .select2-selection--single .select2-selection__placeholder{
+            color: #fff;
+        }
+        .select-e1 .select2-container--default .select2-selection--single .select2-selection__arrow{
+            height: 30px;
+        }
+        .select2-results__options{
+            background-color: #333;
+            color: #bfbfbf;
+        }
+        .select2-container--default li:hover {
+            color: #fff;
+            background-color: rgba(0, 0, 0, .4)!important;
+        }
+        .select2-container--default .select2-results__option[aria-selected=true]{
+            color: #fff;
+            background-color: #13cb75!important;
+        }
+        .select2-container--default .select2-results__option--highlighted[aria-selected]{
+            background-color: transparent;
+        }
+        
+        .select2-dropdown{
+            border: 1px solid #aaa;
+            box-sizing: border-box;
+            background-color: transparent;
+            border-radius:0;
+        }
+    </style>
+</head>
+<body>
+    <div class="select-e1">
+        <select id="e1">
+            <option><!---占位符不要动--></option>
+            <option value="AL1">Alabama</option>
+            <option value="WY2">Wyoming</option>
+            <option value="AL3">Alabama</option>
+            <option value="WY4">Wyoming</option>
+        </select>
+    </div>
+    
+	<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+    <script>
+        $(function(){
+            // $.fn.select2.defaults.set("theme", "classic");
+            $("#e1").select2({
+                placeholder: '请选择',
+                minimumResultsForSearch: Infinity
+            });
+            $("#e1").val("AL1").trigger("change");
+            $('#e1').on('select2:select', function (e) {
+                var data = e.params.data;
+                console.log(data,data.id,data.text);
+            });
+        })
+    </script>
+</body>
+</html>
