@@ -111,7 +111,7 @@ ReactDOM.render(<App />, document.querySelector('#app'))
 
 如果传入了字符串 提示
 
-ReactDOM.render(): Invalid component element. Instead of passing a string like 'div', pass React.createElement('div') or <div />
+`ReactDOM.render(): Invalid component element. Instead of passing a string like 'div', pass React.createElement('div') or <div />`
 
 查看ReactDOM.js文件，可以看到ReactDOM.render引用ReactMount.js的render方法,如下：
 
@@ -430,7 +430,7 @@ class A extend React.Component{
 
 同样的，componentDidUpdate生命周期钩子每次更新后都会执行，所以在这里调用this.setState也非常危险，有可能会没完没了。
 
-##### componentWillUnmount()
+### componentWillUnmount()
 
 当组件需要从DOM中移除时, 即会触发这个钩子函数.
 

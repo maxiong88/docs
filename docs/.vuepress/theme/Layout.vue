@@ -49,7 +49,8 @@ import Page from './Page.vue'
 import Sidebar from './Sidebar.vue'
 import SWUpdatePopup from './SWUpdatePopup.vue'
 import { resolveSidebarItems } from './util'
-
+import mediumZoom from 'medium-zoom'
+console.log(mediumZoom)
 export default {
   components: { Home, Page, Sidebar, Navbar, SWUpdatePopup },
 
@@ -111,6 +112,7 @@ export default {
   },
 
   mounted () {
+    mediumZoom(document.querySelectorAll('.content img'))
     window.addEventListener('scroll', this.onScroll)
 
     // configure progress bar
@@ -165,3 +167,7 @@ export default {
 
 <style src="prismjs/themes/prism-tomorrow.css"></style>
 <style src="./styles/theme.styl" lang="stylus"></style>
+<style lang="stylus">
+.medium-zoom-image--opened{
+  z-index: 111}
+</style>

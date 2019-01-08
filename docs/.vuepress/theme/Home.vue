@@ -53,7 +53,6 @@ import NavLink from './NavLink.vue'
 
 export default {
   components: { NavLink },
-
   computed: {
     data () {
       return this.$page.frontmatter
