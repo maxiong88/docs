@@ -7,191 +7,100 @@
     <title>Document</title>
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
     <style>
+        *{
+            padding:0;
+            margin:0;
+        }
         body,html{
             background: #333
+        }
+        select{
+            appearance:none;
+            -moz-appearance:none;
+            -webkit-appearance:none;
+        }
+        .select-e1{
+            display: inline-block;
+            width: 200px;
+            font-size: 14px;
+        }
+        .select-e1 select{
+            width: 100%;
+        }
+        .select-e1 .select2-container{
+            /* border: 1px solid #666; */
+            color: #fff!important;
+            
+        }
+        .select-e1 .select2-container--default .select2-selection--single{
+            background: transparent!important;
+        }
+        .select-e1 .select2-container .select2-selection--single{
+            height: 33px;
+        }
+        .select-e1 .select2-container--default .select2-selection--single .select2-selection__rendered{
+            color: #fff;
+            line-height: 33px;
+        }
+        .select-e1 .select2-container--default .select2-selection--single{
+            border: 1px solid #666;
+        }
+        .select-e1 .select2-container--default .select2-selection--single .select2-selection__placeholder{
+            color: #fff;
+        }
+        .select-e1 .select2-container--default .select2-selection--single .select2-selection__arrow{
+            height: 30px;
+        }
+        .select2-results__options{
+            background-color: #333;
+            color: #bfbfbf;
+        }
+        .select2-container--default li:hover {
+            color: #fff;
+            background-color: rgba(0, 0, 0, .4)!important;
+        }
+        .select2-container--default .select2-results__option[aria-selected=true]{
+            color: #fff;
+            background-color: #13cb75!important;
+        }
+        .select2-container--default .select2-results__option--highlighted[aria-selected]{
+            background-color: transparent;
+        }
+        
+        .select2-dropdown{
+            border: 1px solid #aaa;
+            box-sizing: border-box;
+            background-color: transparent;
+            border-radius:0;
         }
     </style>
 </head>
 <body>
-    <div id="main" style="width: 600px;height:400px;"></div>
+    <div class="select-e1">
+        <select id="e1">
+            <option><!---占位符不要动--></option>
+            <option value="AL1">Alabama</option>
+            <option value="WY2">Wyoming</option>
+            <option value="AL3">Alabama</option>
+            <option value="WY4">Wyoming</option>
+        </select>
+    </div>
+    
 	<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
     <script>
-        (function(){
-            var userUseInfo = {
-                allCapacity: 5497558138800,
-                useCapacity: 5497558138880,
-
-            }
-            var useUnit = '';
-            var totalUnit = '';
-            var formatStorage = function(e, t) {
-                var o = function(e) {
-                    return e.toFixed(2)
-                };
-                return e < 1024 ? (t ? useUnit = "B" : totalUnit = "B", "" + e) : e < 1048576 ? 
-                (t ? useUnit = "KB" : totalUnit = "KB", "" + o(e / 1024)) : e < 1073741824 ? 
-                (t ? useUnit = "M" : totalUnit = "M", "" + o(e / 1048576)) : e < 1099511627776 ? 
-                (t ? useUnit = "G" : totalUnit = "G", "" + o(e / 1073741824)) : e < 0x4000000000000 ? 
-                (t ? useUnit = "T" : totalUnit = "T", "" + o(e / 1099511627776)) : void 0
-            }
-            var getDiskOptions = function(e, t, o, i, n) {
-                return {
-                    tooltip: {
-                        formatter: "overview_disk_used" + ": " + 100 * o + "%"
-                    },
-                    toolbox: {
-                        feature: {
-                            restore: {
-                                show: !1
-                            },
-                            saveAsImage: {
-                                show: !1
-                            }
-                        }
-                    },
-                    series: [{
-                        name: "overview_disk_title",
-                        type: "gauge",
-                        startAngle: 215,
-                        endAngle: -35,
-                        min: 0,
-                        max: n,
-                        splitNumber: 10,
-                        radius: "100%",
-                        data: [{
-                            value: i,
-                        }],
-                        pointer: {
-                            width: 5,
-                            length: "75%",
-                            shadowColor: "#fff",
-                            shadowBlur: 5
-                        },
-                        axisLine: {
-                            lineStyle: {
-                                color: '#fff',
-                                color: [
-                                    [1, new echarts.graphic.LinearGradient(0, 0, 1, 0, [{
-                                        offset: 1,
-                                        color: "#e25c59"
-                                    }, {
-                                        offset: 0,
-                                        color: "#13cb75"
-                                    }], !1)]
-                                ],
-                                width: 10
-                            }
-                        },
-                        axisLabel: {
-                            show: !1,
-                            distance: 0,
-                            textStyle: {
-                                color: "#fff",
-                                shadowColor: "#fff",
-                                shadowBlur: 5
-                            }
-                        },
-                        axisTick: {
-                            show: !1,
-                            length: 15,
-                            lineStyle: {
-                                color: {
-                                    type: "radial",
-                                    x: .5,
-                                    y: .5,
-                                    r: .5,
-                                    colorStops: [{
-                                        offset: 0,
-                                        color: "red"
-                                    }, {
-                                        offset: 1,
-                                        color: "blue"
-                                    }],
-                                    globalCoord: !1
-                                }
-                            }
-                        },
-                        splitLine: {
-                            length: 15,
-                            show: !1,
-                            splitNumber: 5,
-                            lineStyle: {
-                                width: 1,
-                                color: "#999",
-                                shadowColor: "#fff",
-                                shadowBlur: 10
-                            }
-                        },
-                        detail: {
-                            show: !0,
-                            formatter: ["{score|" + e + useUnit + "}", "{unit|/" + t + totalUnit + "}"].join(""),
-                            borderWidth: 0,
-                            offsetCenter: [0, "85%"],
-                            textStyle: {
-                                fontWeight: "bolder",
-                                color: "#fff",
-                                fontSize: 30
-                            },
-                            rich: {
-                                score: {
-                                    color: "#fff",
-                                    fontSize: 30
-                                },
-                                unit: {
-                                    color: "#999",
-                                    fontSize: 18
-                                }
-                            }
-                        }
-                    }]
-                }
-            }
-            // 基于准备好的dom，初始化echarts实例
-            var myChart = echarts.init(document.getElementById('main')),
-                t = userUseInfo.allCapacity || 0,
-                o = userUseInfo.useCapacity || 5497558138880,
-                i = Number(formatStorage(t, !0)),
-                n = Number(formatStorage(o)),
-                r = Number((t / o).toFixed(2)) || Number((t / o).toFixed(3)) || 0,
-                a = getDiskOptions(i, n, r, t, o),
-                l = t / o || 0;
-                l < .4 && (a.series[0].axisLine.lineStyle.color = [
-                    [l, "#13cb75"],
-                    [1, "#404040"]
-                ]), l >= .4 && l <= .5 && (a.series[0].axisLine.lineStyle.color = [
-                    [.4, "#13cb75"],
-                    [l, new echarts.graphic.LinearGradient(0, 0, 1, 0, [{
-                        offset: 1,
-                        color: "#7c9367"
-                    }, {
-                        offset: 0,
-                        color: "#13cb75"
-                    }], !1)],
-                    [1, "#404040"]
-                ]), l > .5 && (a.series[0].axisLine.lineStyle.color = [
-                    [.4, "#13cb75"],
-                    [.5, new echarts.graphic.LinearGradient(0, 0, 1, 0, [{
-                        offset: 1,
-                        color: "#7c9367"
-                    }, {
-                        offset: 0,
-                        color: "#13cb75"
-                    }], !1)],
-                    [l, new echarts.graphic.LinearGradient(0, 0, 1, 0, [{
-                        offset: 1,
-                        color: "#e25c59"
-                    }, {
-                        offset: 0,
-                        color: "#7c9367"
-                    }], !1)],
-                    [1, "#404040"]
-                ]),
-            // 使用刚指定的配置项和数据显示图表。
-            myChart.setOption(a);
-        })();
-        
-        
+        $(function(){
+            // $.fn.select2.defaults.set("theme", "classic");
+            $("#e1").select2({
+                placeholder: '请选择',
+                minimumResultsForSearch: Infinity
+            });
+            $("#e1").val("AL1").trigger("change");
+            $('#e1').on('select2:select', function (e) {
+                var data = e.params.data;
+                console.log(data,data.id,data.text);
+            });
+        })
     </script>
 </body>
 </html>

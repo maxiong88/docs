@@ -205,9 +205,12 @@ ReactDOM.render(React.createElement(
 
 	>> 调用renderNewRootComponent渲染（将新组件呈现到dom中）
 
-	>> 调用instantiateReactComponent这是初始化组件的入口函数，它通过判断node类型来区分不同组件入口（【node类型null】空组件、【node类型对象】DOM标签组件（ReactDOMComponent）或自定义组件（ReactCompositeComponent）、【node类型字符串或数字】文本组件（ReactDOMTextComponent）、【node其他情况】不做处理）
+	>> 调用instantiateReactComponent这是初始化组件的入口函数，
+
+> 执行instantiateReactComponent  `src\renderers\shared\stack\reconciler\instantiateReactComponent.js`
+  
+  >> 它通过判断node类型来区分不同组件入口（【node类型null】空组件、【node类型对象】DOM标签组件（ReactDOMComponent）或自定义组件（ReactCompositeComponent）、【node类型字符串或数字】文本组件（ReactDOMTextComponent）、【node其他情况】不做处理）
 	
-	==== src\renderers\shared\stack\reconciler\instantiateReactComponent.js
 
 	
 
