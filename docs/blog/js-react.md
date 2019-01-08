@@ -16,7 +16,7 @@ next: ''
 
 JSX 是 JavaScript 语言的一种语法扩展，你可以在里面写html+js。
 
-jsx只是为 React.createElement(component, props, ...other)方法提供的语法糖
+jsx通过babel转换为 React.createElement(component, props, ...other)
 
 ## createElement(type, [config], [childrens])
 
@@ -137,9 +137,6 @@ Render函数在什么情况下会被调用，当且仅当下面三种情况：
 
 
 
-jsx只是为 React.createElement(component, props, ...other)方法提供的语法糖
-
-
 #### 本文用到的文件
 
 > src/isomorphic/React.js  `React.createElement`入口83行
@@ -148,6 +145,16 @@ jsx只是为 React.createElement(component, props, ...other)方法提供的语�
 
 > src/renderers/dom/ReactDOM.js: `ReactDOM.render()`的入口
 
+
+=========================
+
+React分为react-dom和react的原因是React-Native的出现，它可以实现跨平台实现相同的组件。
+
+react包包含了React.createElement、 .createClass、 .Component、 .PropTypes、.Children以及其他的描述元素和组件的类。
+
+react-dom包包含了ReactDOM.render、.unmountComponentAtNode和.findDOMNode等
+
+ReactDOM.render是React的最基本方法用于将模板转为HTML语言，并插入指定的DOM节点。它可以将一个React元素呈现在指定的DOM container中，并返回对组件的引用对象。
 
 
 ##### 从JSX到React.createElement()
@@ -193,52 +200,223 @@ ReactDOM.render(React.createElement(
 
 这个新构建的ReactElement一会会在ReactMount.instantiateReactComponent() 函数中用到。因为下一步也会构建一个ReactElement我们先把这一步生成的对象命名为ReactElement[1]。
 	
+	
+## React渲染机制
+
+``` js
+
+class Form extends React.Component {
+    constructor() {
+    super();
+  }
+  render() {
+    return (
+        <form>
+          <input type="text"/>
+        </form>
+    );
+  }
+}
+
+ReactDOM.render( (
+  <div className="test">
+    <p>请输入你的信息</p>
+    <Form/>
+  </div>
+), document.getElementById('example'))
+```	
+
+从ReactDOM入口开始，找到ReactDOM.js文件
+
+``` js {3,17}
+var ReactDOMComponentTree = require('ReactDOMComponentTree');
+var ReactDefaultInjection = require('ReactDefaultInjection');
+var ReactMount = require('ReactMount');
+var ReactReconciler = require('ReactReconciler');
+var ReactUpdates = require('ReactUpdates');
+var ReactVersion = require('ReactVersion');
+
+var findDOMNode = require('findDOMNode');
+var getHostComponentFromComposite = require('getHostComponentFromComposite');
+var renderSubtreeIntoContainer = require('renderSubtreeIntoContainer');
+var warning = require('warning');
+
+ReactDefaultInjection.inject();
+
+var ReactDOM = {
+  findDOMNode: findDOMNode,
+  render: ReactMount.render,
+  unmountComponentAtNode: ReactMount.unmountComponentAtNode,
+  version: ReactVersion,
+
+  /* eslint-disable camelcase */
+  unstable_batchedUpdates: ReactUpdates.batchedUpdates,
+  unstable_renderSubtreeIntoContainer: renderSubtreeIntoContainer,
+  /* eslint-enable camelcase */
+};
+```
+
+ReactDOM.render()方法来自ReactMount文件的render方法：
+
+``` js
+render: function(nextElement, container, callback) {
+   /**入口render方法
+   * @param {ReactElement} nextElement 要插入到DOM中的组件
+   * @param {DOMElement} container 要插入到的容器
+   * @param {?function} callback 回调
+   * @return {ReactComponent} Component instance rendered in `container`.返回ReactComponent
+   */
+    return ReactMount._renderSubtreeIntoContainer(
+      null,
+      nextElement,
+      container,
+      callback,
+    );
+ },
+```
+
+Render方法返回的是当前文件下的_renderSubtreeIntoContainer方法，大白话（将子树呈现到容器中），顾名思义，
+它的作用是将子树nextElement注入到指定的container中，并调用其回调方法_renderSubtreeIntoContainer方法主要完成以下一个功能：
+	
+1、调用React.createElement生成待插入节点的虚拟DOM的实例对象
+2、与之前的component比较，如果是初次渲染直接将虚拟DOM转换为真实DOM
+3、将真实的组件写到对应的container节点中
+
+``` js
+  _renderSubtreeIntoContainer: function(
+    parentComponent,
+    nextElement,
+    container,
+    callback,
+  ) {
+    ReactUpdateQueue.validateCallback(callback, 'ReactDOM.render');
+
+    var nextWrappedElement = React.createElement(TopLevelWrapper, {
+      child: nextElement,
+    });
+
+    var nextContext;
+    if (parentComponent) {
+      var parentInst = ReactInstanceMap.get(parentComponent);
+      nextContext = parentInst._processChildContext(parentInst._context);
+    } else {
+      nextContext = emptyObject;
+    }
+	// 获取要插入到的容器的前一次的ReactComponent，这是为了做DOM diff
+    var prevComponent = getTopLevelWrapperInContainer(container);
+
+    if (prevComponent) {
+      var prevWrappedElement = prevComponent._currentElement;
+      var prevElement = prevWrappedElement.props.child;
+      if (shouldUpdateReactComponent(prevElement, nextElement)) {
+        var publicInst = prevComponent._renderedComponent.getPublicInstance();
+        var updatedCallback =
+          callback &&
+          function() {
+            callback.call(publicInst);
+          };
+        ReactMount._updateRootComponent(
+          prevComponent,
+          nextWrappedElement,
+          nextContext,
+          container,
+          updatedCallback,
+        );
+        return publicInst;
+      } else {
+        ReactMount.unmountComponentAtNode(container);
+      }
+    }
+
+    var reactRootElement = getReactRootElementInContainer(container);
+    var containerHasReactMarkup =
+      reactRootElement && !!internalGetID(reactRootElement);
+    var containerHasNonRootReactChild = hasNonRootReactChild(container);
+
+    if (__DEV__) {
+      warning(
+        !containerHasNonRootReactChild,
+        'render(...): Replacing React-rendered children with a new root ' +
+          'component. If you intended to update the children of this node, ' +
+          'you should instead have the existing children update their state ' +
+          'and render the new components instead of calling ReactDOM.render.',
+      );
+
+      if (!containerHasReactMarkup || reactRootElement.nextSibling) {
+        var rootElementSibling = reactRootElement;
+        while (rootElementSibling) {
+          if (internalGetID(rootElementSibling)) {
+            warning(
+              false,
+              'render(): Target node has markup rendered by React, but there ' +
+                'are unrelated nodes as well. This is most commonly caused by ' +
+                'white-space inserted around server-rendered markup.',
+            );
+            break;
+          }
+          rootElementSibling = rootElementSibling.nextSibling;
+        }
+      }
+    }
+
+    var shouldReuseMarkup =
+      containerHasReactMarkup &&
+      !prevComponent &&
+      !containerHasNonRootReactChild;
+    var component = ReactMount._renderNewRootComponent(
+      nextWrappedElement,
+      container,
+      shouldReuseMarkup,
+      nextContext,
+    )._renderedComponent.getPublicInstance();
+    if (callback) {
+      callback.call(component);
+    }
+    return component;
+  },
+
+```
+
+
+
 #### ReactDom.render() -  开始渲染
 
-> ReactDom.render 执行的是 ReactMount.render `src\renderers\dom\ReactDOM.js 30行`
++ ReactDom.render 执行的是 ReactMount.render `src\renderers\dom\ReactDOM.js 30行`
 
-> 执行 ReactMount._renderSubtreeIntoContainer `src\renderers\dom\client\ReactMount.js 567行`
++ 执行 ReactMount._renderSubtreeIntoContainer `src\renderers\dom\client\ReactMount.js 567行`
 
-	>> 检测ReactELement[1]合法性
+	- 检测ReactELement[1]合法性
 
-	>> 检擦container页面容器是否已经被渲染过react组件
+	- 检擦container页面容器是否已经被渲染过react组件
 
-	>> 调用renderNewRootComponent渲染（将新组件呈现到dom中）
+	- 调用renderNewRootComponent渲染（将新组件呈现到dom中）
 
-	>> 调用instantiateReactComponent这是初始化组件的入口函数，
+	- 调用instantiateReactComponent这是初始化组件的入口函数，
 
-> 执行instantiateReactComponent  `src\renderers\shared\stack\reconciler\instantiateReactComponent.js`
++ 执行instantiateReactComponent  `src\renderers\shared\stack\reconciler\instantiateReactComponent.js`
   
-  >> 它通过判断node类型来区分不同组件入口（【node类型null】空组件、【node类型对象】DOM标签组件（ReactDOMComponent）或自定义组件（ReactCompositeComponent）、【node类型字符串或数字】文本组件（ReactDOMTextComponent）、【node其他情况】不做处理）
+  - 它通过判断node类型来区分不同组件入口（【node类型null】空组件、【node类型对象】DOM标签组件（ReactDOMComponent）或自定义组件（ReactCompositeComponent）、【node类型字符串或数字】文本组件（ReactDOMTextComponent）、【node其他情况】不做处理）
 	
 
-	
+
+
+
+
 
 
 ## 生命周期
 
 组件的生命主要包括3个阶段： 挂载、更新、卸载，React 16开始还添加了错误处理。
 
-::: tip 这个先不考虑
 
-static defaultProps = {}
-
-static propTypes = {}
-
-服务端渲染
-
-:::
-
-
-###### <center>v15</center>
+##### <center>v15</center>
 
 ![v15](../.vuepress/public/assets/img/react-life-3.jpg)
 
 
-###### <center>v16</center>
+##### <center>v16</center>
 
 ![v16](../.vuepress/public/assets/img/react-life-1.jpg)
-
 
 
 ### constructor()
@@ -265,6 +443,8 @@ class App extends Component {
 
 为什么可以写成[1] 或者 [2]
 
+官网： 如果不初始化状态 state，也不绑定方法 .bind()，则不需要为react组件实现构造函数。
+
 + Class基本语法
 	- 实例属性的新写法
 		* 实例属性除了在constructor()方法里面定义，也可以直接写在类的最顶层。
@@ -276,7 +456,7 @@ class App extends Component {
 	- constructor
 		* 子类必须在constructor方法中调用super方法，否则新建实例时会报错
 			* 这是因为子类自己的this对象，必须先通过父类的构造函数完成塑造，得到与父类同样的实例属性和方法，然后再对其进行加工，加上子类自己的实例属性和方法。如果不调用super方法，子类就得不到this对象。
-		- 如果子类没有定义constructor方法，这个方法会被默认添加，代码如下。也就是说，不管有没有显式定义，任何一个子类都有constructor方法。
+		- 如果子类没有定义constructor方法，这个方法会被默认添加。也就是说，不管有没有显式定义，任何一个子类都有constructor方法。
 		- ES5 的继承，实质是先创造子类的实例对象this，然后再将父类的方法添加到this上面（[Parent.apply(this)、.call()](./js-this-call.html)）。
 		- ES6 的继承机制完全不同，实质是先将父类实例对象的属性和方法，加到this上面（所以必须先调用super方法），然后再用子类的构造函数修改this。
 
