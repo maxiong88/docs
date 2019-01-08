@@ -164,6 +164,9 @@
         .k-table td, html .k-table th {
             border: none;
         }
+        .k-table .el-table::before{
+            display: none;
+        }
         
         
         .k-select {
@@ -284,8 +287,16 @@
             padding: 6px 0 6px 12px;
             color: #eee;
         }
+        .el-pagination .btn-next, .el-pagination .btn-prev {
+            background: 50% no-repeat #fff;
+            background-size: 16px;
+            border: 1px solid #d1dbe5;
+            cursor: pointer;
+            margin: 0;
+            color: #97a8be;
+        }
         #table-page.k-page {
-            background-color: #282828;
+            /* background-color: #282828; */
             padding: 20px 0 10px 12px!important;
         }
         .el-pagination button, .el-pagination span {
@@ -299,21 +310,36 @@
         }
         .el-pagination__total {
             margin: 0 10px;
+            color: #eee;
         }
         .el-pagination__jump {
             margin-left: 10px;
+            color: #eee;
         }
         #table-page .el-pagination__jump {
             margin-right: 10px;
         }
-        #table-page button {
+        #table-page.el-pagination button {
             background-color: #444;
             color: #eee;
             border-color: #505050;
         }
-        #table-page button.disabled {
+        #table-page.el-pagination button.disabled {
             background-color: #555;
             color: #848484;
+        }
+        .el-pagination .btn-prev {
+            border-radius: 2px 0 0 2px;
+            border-right: 0;
+        }
+        .el-pagination .btn-next {
+            border-radius: 0 2px 2px 0;
+            border-left: 0;
+        }
+        .k-page .el-pagination__editor,
+        .k-page button,
+        .k-page li {
+            background-color: transparent!important;
         }
     </style>
 </head>
@@ -421,16 +447,19 @@
                 <el-pagination
                     @size-change="handleSizeChange"
                     @current-change="handleCurrentChange"
-                    :current-page.sync="currentPage3"
+                    :current-page.sync="currentPage"
+                    @prev-click="prevClick"
+                    @next-click="nextClick"
                     :page-size="100"
                     class="k-page"
                     id="table-page"
-                    layout="prev, pager, next, jumper"
-                    :total="1000">
+                    layout="total, jumper, prev, pager, next"
+                    :total="total">
                     </el-pagination>
             </el-col>
         </el-row>
     </div>
+    <script src="./lib/jquery/jquery.min.js"></script>
     <script src="./lib/vue/vue.js"></script>
     <script src="./lib/elementUI/element.js"></script>
     <script>
@@ -523,9 +552,9 @@
                     date511: '上海市普陀区金沙江路 1518 弄1',
                     date611: 2003331,
                 }],
-                pageNum: 1,
                 pageSize: 10,
-                currentPage3:1,
+                currentPage:1,
+                total: 0,
             }
         },
         computed: {
@@ -545,6 +574,21 @@
                     }
                 }
             }
+        },
+        mounted(){
+            //  请举起表单数据
+            $.ajax({
+                url:'https://comment.mgtv.com/v4/comment/getCommentList?page=3&subjectType=hunantv2014&subjectId=4937791&callback=jQuery18207534134910063794_1546958026201&_support=10000000&_=1546958057842',
+                type:'GET',
+                dataType:'json',
+                data:{},
+                success:function(res){
+                    console.log(res)
+                },
+                error:function(res){
+                    console.log(res)
+                }
+            })
         },
         methods: {
             setDate: function(e) {
@@ -567,7 +611,11 @@
             },
             handleCurrentChange(val){
 
-            }
+            },
+            prevClick(){
+
+            },
+            nextClick(){}
         }
     })
     </script>
