@@ -222,15 +222,7 @@ promise/A+ 规范 返回一个new promise
 
 
 
-
-
-promise/A+ 规范
-
-[https://segmentfault.com/a/1190000002452115](https://segmentfault.com/a/1190000002452115)
-[http://malcolmyu.github.io/malnote/2015/06/12/Promises-A-Plus/](http://malcolmyu.github.io/malnote/2015/06/12/Promises-A-Plus/)
-[https://promisesaplus.com](https://promisesaplus.com)
-
-
+``` js
 
 /*!
  * @overview es6-promise - a tiny implementation of Promises/A+.
@@ -251,15 +243,14 @@ function objectOrFunction(x) {
   var type = typeof x;
   return x !== null && (type === 'object' || type === 'function');
 }
+
 // 判断是否是函数
 function isFunction(x) {
   return typeof x === 'function';
 }
 
-
-// 定义变量
 var _isArray = void 0;
-// 判断是不是数组
+
 if (Array.isArray) {
   _isArray = Array.isArray;
 } else {
@@ -267,12 +258,13 @@ if (Array.isArray) {
     return Object.prototype.toString.call(x) === '[object Array]';
   };
 }
+// 判断是不是数组
 var isArray = _isArray;
 
 var len = 0;
 var vertxNext = void 0;
 var customSchedulerFn = void 0;
-
+//====
 var asap = function asap(callback, arg) {
   queue[len] = callback;
   queue[len + 1] = arg;
