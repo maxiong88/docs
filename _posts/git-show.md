@@ -222,4 +222,6 @@ git pull  下拉同步
 
 [https://github.com/Microsoft/Git-Credential-Manager-for-Windows/releases/tag/v1.14.0](https://github.com/Microsoft/Git-Credential-Manager-for-Windows/releases/tag/v1.14.0)
 
+重置密码
 
+git config --system --unset credential.helper

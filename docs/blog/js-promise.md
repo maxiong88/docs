@@ -264,7 +264,7 @@ var isArray = _isArray;
 var len = 0;
 var vertxNext = void 0;
 var customSchedulerFn = void 0;
-//====
+//==== https://github.com/kriskowal/asap/blob/master/browser-raw.js
 var asap = function asap(callback, arg) {
   queue[len] = callback;
   queue[len + 1] = arg;
