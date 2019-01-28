@@ -298,8 +298,25 @@ var re = new RegExp("ab+c")
 * + 匹配前面一个表达式1此或多次，等价于{1,}
 * ? 匹配前面一个表达式0次或者1次，等价于{0,1}
 * . 匹配除了换行符(\n)之外的任何单个字符
-* (X) 匹配x并且记住匹配项
-* (?:x) 匹配x但是不记住匹配项
++ (X) 匹配x并且记住匹配项.叫做`捕获括号`
++ (?:x) 匹配x但是不记住匹配项，只做为匹配，不返回结果.叫做`非捕获括号`
+
+``` js
+
+var regular = /^Subject:(?:\d)/
+var str = "Subject:1 as something";
+var result = regular.exec(str);
+
+// ["Subject:1", index: 0, input: "Subject:1 as something", groups: undefined]
+
+var regular = /^Subject:(\d)/
+var str = "Subject:1 as something";
+var result = regular.exec(str);
+
+// (2) ["Subject:1", "1", index: 0, input: "Subject:1 as something", groups: undefined]
+
+```
+
 * x(?=y) 匹配x仅仅当x后面跟着y，正向肯定查找
 * x(?!y) 匹配x仅仅当x后面不跟着y，正向否定查找
 * x|y 匹配x或者y
