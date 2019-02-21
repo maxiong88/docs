@@ -206,7 +206,7 @@ console.log( regex.test(string2) ); // true
 console.log( regex.test(string3) ); // true
 console.log( regex.test(string4) ); // true
 
-``` js
+```
 
 其中/和.需要转义。虽然匹配了要求的情况，但也匹配"2016-06/12"这样的数据。
 
@@ -278,13 +278,13 @@ s.match(/Tom|Jack/gi)
 
 ###### 使用一个正则表达式字面量，适用于正则表达式是常量
 
-```
+``` js
 var re = /ab+c/
 ```
 
 ###### 调用RegExp对象的构造函数 
 
-```
+``` js
 var re = new RegExp("ab+c")
 ```
 
@@ -375,7 +375,7 @@ var result = regular.exec(str);
 $1-$9存放着正则表达式中最近的9个表达式的提取结果，这些结果按照匹配的出现顺序依次排列
 基本语法是 RegExp.$n 这些属性是静态的除了replace中的第二个参数可以省略RegExp之外没其他地方都要加上RegExp
 
-```
+``` js
 在regexp 中访问
 var a1 = /(\d+)-(\d+)-(\d+)/.test("2016-03-26")
 console.log(a1)
@@ -398,7 +398,7 @@ var rgx = /\d{4}(\-|\/|.)\d{1,2}\1\d{1,2}/
 
 #### 应用
 
-```
+``` js
 stringObject.match(searchvalue) // 需要检索的字符窜
 stringObject.match(regexp) // 要匹配的模式的RegExp对象
 
@@ -456,7 +456,7 @@ uw=name.replace(/\b\w+\b/g, function(word){
 
 ###### js 正则判断判断移动端
 
-```
+``` js
 if(/(iphone|iPad|iPod|iOS)/i.test(navigator.userAgent)){
 	window.location.href=""
 }
@@ -466,7 +466,7 @@ console.log(navigator.userAgent.toLowerCase().match(/iphone/i)=="iphone")
 
 ###### 用javascript替换url中的参数
 
-```
+```js
 
 function changeUrlArg(url,arg,val){
 	
@@ -568,7 +568,7 @@ regExpObject.test(string)
 返回值： true  false
 
 
-```
+``` js
 
 // 检查输入手机号码是否正确
 
@@ -597,7 +597,7 @@ regexp/substr 必需 规定子字符串或要替换的模式的regexp对象
 返回值： 一个新的字符窜
 
 
-```
+``` js
 
 // 检测日期格式
 
@@ -678,7 +678,7 @@ stringObject中的所有匹配子字符窜。若没有找到任何匹配的子�
 
 
 
-```
+``` js
 
 验证邮箱
 
