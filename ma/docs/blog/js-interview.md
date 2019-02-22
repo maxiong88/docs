@@ -1,6 +1,6 @@
 ---
-title: javascript interview
-description: ''
+title: interview
+description: '工作中遇到的问题'
 sidebar: 'auto'
 time: '2019-03-01'
 prev: ''
