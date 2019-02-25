@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <script src="https://cdn.bootcss.com/lodash.js/4.17.5/lodash.min.js">
+    </script>
+
+    <div id="throttle">点击</div>
+    <script>
+	document.getElementById('throttle').onclick = debounce(function(){console.log('vvvvv')}, 1000)
+	//debounce(function(){console.log(1)}, 5000)()
+function debounce(func, wait, options) {
+  let lastArgs,
+    lastThis,
+    result,
+    timerId,
+    lastCallTime // 每次调用函数时间
+
+  let leading = false
+  let trailing = true
+
+  if (typeof func !== 'function') {
+    throw new TypeError('Expected a function')
+  }
+  wait = +wait || 0
+  if (Object.prototype.toString.call(options) === '[object Object]') {
+    leading = !!options.leading
+    trailing = 'trailing' in options ? !!options.trailing : trailing
+  }
+	// 回调函数
+  function invokeFunc(time) {
+    const args = lastArgs
+    const thisArg = lastThis
+
+    lastArgs = lastThis = undefined // 销毁变量
+    result = func.apply(thisArg, args) // 运行在当前作用域下
+    return result
+  }
+
+  function startTimer(pendingFunc, wait) {
+    return setTimeout(pendingFunc, wait)
+  }
+
+  function cancelTimer(id) {
+    clearTimeout(id)
+  }
+	// 立即执行引擎
+  function leadingEdge(time) {
+    // Reset any `maxWait` timer.
+    // Start the timer for the trailing edge.
+    timerId = startTimer(timerExpired, wait)
+    // Invoke the leading edge.
+	// 是否立即执行 
+    return leading ? invokeFunc(time) : result
+  }
+
+  function remainingWait(time) {
+  // time 过期时间
+    const timeSinceLastCall = time - lastCallTime
+    const timeWaiting = wait - timeSinceLastCall
+
+    return timeWaiting
+  }
+	// 是否开启回调
+	// 1. lastCallTime  1默认undefined 所以should 默认 true；2用户开始触发事件的时间
+	// 2. time 1默认 当前执行部分函数时间
+	// timeSinceLastCall= 
+  function shouldInvoke(time) {
+  
+    const timeSinceLastCall = time - lastCallTime
+console.log(time, lastCallTime, wait, timeSinceLastCall)
+    // Either this is the first call, activity has stopped and we're at the
+    // trailing edge, the system time has gone backwards and we're treating
+    // it as the trailing edge, or we've hit the `maxWait` limit.
+    return (lastCallTime === undefined || (timeSinceLastCall >= wait))
+  }
+
+  function timerExpired() {
+    const time = Date.now()
+    if (shouldInvoke(time)) {
+	console.log(time)
+      return trailingEdge(time)
+    }
+	console.log('ddd')
+    // Restart the timer.
+    timerId = startTimer(timerExpired, remainingWait(time))
+  }
+
+  function trailingEdge(time) {
+    timerId = undefined // 清nulltimerid
+
+    // Only invoke if we have `lastArgs` which means `func` has been
+    // debounced at least once.
+    if (trailing && lastArgs) { 
+		// trailing等延迟时间到了以后是否执行回调函数，默认 true 是 ；false  否
+		// lastArgs 传入函数的参数
+		console.log('1111')
+      return invokeFunc(time)
+    }
+    lastArgs = lastThis = undefined
+    return result
+  }
+
+
+  function debounced(...args) {
+    const time = Date.now()
+    const isInvoking = shouldInvoke(time)
+	console.log(this)
+    lastArgs = args
+	console.log(lastArgs)
+    lastThis = this
+    lastCallTime = time
+
+    if (isInvoking) {
+      if (timerId === undefined) {
+        return leadingEdge(lastCallTime)
+      }
+    }
+    if (timerId === undefined) {
+      timerId = startTimer(timerExpired, wait)
+    }
+    return result
+  }
+  return debounced
+}
+    </script>
+</body>
+
+</html>
