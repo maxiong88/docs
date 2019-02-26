@@ -23,7 +23,7 @@ export default {
             urlList: [],
         }
     },
-        mounted(){
+    mounted(){
         const {pages} = this.$site;
         pages.forEach(element => {
             if(/^\/blog\/(\w+\-*\w+)*\.html$/gi.test(element.path)){
