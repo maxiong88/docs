@@ -1,8 +1,8 @@
 <template>
     <div class="mx-blog-box">
         <div class="content">
-            <ul v-if="urlList.length > 0" class="mx-blog-box-ul">
-                <li v-for="item in urlList" >
+            <ul v-if="urlSizeList.length > 0" class="mx-blog-box-ul">
+                <li v-for="item in urlSizeList" >
                     <router-link
                     :to="item.path" 
                     >
@@ -12,6 +12,17 @@
                     </router-link>
                 </li>
             </ul>
+            <div class="block" v-if="urlSizeList.length > 0">
+                <el-pagination
+                    @size-change="handleSizeChange"
+                    @current-change="handleCurrentChange"
+                    :current-page="page.currentPage"
+                    :page-sizes="page.pageSizes"
+                    :page-size="page.pageSize"
+                    layout="total, sizes, prev, pager, next, jumper"
+                    :total="page.totalPage">
+                </el-pagination>
+            </div>
         </div>
     </div>
 </template>
@@ -21,19 +32,49 @@ export default {
     data(){
         return {
             urlList: [],
+            urlSizeList: [],
+            page: {
+                currentPage: 1,
+                totalPage: 0,
+                pageSize: 10,
+                pageSizes: [10, 20, 30, 40]
+            }
         }
     },
     mounted(){
         const {pages} = this.$site;
+        let {
+            pageSize
+        } = this.page;
         pages.forEach(element => {
             if(/^\/blog\/(\w+\-*\w+)*\.html$/gi.test(element.path)){
                 this.urlList.push(element)
             }
         });
         this.urlList.sort(this.timeSort);
-        console.log(this.urlList)
+        this.page.totalPage = this.urlList.length || 0;
+        this.urlSizeList = this.urlList.slice(0, pageSize);
+        console.log(this.urlList, this.urlSizeList)
     },
     methods:{
+        handleSizeChange(n){
+            let {
+                currentPage
+            } = this.page;
+            this.page.pageSize = n;
+            this.urlSizeList = this.urlList.slice(
+                n*(currentPage - 1), n*currentPage
+            )
+        },
+        handleCurrentChange(n){
+            let {
+                pageSize
+            } = this.page;
+            this.page.currentPage = n;
+            this.urlSizeList = this.urlList.slice(
+                pageSize*(n - 1), pageSize*n
+            )
+        },
         timeSort(a, b){
             let aTime = new Date(a.frontmatter.time);
             let bTime = new Date(b.frontmatter.time)

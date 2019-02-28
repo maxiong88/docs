@@ -10,7 +10,9 @@ module.exports = {
             {
                 text: '参考',
                 items: [
-                    {text: 'H5案例', link: 'https://www.h5anli.com/'}
+                    {text: 'H5案例', link: 'https://www.h5anli.com/'},
+                    {text: 'vue-weibo', link: ''},
+                    {text: 'vue-cms', link: ''}
                 ]
             },
             {text: 'MEME', link: '/about/'},

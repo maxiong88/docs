@@ -2,8 +2,8 @@
 title: 'js 防抖节流'
 description: '防抖与节流函数是一种最常用的 高频触发优化方式，能对性能有较大的帮助。这里不在介绍使用场景，这里只是纯展示代码理解'
 sidebar: 'auto'
-time: '2015-01-13'
-prev: ''
+time: '2017-01-01'
+prev: './js-number-format'
 next: './js-vue-observer-3'
 ---
 
