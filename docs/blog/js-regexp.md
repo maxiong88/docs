@@ -351,7 +351,6 @@ var re = new RegExp("ab+c")
 
 ##### 特殊字符
 
-<<<<<<< HEAD
 + `\` 
 	- 在非特殊字符之前使用反斜杆，表示是特殊字符
 	- 在特殊字符之前使用反斜杆，表示转义为字面量
@@ -362,38 +361,14 @@ var re = new RegExp("ab+c")
 		* /^A/ 并不会匹配 "an A" 中的 'A'，但是会匹配 "An E" 中的 'A'。
 
 
-=======
->>>>>>> e685a10dc2da220ea70c0ecc1303e7665350949e
 * ^ 匹配一个输入或一行的开头 /^a/.test("an A") true; /^a/.test("An a") false
 * $ 匹配一个输入或一行的结尾 /a$/.test("an A") false; /a$/.test("An a") true
 * * 匹配签一个表达式0此或多次，等价于{0,}
 * + 匹配前面一个表达式1此或多次，等价于{1,}
 * ? 匹配前面一个表达式0次或者1次，等价于{0,1}
 * . 匹配除了换行符(\n)之外的任何单个字符
-<<<<<<< HEAD
 * (X) 匹配x并且记住匹配项
 * (?:x) 匹配x但是不记住匹配项
-=======
-+ (X) 匹配x并且记住匹配项.叫做`捕获括号`
-+ (?:x) 匹配x但是不记住匹配项，只做为匹配，不返回结果.叫做`非捕获括号`
-
-``` js
-
-var regular = /^Subject:(?:\d)/
-var str = "Subject:1 as something";
-var result = regular.exec(str);
-
-// ["Subject:1", index: 0, input: "Subject:1 as something", groups: undefined]
-
-var regular = /^Subject:(\d)/
-var str = "Subject:1 as something";
-var result = regular.exec(str);
-
-// (2) ["Subject:1", "1", index: 0, input: "Subject:1 as something", groups: undefined]
-
-```
-
->>>>>>> e685a10dc2da220ea70c0ecc1303e7665350949e
 * x(?=y) 匹配x仅仅当x后面跟着y，正向肯定查找
 * x(?!y) 匹配x仅仅当x后面不跟着y，正向否定查找
 * x|y 匹配x或者y
@@ -452,11 +427,7 @@ var result = regular.exec(str);
 $1-$9存放着正则表达式中最近的9个表达式的提取结果，这些结果按照匹配的出现顺序依次排列
 基本语法是 RegExp.$n 这些属性是静态的除了replace中的第二个参数可以省略RegExp之外没其他地方都要加上RegExp
 
-<<<<<<< HEAD
-```
-=======
 ``` js
->>>>>>> e685a10dc2da220ea70c0ecc1303e7665350949e
 在regexp 中访问
 var a1 = /(\d+)-(\d+)-(\d+)/.test("2016-03-26")
 console.log(a1)
@@ -479,11 +450,7 @@ var rgx = /\d{4}(\-|\/|.)\d{1,2}\1\d{1,2}/
 
 #### 应用
 
-<<<<<<< HEAD
-```
-=======
 ``` js
->>>>>>> e685a10dc2da220ea70c0ecc1303e7665350949e
 stringObject.match(searchvalue) // 需要检索的字符窜
 stringObject.match(regexp) // 要匹配的模式的RegExp对象
 
@@ -798,7 +765,6 @@ String(参数) 可以将null和undefined转换为字符窜，但没法转进制
 ### 修改于20170329
 
 
-<<<<<<< HEAD
 
 ::: tip
 
@@ -812,8 +778,3 @@ split [丝 p 丽 t]
 ## 特殊字符
 
 > `/` 
-=======
-var a = '5555[222]333'
-
-a.match(/[(.+?)]/g)  匹配中括号文字
->>>>>>> e685a10dc2da220ea70c0ecc1303e7665350949e
