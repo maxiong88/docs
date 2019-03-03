@@ -206,7 +206,7 @@ console.log( regex.test(string2) ); // true
 console.log( regex.test(string3) ); // true
 console.log( regex.test(string4) ); // true
 
-``` js
+```
 
 其中/和.需要转义。虽然匹配了要求的情况，但也匹配"2016-06/12"这样的数据。
 
@@ -234,6 +234,65 @@ console.log( regex.test(string4) ); // false
 
 
 ##### 3.1 括号嵌套怎么办？
+
+
+
+### 4. 非捕获分组
+
+
+### 5. 相关案例
+
+至此括号的作用已经讲完了，总结一句话，就是提供了可供我们使用的分组，如何用就看我们的了。
+
+#### 5.1 字符串trim方法模拟
+
+trim方法是去掉字符串的开头和结尾的空白符。有两种思路去做。
+
+第一种，匹配到开头和结尾的空白符，然后替换成空字符。如：
+
+``` js
+
+function trim(str) {
+	return str.replace(/^\s+|\s+$/g, '');
+}
+console.log( trim("  foobar   ") ); // "foobar"
+
+```
+
+第二种，匹配整个字符串，然后用引用来提取出相应的数据
+
+``` js
+
+function trim(str) {
+	return str.replace(/^\s*(.*?)\s*$/g, "$1");
+}
+console.log( trim("  foobar   ") ); // "foobar"
+
+```
+
+这里使用了惰性匹配*?，不然也会匹配最后一个空格之前的所有空格的。
+
+当然，前者效率高。
+
+#### 5.2 将每个单词的首字母转换为大写
+
+``` js
+
+function titleize(str) {
+	return str.toLowerCase().replace(/(?:^|\s)\w/g, function(c) {
+		return c.toUpperCase();
+	});
+}
+console.log( titleize('my name is epeli') ); // "My Name Is Epeli"
+
+```
+
+思路是找到每个单词的首字母，当然这里不使用非捕获匹配也是可以的。
+
+#### 5.3 驼峰化
+
+
+
 
 ## | ()
 
@@ -291,6 +350,16 @@ var re = new RegExp("ab+c")
 使用构造函数，提供了对正则表达式运行时的编译。当你知道正则表达式的模式会发生改变， 或者你事先并不了解它的模式或者是从其他地方（比如用户的输入），得到的代码这时比较适合用构造函数的方式。
 
 ##### 特殊字符
+
++ `\` 
+	- 在非特殊字符之前使用反斜杆，表示是特殊字符
+	- 在特殊字符之前使用反斜杆，表示转义为字面量
+	- 在字符串中，表示一个转义字符
+
++ `^`
+	- 匹配输入的开始
+		* /^A/ 并不会匹配 "an A" 中的 'A'，但是会匹配 "An E" 中的 'A'。
+
 
 * ^ 匹配一个输入或一行的开头 /^a/.test("an A") true; /^a/.test("An a") false
 * $ 匹配一个输入或一行的结尾 /a$/.test("an A") false; /a$/.test("An a") true
@@ -695,3 +764,17 @@ String(参数) 可以将null和undefined转换为字符窜，但没法转进制
 
 ### 修改于20170329
 
+
+
+::: tip
+
+exec [一 哥 贼 克]
+
+split [丝 p 丽 t]
+
+:::
+
+
+## 特殊字符
+
+> `/` 
