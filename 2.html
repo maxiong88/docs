@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <script src="https://cdn.bootcss.com/lodash.js/1.2.0/lodash.min.js">
+    </script>
+
+    <div id="throttle">点击</div>
+    <script>
+	document.getElementById('throttle').onclick = _.debounce(function(){console.log('cccx')}, 1000, {leading :true});// debounce2(function(){console.log('vvvvv')}, 1000,true)
+	//debounce(function(){console.log(1)}, 5000)()
+	function debounce2(func, wait, leading){
+    var args,
+        result,
+        thisArg,
+        timeId;
+    function delayed(){
+        timeId = null;
+        if(!leading){
+            result = func.apply(thisArg, args)
+        }
+    }
+    return function(){
+        var isLeading = leading && !timeId;
+        args = arguments;
+        thisArg = this;
+
+        clearTimeout(timeId);
+        timeId = setTimeout(delayed, wait);
+		console.log(isLeading, timeId)
+        if(isLeading){
+            result = func.apply(thisArg, args);
+        }
+        return result;
+    }
+}
+function debounce(func, wait, options) {
+  let lastArgs,
+    lastThis,
+    result,
+    timerId,
+    lastCallTime // 每次调用函数时间
+
+  let leading = false
+  let trailing = true
+
+  if (typeof func !== 'function') {
+    throw new TypeError('Expected a function')
+  }
+  wait = +wait || 0
+  if (Object.prototype.toString.call(options) === '[object Object]') {
+    leading = !!options.leading
+    trailing = 'trailing' in options ? !!options.trailing : trailing
+  }
+	// 回调函数
+  function invokeFunc() {
+    const args = lastArgs
+    const thisArg = lastThis
+
+    lastArgs = lastThis = undefined // 销毁变量
+    result = func.apply(thisArg, args) // 运行在当前作用域下
+    return result
+  }
+
+  function startTimer(pendingFunc, wait) {
+    return setTimeout(pendingFunc, wait)
+  }
+
+  function cancelTimer(id) {
+    clearTimeout(id)
+  }
+	// 立即执行引擎
+  function leadingEdge() {
+    // Reset any `maxWait` timer.
+    // Start the timer for the trailing edge.
+    timerId = startTimer(timerExpired, wait)
+    // Invoke the leading edge.
+	// 是否立即执行 
+    return leading ? invokeFunc() : result
+  }
+
+  function remainingWait(time) {
+  // time 过期时间
+    const timeSinceLastCall = time - lastCallTime // setTimeout里面函数执行开始时间 - 用户触发事件时间 负数 
+    const timeWaiting = wait - timeSinceLastCall // 空闲时间 
+console.log(timeWaiting,'bbv',wait, timeSinceLastCall)
+    return timeWaiting
+  }
+	// 是否开启回调
+	// 1. lastCallTime  1默认undefined 所以should 默认 true；2用户开始触发事件的时间
+	// 2. time 1默认 用户开始触发事件的时间 2时间过期当前时间
+	// timeSinceLastCall= 
+  function shouldInvoke(time) {
+  
+    const timeSinceLastCall = time - lastCallTime
+console.log(time, lastCallTime, wait, timeSinceLastCall, timeSinceLastCall >= wait, lastCallTime === undefined ,timeSinceLastCall >= wait, timeSinceLastCall < 0)
+    // Either this is the first call, activity has stopped and we're at the
+    // trailing edge, the system time has gone backwards and we're treating
+    // it as the trailing edge, or we've hit the `maxWait` limit.
+    return (lastCallTime === undefined || (timeSinceLastCall >= wait))
+  }
+
+  function timerExpired() {
+    const time = Date.now()// setTimeout在指定的毫秒数后调用函数或计算表达式  调用函数的时间
+    if (shouldInvoke(time)) {
+	console.log(time)
+      return trailingEdge(time)
+    }
+	console.log('ddd')
+    // Restart the timer.
+    timerId = startTimer(timerExpired, remainingWait(time))
+  }
+
+  function trailingEdge(time) {
+    timerId = undefined // 清nulltimerid
+
+    // Only invoke if we have `lastArgs` which means `func` has been
+    // debounced at least once.
+    if (trailing && lastArgs) { 
+		// trailing等延迟时间到了以后是否执行回调函数，默认 true 是 ；false  否
+		// lastArgs 传入函数的参数
+		console.log('1111')
+      return invokeFunc(time)
+    }
+    lastArgs = lastThis = undefined
+    return result
+  }
+
+
+  function debounced(...args) {
+    const time = Date.now()
+    const isInvoking = shouldInvoke(time)
+	console.log(this)
+    lastArgs = args
+	console.log(lastArgs)
+    lastThis = this
+    lastCallTime = time
+
+    if (isInvoking) {
+      if (timerId === undefined) {
+	  console.log('bbbbb')
+        return leadingEdge(lastCallTime)
+      }
+    }
+    if (timerId === undefined) {
+	console.log('bbbbb1')
+      timerId = startTimer(timerExpired, wait)
+    }
+    return result
+  }
+  return debounced
+}
+
+function debounce1(func, wait, options) {
+    let lastArgs, // 参数
+        lastThis, // 作用域
+        timerId, // 定时器对象
+        lastCallTime // 触发事件时间戳
+
+    let leading = false // 是否立即执行一次
+    let trailing = true // 延迟时间到了以后是否执行一次
+
+    if (typeof func !== 'function') {
+        throw new TypeError('Expected a function')
+    }
+    wait = +wait || 0
+    if (Object.prototype.toString.call(options) === '[object Object]') {
+        leading = 'leading' in options ? !!options.leading : leading
+        trailing = 'trailing' in options ? !!options.trailing : trailing
+    }
+    function invokeFunc() {
+        // func函数执行 
+        func.apply(lastThis, lastArgs)
+    }
+
+    function startTimer(pendingFunc, wait) {
+        // 启动定时器
+        return setTimeout(pendingFunc, wait)
+    }
+
+    function leadingEdge() {
+        // 开启定时器
+        timerId = startTimer(timerExpired, wait)
+        // 是否是在函数调用之前启动一次
+		console.log(leading)
+        return leading ? invokeFunc() : undefined
+    }
+
+    function remainingWait(time) { // 剩余等待时间
+        // 定时器回调函数结束时间 - 上一次用户触发debounced事件的时间
+        const timeSinceLastCall = time - lastCallTime
+        // wait - 
+        const timeWaiting = wait - timeSinceLastCall
+
+        return timeWaiting
+    }
+
+    function shouldInvoke(time) {
+        // 调用func函数的判定条件【开关】
+        // time 定时器回掉函数执行开始时间 lastCallTime 上一次用户触发debounced时间
+        const timeSinceLastCall = time - lastCallTime
+		console.log(time , lastCallTime)
+        // 用户只触发一次debounced 返回 true lastCallTime === undefined
+        // 用户停止触发debounced  返回 true timeSinceLastCall >= wait
+        // 系统时间倒退了 返回 true timeSinceLastCall < 0
+        return timeSinceLastCall >= wait
+    }
+
+    function timerExpired() {
+        //  定时器的回调函数 ,用来判断触法事件的时间差
+        const time = Date.now()
+        if (shouldInvoke(time)) {
+            return trailingEdge()
+        }
+        // Restart the timer.
+        timerId = startTimer(timerExpired, remainingWait(time))
+    }
+
+    function trailingEdge() {
+        timerId = undefined // 重置定时器对象
+        // 只有当我们有`lastArgs`时才会调用，这意味着`func`至少已被去抖过一次。[执行过denounced函数]
+        if (trailing && lastArgs) {
+            return invokeFunc()
+        }
+    }
+
+
+    function debounced(...args) {
+        // 要返回的函数
+        const time = Date.now() // 用户触发事件的时间
+
+        lastArgs = args  // 入参
+        lastThis = this // 作用域
+        lastCallTime = time // 将用户触发事件的时间赋值给lastCalltime，即上一次调用debounced时间
+
+        if (timerId === undefined) {
+            return leadingEdge()
+        }
+    }
+    return debounced
+}
+    </script>
+</body>
+
+</html>

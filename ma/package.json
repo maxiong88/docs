@@ -1,0 +1,13 @@
+{
+  "scripts": {
+    "docs:dev": "vuepress dev docs",
+    "docs:build": "vuepress build docs"
+  },
+  "devDependencies": {
+    "vuepress": "^1.0.0-alpha.39"
+  },
+  "dependencies": {
+    "css-doodle": "^0.6.0",
+    "element-ui": "^2.5.4"
+  }
+}
