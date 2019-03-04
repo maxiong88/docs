@@ -43,6 +43,8 @@ DOM到底是建模过程，还是最后建的那个模型，
 
 以上是站在浏览器的角度思考DOM，你还可以站在浏览器设计人员、网页编码人员等角度考虑：
 
++ DOM是一个对象模型，它将文档内容建模为对象并组织为树状结构，定义了这些对象的行为和属性以及这些对象之间的关系
+
 + DOM跟JavaScript什么关系？
     - DOM很显然诞生在浏览器，一开始是用JS实现的；
     - 但随着DOM本身的发展，已经形成规范，你可以用任何一种语言比如Python来解析文档，生成对像树，只要满足DOM标准，包括开放标准的操作接口，那你实现的就是一个DOM
@@ -50,15 +52,8 @@ DOM到底是建模过程，还是最后建的那个模型，
     - JS原生接口使用。
     - JQuery高纬度封装如何使用。
 
-至此，你应该明白了什么是DOM，甚至明白了为什么一开始不明白以后如何做，
-如何举一反三，甚至还能看出一点如何建立体系化认知的影子。笑
-
-
 牢记：站高一个维度去理解问题 ！
 
-## DOM元素（节点）
-
-html标签
 
 ## DOM结构
 
@@ -70,14 +65,21 @@ html标签
 </html>
 
 ```
+### DOM元素（节点）
+
++ 文档本身是文档节点
++ 所有 HTML 元素是元素节点
++ 所有 HTML 属性是属性节点
++ HTML 元素内的文本是文本节点
++ 注释是注释节点
+
+标签：html、div、span、main等
 
 ## [DOM对象](http://www.w3school.com.cn/js/js_obj_htmldom.asp)
 
 js对象：window、navigator、screen、history、location
 
 DOM对象：document、body、frame、image、input、object、select、table、link。。。。
-
-### HTML DOM 对象
 
 + 一些常用的 HTML DOM 方法:
     - getElementById(id) - 获取带有指定 id 的节点（元素）
@@ -91,10 +93,6 @@ DOM对象：document、body、frame、image、input、object、select、table、
     - childNodes - 节点（元素）的子节点
     - attributes - 节点（元素）的属性节点
 
-## DOM节点
 
-+ 文档本身是文档节点
-+ 所有 HTML 元素是元素节点
-+ 所有 HTML 属性是属性节点
-+ HTML 元素内的文本是文本节点
-+ 注释是注释节点
+
+#### nodeType

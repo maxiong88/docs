@@ -36,7 +36,7 @@ export default {
             page: {
                 currentPage: 1,
                 totalPage: 0,
-                pageSize: 10,
+                pageSize: 20,
                 pageSizes: [10, 20, 30, 40]
             }
         }
