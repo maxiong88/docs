@@ -4,8 +4,10 @@
             <a href="/">返回首页</a>
         </div>
         <div class="about-box">
-            <h3>主公Vue、React</h3>
-            <h4>QQ：646512616@qq.com</h4>
+            <h4>技能：</h4>
+            <p></p>
+            <!-- <h3>主公Vue、React</h3>
+            <h4>QQ：646512616@qq.com</h4> -->
         </div>
     </div>
 </template>
