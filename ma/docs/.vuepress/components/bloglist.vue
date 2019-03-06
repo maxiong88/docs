@@ -42,6 +42,9 @@ export default {
         }
     },
     mounted(){
+        console.log(this.$site, '==========1')
+        console.log(this.$page, '===========2')
+        console.log(this.$pagination, '============3')
         const {pages} = this.$site;
         let {
             pageSize

@@ -1,7 +1,29 @@
 module.exports = {
-    title: '马雄',
-    description: '马雄马雄blog',
-    plugins: ['@vuepress/medium-zoom'],
+    title: '熊大家',
+    description: '熊大熊二日志',
+    plugins: [
+        [
+            '@vuepress/medium-zoom',
+            {
+                selector: '.content img'
+            }
+        ],
+        // '@vuepress/blog'
+        // [
+        //     '@vuepress/pagination',
+        //     {
+        //         firstPagePath: 'blog',
+        //         postsFilter:({ type }) => type === 'post',
+        //         postsSorter: (prev, next) => {
+        //             console.log(prev, next, '===1')
+        //             const prevTime = new Date(prev.frontmatter.date).getTime()
+        //             const nextTime = new Date(next.frontmatter.date).getTime()
+        //             return prevTime - nextTime > 0 ? -1 : 1
+        //         }
+        //     }
+        // ]
+		
+	],
     themeConfig: {
         search: true,
         nav: [

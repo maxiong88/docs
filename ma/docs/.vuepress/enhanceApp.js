@@ -1,7 +1,8 @@
 /**
  * 扩展 VuePress 应用
  */
-import Element from 'element-ui'
+// import Element from 'element-ui'
+import { Pagination } from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css'
 
 // import './public/css/index.css' //组件css文件
@@ -13,5 +14,6 @@ export default ({
   siteData // 站点元数据
 }) => {
   // ...做一些其他的应用级别的优化
-  Vue.use(Element)
+  // Vue.use(Element)
+  Vue.use(Pagination);
 }
