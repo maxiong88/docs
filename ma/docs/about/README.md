@@ -19,6 +19,7 @@ pageClass: md-ma-about
 大牛博客：
 
 [https://github.com/lihongxun945/myblog](https://github.com/lihongxun945/myblog)
+[https://www.valentinog.com/blog/](https://www.valentinog.com/blog/)
 
 <about />
 
