@@ -3,7 +3,7 @@ title: export使用方法
 description: '再看axios源码的时候看到了 module.exports module.exports.default export export default'
 sidebar: 'auto'
 time: '2015-01-03'
-prev: './js-function-0'
+prev: ''
 next: './js-modal'
 ---
 

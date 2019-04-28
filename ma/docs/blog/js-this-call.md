@@ -4,7 +4,7 @@ description: '来了解一下call apply bind'
 sidebar: 'auto'
 time: '2015-01-06'
 prev: './js-variable-lift'
-next: './js-function-prototype'
+next: ''
 ---
 
 ![bind-3](../.vuepress/public/assets/img/bind-3.jpg)

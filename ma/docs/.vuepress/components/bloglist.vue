@@ -49,8 +49,11 @@ export default {
         let {
             pageSize
         } = this.page;
+		let roofArr = [];
         pages.forEach(element => {
-            if(/^\/blog\/(\w+\-*\w+)*\.html$/gi.test(element.path)){
+			if(element.frontmatter.roof){
+				roofArr.push(element)
+			}else if(/^\/blog\/(\w+\-*\w+)*\.html$/gi.test(element.path) && element.frontmatter.time){
                 this.urlList.push(element)
             }
         });

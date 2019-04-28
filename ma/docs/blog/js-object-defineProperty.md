@@ -4,7 +4,7 @@ description: '来了解一下this'
 sidebar: 'auto'
 time: '2015-01-06'
 prev: './js-parseint'
-next: './js-function-prototype'
+next: ''
 ---
 
 ## 神秘的 this
