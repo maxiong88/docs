@@ -194,6 +194,8 @@ next: ''
 		export default eventProxy;
 	```
 
-+ [taobaofed.org/blog/2016/11/17/react-components-communication/](//taobaofed.org/blog/2016/11/17/react-components-communication/)
++ [taobaofed.org](//taobaofed.org/blog/2016/11/17/react-components-communication/)
+
+
 
 

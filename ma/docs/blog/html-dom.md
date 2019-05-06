@@ -1,6 +1,6 @@
 ---
 title: DOM 是什么
-description: ''
+description: 'DOM VirtualDOM'
 sidebar: 'auto'
 time: '2018-10-01'
 prev: ''
@@ -15,10 +15,8 @@ next: ''
 
 为了理解DOM，我们至少需要站在浏览器的角度思考。
 
-DOM概念本身很简单，请先完成跟我思路来：
-
-+ 普通文件（*.text）和HTML、XML（*.html/*.xml）的区别仅仅是因为后者是有组织的结构文件；
-+ 浏览器将结构化的文档以树的数据结构读入浏览器内存，并将每个树的子节点定义为一个NODE（想象这颗树，从根节点到叶子节点都被建模为一个NODE对象）
++ `txt`和`html/xml`的区别仅仅是因为后者是有组织的结构文件;
++ 浏览器将结构化的文档以树的数据结构读入浏览器内存，并将每个树的子节点定义为一个NODE对象
 + 这每个节点（NODE）都有自己的属性（名称、类型、内容...）
 + NODE之间有层级关系（parents、child、sibling...）
 + 以上已经完成文档的建模工作（将文档内容以树形结构写入内存），此时再编写一些方法来操作节点（属性和位置信息），即为NODE API
@@ -54,45 +52,72 @@ DOM到底是建模过程，还是最后建的那个模型，
 
 牢记：站高一个维度去理解问题 ！
 
+## 虚拟DOM
 
-## DOM结构
+比如：更新文章列表
+
+一般情况下，我们会清空容器，在渲染
+
+虚拟dom是diff出不一样的节点，只渲染不同的节点内容
+
+为什么说如果大批量操作DOM会影响效能呢，请看下面代码：
+
+DOM元素非常大，我们创建一个`<p>`元素
 
 ``` js
+var p=document.createElement("p");
 
-<html>
-<head></head>
-<body></body>
-</html>
-
+let i = 0;
+for(let n in p){i++; console.log(n)}
+console.log(i) // 谷歌74.0.3729.108 打印出了241个第一层属性
 ```
-### DOM元素（节点）
 
-+ 文档本身是文档节点
-+ 所有 HTML 元素是元素节点
-+ 所有 HTML 属性是属性节点
-+ HTML 元素内的文本是文本节点
-+ 注释是注释节点
++ Virtual DOM 是以js模拟特定DOM结构而产生的树状结构。
 
-标签：html、div、span、main等
 
-## [DOM对象](http://www.w3school.com.cn/js/js_obj_htmldom.asp)
+<p class="tip">VDOM保证的并不是在所有状态下都比操作原生DOM来的快速，比如我们可以快速的找到我们需要操作的dom元素</p>
 
-js对象：window、navigator、screen、history、location
 
-DOM对象：document、body、frame、image、input、object、select、table、link。。。。
+用途是不直接操作DOM，而是操作这些树，再将这些变更的更新到真实的DOM上，提升效能
 
-+ 一些常用的 HTML DOM 方法:
-    - getElementById(id) - 获取带有指定 id 的节点（元素）
-    - appendChild(node) - 插入新的子节点（元素）
-    - removeChild(node) - 删除子节点（元素）
+当我们频繁的去操作DOM的时候可能会有性能问题
 
-+ 一些常用的 HTML DOM 属性：
+vnode库
 
-    - innerHTML - 节点（元素）的文本值
-    - parentNode - 节点（元素）的父节点
-    - childNodes - 节点（元素）的子节点
-    - attributes - 节点（元素）的属性节点
++ [snabbdom](//github.com/snabbdom/snabbdom)
+
+
+## diff算法
 
 
 
-#### nodeType
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

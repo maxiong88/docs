@@ -1,7 +1,7 @@
 ---
 title: mac版github配置ssh
 description: 'mac版github配置ssh'
-prev: './js-mp2'
+prev: ''
 next: ''
 time: '2013-12-30'
 ---

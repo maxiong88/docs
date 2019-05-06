@@ -457,7 +457,7 @@ class App extends Component {
 		* 子类必须在constructor方法中调用super方法，否则新建实例时会报错
 			* 这是因为子类自己的this对象，必须先通过父类的构造函数完成塑造，得到与父类同样的实例属性和方法，然后再对其进行加工，加上子类自己的实例属性和方法。如果不调用super方法，子类就得不到this对象。
 		- 如果子类没有定义constructor方法，这个方法会被默认添加。也就是说，不管有没有显式定义，任何一个子类都有constructor方法。
-		- ES5 的继承，实质是先创造子类的实例对象this，然后再将父类的方法添加到this上面（[Parent.apply(this)、.call()](./js-this-call.html)）。
+		- ES5 的继承，实质是先创造子类的实例对象this，然后再将父类的方法添加到this上面（Parent.apply(this)、.call()）。
 		- ES6 的继承机制完全不同，实质是先将父类实例对象的属性和方法，加到this上面（所以必须先调用super方法），然后再用子类的构造函数修改this。
 
 

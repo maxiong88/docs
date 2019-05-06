@@ -3,8 +3,8 @@ title: 为什么 [1,2,3].map(parseInt)
 description: '来理解一下array.map、parseint'
 sidebar: 'auto'
 time: '2015-01-07'
-prev: './js-variable-lift'
-next: './js-this-call'
+prev: ''
+next: ''
 ---
 
 

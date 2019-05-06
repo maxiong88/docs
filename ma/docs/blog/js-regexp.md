@@ -26,7 +26,7 @@ var string = "ababa abbb ababab";
 
 console.log( string.match(regex) ); // ["abab", "ab", "ababab"]
 
-var regex1 = /ab+/g; // 不加匹配的一个a多个b
+var regex1 = /ab+/g; // 不加匹配的是一个a多个b
 
 console.log( string.match(regex1) ); // ["ab", "ab", "abbb", "ab", "ab", "ab"]
 
@@ -67,23 +67,6 @@ console.log( regex.test("I love Regular Expression") ); // true
 
 而要使用它带来的好处，必须配合使用实现环境的API。
 
-以日期为例。假设格式是yyyy-mm-dd的，我们可以先写一个简单的正则：
-
-``` js
-
-var regex = /\d{4}-\d{2}-\d{2}/;
-
-```
-
-然后再修改成括号版的：
-
-``` js
-
-var regex =  /(\d{4})-(\d{2})-(\d{2})/;
-
-```
-
-为什么要使用这个正则呢？
 
 #### 2.1 提取数据
 
