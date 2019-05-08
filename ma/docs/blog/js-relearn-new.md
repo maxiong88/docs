@@ -1,15 +1,11 @@
 ---
-title: '重学 JS new操作符'
+title: '[转]重学 JS new操作符'
 description: ''
 sidebar: 'auto'
 time: '2019-01-01'
 prev: ''
 next: ''
 ---
-
-::: warning
-这是重学 JS 系列的第一篇文章，写这个系列的初衷也是为了夯实自己的 JS 基础。既然是重学，肯定不会从零开始介绍一个知识点，如有遇到不会的内容请自行查找资料。
-:::
 
 ## new 的作用
 
@@ -120,7 +116,30 @@ function create(Con, ...args) {
 }
 ```
 
-这就是一个完整的实现代码，我们通过以下几个步骤实现了它：
+[这就是一个完整的实现代码，我们通过以下几个步骤实现了它](//www.ecma-international.org/ecma-262/5.1/#sec-11.2.2)
+
+[草稿](//tc39.github.io/ecma262/#sec-new-operator)
+
+new 运算符
+
++ 新表达式 new NewExpression => EvaluteNew(NewXepresstion, empty)
++ 成员表达式 new MemberExpression Arguments => EvaluateNew(MemberExpression, Arguments)
+
+EvaluateNew( constructExpr, arguments ) 求值 
+
+使用参数constructexpr和arguments计算new，执行以下步骤：
++ 构造函数 constructexpr 存在
++ arguments为empty或者是一个arguments对象
++ 假设 ref是构造函数返回的结果
+
+
+
+
+
+
+
++ 让 `ref` 为新表达式的计算结果
++ 
 
 + 首先函数接受不定量的参数，第一个参数为构造函数，接下来的参数被构造函数使用
 + 创建一个空对象
@@ -158,4 +177,5 @@ a.sayName() // 'yck'
 `Object.setPrototypeOf({},prototype/null)`设置一个指定的对象的原型 ( 即, 内部[[Prototype]]属性）到另一个对象或  null。
 
 
-来自 [KieSun](https://github.com/KieSun/Dream)、[https://segmentfault.com/a/1190000008615288](https://segmentfault.com/a/1190000008615288)
++ [KieSun](//github.com/KieSun/Dream)
++ [https://segmentfault.com/a/1190000008615288](//segmentfault.com/a/1190000008615288)

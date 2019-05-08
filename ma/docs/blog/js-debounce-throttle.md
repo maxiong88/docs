@@ -1,11 +1,24 @@
 ---
 title: 'js 防抖节流'
-description: '防抖与节流函数是一种最常用的 高频触发优化方式，能对性能有较大的帮助。这里不在介绍使用场景，这里只是纯展示代码理解'
+description: '防抖与节流函数是一种最常用的 高频触发优化方式，能对性能有较大的帮助。'
 sidebar: 'auto'
-time: '2017-01-01'
-prev: './js-number-format'
-next: './js-vue-observer-3'
+time: '2019-01-01'
+prev: ''
+next: ''
 ---
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ::: tip 防抖和节流的作用都是防止函数多次调用。
 
@@ -351,3 +364,107 @@ function debounce(func, wait, options) {
 
 ```
 
+
+
+
+
+
+
+
+[摘自](//github.com/niksy/throttle-debounce)
+
+::: tip 概念
+Throttle execution of a function. Especially useful for rate limiting execution of handlers on events like resize and scroll.
+
+Debounce execution of a function. Debouncing, unlike throttling, guarantees that a function is only executed a single time, either at thevery beginning of a series of calls, or at the very end.
+:::
+
+Throttle 节流 特别适用于在调整大小和滚动等事件上限制处理程序执行速率。
+    在特定间隔内调用函数
+    节流是重复事件发生率的降低
+
+debounced 去抖 可以保证一个函数只执行一次，要么在一系列调用的最开始执行，要么在最末尾执行。 
+    在一定时间内仅调用一次函数
+    去抖可确保为可能发生多次的事件发送恰好一个信号 
+
+Throttle
++ delay Number 以毫秒为单位的零或更大延迟。对于事件回调，大约100或250（甚至更高）的值是最有用的。
++ noTrailing Boolean 
+    - 默认 false
+        +  回调将在最后一次受限制的函数调用之后最后一次执行
+    - true
+        + 回调将仅每隔“delay”毫秒执行一次
++ callback Function “this”上下文和所有参数都会在执行受限制的函数时传递给“callback”。
++ debounceMode 
+    - false  （在结束时） “callback”在“delay”ms之后执行
+    - true （在开始时）  “clear”在“delay”ms之后执行
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## throttle 节流
+
++ 在特定间隔内调用函数
++ 节流是使重复事件发生率的降低
++ 适用于在调整大小和滚动等事件上限制处理程序执行速率
+
+
+``` js
+
+function throttle(func, timeout) {
+    let ready = true;
+    return (...args) => {
+        if (!ready) {
+            return;
+        }
+
+        ready = false;
+        func(...args);
+        setTimeout(() => {
+            ready = true;
+        }, timeout);
+    };
+}
+
+```
+
+
+## debounced 去抖
+
++ 在一定时间内仅调用一次函数
++ 去抖可确保为可能发生多次的事件恰好发生一次
+
+``` js
+
+function debounce(func, timeout) {
+    let timer;
+    return (...args) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+            func(...args);
+        }, timeout);
+    };
+}
+
+```
+
+http://benalman.com/projects/jquery-throttle-debounce-plugin/

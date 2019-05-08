@@ -1,0 +1,162 @@
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+</head>
+<body>
+	<div id="a" style="height:10000px;">dddd===<span></span></div>
+	<script>
+		function throttle(delay, noTrailing, callback, debounceMode){
+			/*
+			 * After wrapper has stopped being called, this timeout ensures that
+			 * `callback` is executed at the proper times in `throttle` and `end`
+			 * debounce modes.
+			 */
+			 console.log(this)
+			var timeoutID;
+			// var cancelled = false;
+
+			// Keep track of the last time `callback` was executed.
+			// 记录上次callback执行时间
+			var lastExec = 0;
+
+			// Function to clear existing timeout
+			// 清除现在存在的超时任务
+			function clearExistingTimeout () {
+				if ( timeoutID ) {
+					clearTimeout(timeoutID);
+				}
+			}
+
+			// Function to cancel next exec
+			//function cancel () {
+			//	clearExistingTimeout();
+			//	cancelled = true;
+			//}
+
+
+			// `noTrailing` defaults to falsy.
+			// 判断是否是 false  true 真值
+			// 处理noTrailing不存在时候
+			if ( typeof noTrailing !== 'boolean' ) {
+				console.log(delay, noTrailing, callback, debounceMode)
+				debounceMode = callback;
+				callback = noTrailing;
+				noTrailing = undefined;
+				console.log(delay, noTrailing, callback, debounceMode)
+			}
+
+			/*
+			 * The `wrapper` function encapsulates all of the throttling / debouncing
+			 * functionality and when executed will limit the rate at which `callback`
+			 * is executed.
+			 */
+			 // “wrapper”函数封装了所有的节流/去平衡功能 执行时将限制执行“callback”的速度
+			function wrapper () {
+
+				var self = this;
+				console.log(self)
+				// 用户点击当前时间
+				var elapsed = Date.now() - lastExec;
+				
+				// 获取传入参数
+				var args = arguments;
+
+				//if (cancelled) {
+				//	return;
+				//}
+
+				// Execute `callback` and update the `lastExec` timestamp.
+				// 执行“callback”并更新“lastexec”时间戳。
+				function exec () {
+					lastExec = Date.now();
+					console.log('用户点击时间：'+elapsed, '回调执行时间：'+lastExec,1)
+					callback.apply(self, args);
+				}
+
+				/*
+				 * If `debounceMode` is true (at begin) this is used to clear the flag
+				 * to allow future `callback` executions.
+				 */
+				function clear () {
+					timeoutID = undefined;
+				}
+				
+				//if ( debounceMode && !timeoutID ) {
+					/*
+					 * Since `wrapper` is being called for the first time and
+					 * `debounceMode` is true (at begin), execute `callback`.
+					 */
+				//	exec();
+				//}
+
+				clearExistingTimeout();
+
+				//if ( debounceMode === undefined && elapsed > delay ) {
+					/*
+					 * In throttle mode, if `delay` time has been exceeded, execute
+					 * `callback`.
+					 */
+					 // 在限制模式下，如果超过了“delay”时间，则执行“callback”。
+				//	 console.log('1111')
+				//	exec();
+
+				//} else 
+				if ( noTrailing !== true ) {
+					/*
+					 * In trailing throttle mode, since `delay` time has not been
+					 * exceeded, schedule `callback` to execute `delay` ms after most
+					 * recent execution.
+					 *
+					 * If `debounceMode` is true (at begin), schedule `clear` to execute
+					 * after `delay` ms.
+					 *
+					 * If `debounceMode` is false (at end), schedule `callback` to
+					 * execute after `delay` ms.
+					 */
+					 console.log('用户点击时间：'+elapsed, '回调执行时间：'+lastExec,delay - elapsed,2)
+					timeoutID = setTimeout(
+					debounceMode ? clear : exec, 
+					debounceMode === undefined ? delay - elapsed : delay);
+				}
+
+			}
+
+			// wrapper.cancel = cancel;
+
+			// Return the wrapper function.
+			return wrapper;
+			
+			
+		}
+		function throttle1(func, timeout) {
+			let ready = true;
+			let timeId;
+			return (...args) => {
+				if (!ready) {
+					return;
+				}
+
+				ready = false;
+				func(...args);
+				timeId = setTimeout(() => {
+					ready = true;
+				}, timeout);
+			};
+		}
+		var i = 0;
+		window.onscroll = throttle1(function(){console.log(i++)}, 1000)
+		/*
+		
+			+ debouncedMode 
+				- true  去抖模式
+				- false 节流模式
+		
+			+ noTrailing
+				- true
+					+ 每隔 delay 毫秒执行一次
+				- false
+		*/
+	</script>
+</body>
+</html>

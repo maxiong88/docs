@@ -7,13 +7,9 @@ prev: ''
 next: ''
 ---
 
-## 原始类型有哪几种？null 是对象吗？原始数据类型和复杂数据类型存储有什么区别？
+## new操作符
 
-+ 基本数据类型null、undefined、string、number、Symbol、boolean
-+ null不是对象，只是typeof null返回object，计算机二进制遗留问题
-+ 基本数据类型存储在栈中，存储的是值
-+ 引用数据类型 object、function、array
-+ 引用类型存储在推内存中，存储的是地址。当我们把对象赋值给另外一个变量的时候，复制的是地址，指向同一块内存空间，当其中一个对象改变时，另一个对象也会变化。
+
 
 
 ## 在 Vue 中，子组件为何不可以修改父组件传递的 Prop，如果修改了，Vue 是如何监控到属性的修改并给出警告的。
@@ -194,8 +190,75 @@ next: ''
 		export default eventProxy;
 	```
 
+## [1,2,3].map(parseInt)
+
++ parseInt() 函数可解析一个字符串，并返回一个整数。
+	- string 要被解析的字符串。
+	- radix 转化的进制数
+
++ array.map(function(currentValue, index,arr){}, thisValue)
+	- currentValue 当前元素的值
+	- index 当前元素的索引值
+	- arr 当前元素属于的数组对象
+	- thisValue 对象作为该执行回调时使用，传递给函数，用作 "this" 的值。如果省略了 thisValue ，"this" 的值为 "undefined"
+
+``` bash
+var parseInt = function(string, radix, obj) {
+    return string + "-" + radix + "-" + obj;
+};
+
+["1", "2", "3"].map(parseInt);
+// ["1-0-1,2,3", "2-1-1,2,3", "3-2-1,2,3"]
+// "-" + obj 导致obj调用toString()方法自动转换为了string,相当于连接符
+// 第1次遍历：1 + "-" + 0 + "-" + [1,2,3]="1-0-1,2,3"
+
+//toString()还有以下几种特殊情况
+[{a:1},{b:2}].toString()//"[object Object],[object Object]"
+[1,2].toString()//"1,2"
+[[1,2],[3,4]].toString()//"1,2,3,4"
+```
+
+我们还需要了解进制数的相关知识：
+
+二进制的定义：用0和1两个数码来表示的数。
+
+三进制的定义：用0和1，2三个数码来表示的数......
+
+十进制的定义：用0和1，2，3...9十个数码来表示的数。
+
+``` bash
+//以2为基数，
+parseInt('1', 2)//1
+parseInt('2', 2)//NaN
+parseInt('3', 2)//NaN
+parseInt('10',2)//2
+//以3为基数，
+parseInt('1', 3)//1
+parseInt('2', 3)//2
+parseInt('3', 3)//NaN
+parseInt('10',3)//3
+//以4为基数，
+parseInt('1', 4)//1
+parseInt('2', 4)//2
+parseInt('3', 4)//3
+parseInt('4', 4)//NaN
+parseInt('10',4)//4
+
+['1','2','3'].map(parseInt)
+//  parseInt('1', 0) -> 1   // radix=0,以10为基数解析 1*10^1+0*10^0=10
+//  parseInt('2', 1) -> NaN // radix=1<2,返回NaN
+//  parseInt('3', 2) -> NaN // 3无法转成二进制
+//即遍历后结果为 [1,NaN,NaN]
+
+[1,2,3,4,3,4,6,8,9, 99, 888].map(parseInt)
+// [1, NaN, NaN, NaN, 3, 4, NaN, NaN, NaN, NaN, 888]
+```
+
+::: tip 
+我们可以这样理解，二进制里没有2，3，...9,三进制里没有3，4...9,四进制里没有4，5...9
+即当string无法转成radix基数时会返回NaN
+:::
+
+
++ [juejin.im](//juejin.im/post/5b7298de51882561126f0389)
 + [taobaofed.org](//taobaofed.org/blog/2016/11/17/react-components-communication/)
-
-
-
-
