@@ -3,7 +3,7 @@ title: git命令大全(持续)
 description: ''
 prev: ''
 next: ''
-time: '2019-05-02'
+time: '2017-05-02'
 ---
 
 ## 回滚

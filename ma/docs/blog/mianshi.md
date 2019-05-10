@@ -260,5 +260,68 @@ parseInt('10',4)//4
 :::
 
 
+## throttle debounced
+
+::: tip 防抖和节流的作用都是防止函数多次调用。
+
+区别在于，
+假设一个用户一直触发这个函数，
+且每次触发函数的间隔小于wait，
+防抖的情况下不会触发并从新计算wait时间，直到空闲时间大于await，
+节流函数上次执行函数时间 空闲大于await就会执行。
+
+:::
+
+### throttle 节流
+
++ 在特定间隔内调用函数
++ 节流是使重复事件发生率的降低
++ 适用于在调整大小和滚动等事件上限制处理程序执行速率
+
+``` js
+
+function throttle(func, timeout) {
+    let ready = true;
+    return (...args) => {
+        if (!ready) {
+            return;
+        }
+
+        ready = false;
+        func(...args);
+        setTimeout(() => {
+            ready = true;
+        }, timeout);
+    };
+}
+
+```
+
+### debounced 去抖
+
++ 在一定时间内仅调用一次函数
++ 去抖可确保为可能发生多次的事件恰好发生一次
+
+``` js
+
+function debounce(func, timeout) {
+    let timer;
+    return (...args) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+            func(...args);
+        }, timeout);
+    };
+}
+
+```
+
+实际环境中还是需要`lodashjs`库
+
+
+
+
++ [jquery-throttle-debounce-plugin](//benalman.com/projects/jquery-throttle-debounce-plugin/)
++ [throttle-debounce](//github.com/niksy/throttle-debounce)
 + [juejin.im](//juejin.im/post/5b7298de51882561126f0389)
 + [taobaofed.org](//taobaofed.org/blog/2016/11/17/react-components-communication/)

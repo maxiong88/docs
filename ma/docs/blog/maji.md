@@ -448,14 +448,14 @@ ECMAScript语言根据需要隐式执行自动类型转换。
 ### 案例
 
 `'' == NaN `
-根据规范 左边是string，右边是number，则 ToNumber('') == NaN ,false
+根据规范 左边是string，右边是number，则 ToNumber('') == 0 ,false
 
 `'' == 0`
-根据规范 左边是string，右边是number，则 ToNumber('') == NaN ,true
+根据规范 左边是string，右边是number，则 ToNumber('') == 0 ,true
 
 [ecma-262/6.0](//www.ecma-international.org/ecma-262/6.0/index.html#sec-type-conversion)
 
-`valueOf()` 他是返回一个指定类型[NUmber、Object、Boolean、Date]的原始值
+`valueOf()` 他是返回一个指定类型[Number、Object、Boolean、Date]的原始值
 
 |类型|返回值|
 |----|:-----|
@@ -467,3 +467,5 @@ ECMAScript语言根据需要隐式执行自动类型转换。
 |Object|对象本身|
 |String|字符串值|
 ||Math、Error对象没有valueOf方法|
+
++ [stackoverflow.com](https://stackoverflow.com/questions/359494/which-equals-operator-vs-should-be-used-in-javascript-comparisons/359509#359509)

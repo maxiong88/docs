@@ -3,7 +3,7 @@ title: 今天我们来简单来说一下pm2
 description: 'pm2我大前端没用过啊'
 sidebar: 'auto'
 time: '2014-01-01'
-prev: './js-clone'
+prev: ''
 next: ''
 ---
 
