@@ -9,7 +9,71 @@ next: ''
 
 ## new操作符
 
+我们先来通过两个例子来了解 `new` 的作用
 
+``` js
+function Test(name) {
+  this.name = name
+}
+Test.prototype.sayName = function () {
+    console.log(this.name)
+}
+const t = new Test('yck')
+console.log(t.name) // 'yck'
+t.sayName() // 'yck'
+
+// 以下是conosle.log(t)输出
+Test {
+    name: "yck"
+    __proto__:{
+        sayName: ƒ ()
+        constructor: ƒ Test(name)
+            arguments: null
+            caller: null
+            length: 1
+            name: "Test"
+            prototype: {sayName: ƒ, constructor: ƒ}
+            __proto__: ƒ ()
+            [[FunctionLocation]]: VM4610:1
+            [[Scopes]]: Scopes[2]
+        __proto__: Object
+    }
+}
+```
+
+从上面一个例子中我们可以得出这些结论：
+
++ `new` 通过构造函数 `Test` 创建出来的实例可以访问到构造函数中的属性
++ `new` 通过构造函数 `Test` 创建出来的实例可以访问到构造函数原型链中的属性，也就是说通过 `new` 操作符，实例与构造函数通过原型链连接了起来
+
+关于构造函数返回值的问题：
+
++ 构造函数会默认返回this，也就是新的实例对象
++ 普通函数如果没有return值的话，返回undefined
++ return的是五种简单数据类型：String,Number,Boolean,Null,Undefined的话，构造函数会忽略return的值，依然返回this对象
++ 如果return的是引用类型：Array,Date,Object,Function,RegExp,Error的话，构造函数和普通函数都会返回return后面的值,构造函数的原型不被使用
+
+`Object.create(prototype/null)`返回值是一个新对象，带着指定的原型对象和属性。
+
+`Object.setPrototypeOf({},prototype/null)`设置一个指定的对象的原型 ( 即, 内部[[Prototype]]属性）到另一个对象或  null。
+
+原理
+
++ new 操作符会返回一个新对象，所以我们需要在内部创建一个对象
++ 这个对象可以访问构造函数上的任意属性,可以访问到构造函数原型上的属性，所以需要将对象与构造函数链接起来
++ 返回原始值需要忽略，返回对象需要正常处理
+
+回顾了这些作用，我们就可以着手来实现功能了
+
+```js
+function create(Con, ...args) {
+//   let obj = {};
+//   Object.setPrototypeOf(obj, Con.prototype)
+    let obj = Object.create(Con.prototype)
+    let result = Con.apply(obj, args)
+    return result instanceof Object ? result : obj
+}
+```
 
 
 ## 在 Vue 中，子组件为何不可以修改父组件传递的 Prop，如果修改了，Vue 是如何监控到属性的修改并给出警告的。
@@ -312,6 +376,62 @@ function debounce(func, timeout) {
             func(...args);
         }, timeout);
     };
+}
+
+```
+
+## js 克隆
+
+只针对  object number string boolean date function
+
+```js
+
+_clone(value, [], [], true)
+
+function _cloneRegExp(pattern){
+    return new RegExp(pattern.source, 
+        (pattern.global ? 'g' : '') + 
+        (pattern.ignoreCase ? 'i' : '') +
+        (pattern.multiline ? 'm' : '') +
+		(pattern.sticky ? 'y' : '') +
+		(pattern.unicode ? 'u' : '')
+    );
+}
+/**
+  *复制一个对象。
+  *
+  * @私人的
+  * @param {*} value要复制的值
+  * @param {Array} refFrom包含源引用的数组
+  * @param {Array} refTo包含复制的源引用的数组
+  * @param {Boolean} deep是否执行深度克隆。
+  * @return {*}复制的值。
+*/
+function _clone(value, refFrom, refTo, deep){
+	var copy = function copy(copiedValue){
+		var len = refFrom.length;
+		var idx = 0;
+		while(idx < len){
+			if(value === refFrom[idx]){
+				return refTo[idx]
+			}
+			idx += 1
+		}
+		refFrom[idx + 1] = value;
+		refTo[idx + 1] = copiedValue;
+		for(var key in value){
+			copiedValue[key] = deep ? _clone(value[key], refFrom, refTo, true) : value[key]
+		}
+		return copiedValue;
+		
+	}
+	switch(Object.prototype.toString.call(value).slice(8, -1)){
+		case 'Object' : return copy({});
+		case 'Array' : return copy([]);
+		case 'Date' : return new Date(value.valueOf());
+		case 'RegExp' : return _cloneRegExp(value);
+		default : return value;
+	}
 }
 
 ```

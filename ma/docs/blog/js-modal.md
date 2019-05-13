@@ -4,7 +4,7 @@ description: '主要讲弹出层出现的时候如何防止浏览器闪烁并且
 sidebar: 'auto'
 time: '2015-01-02'
 prev: './js-exports'
-next: './js-clone'
+next: ''
 ---
 # 遮罩层
 
