@@ -3,7 +3,7 @@ title: Vue 响应式原理（三）
 description: ''
 sidebar: 'auto'
 time: '2015-01-12'
-prev: './js-debounce-throttle'
+prev: ''
 next: './js-vue-observer-2'
 ---
 

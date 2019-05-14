@@ -436,6 +436,50 @@ function _clone(value, refFrom, refTo, deep){
 
 ```
 
+
+## 手写bind
+
+[规范](//tc39.github.io/ecma262/#sec-function.prototype.bind)
+
++ 让 目标 成为this
++ 是否是一个包含[[call]]内部方法的有效函数，如果不是`TypeError` [1]
++ args 是一个新的集合，它是由除thisArg以外所有参数组成 [2]
++ 创建一个 包装函数 [3]
++ return 包装函数
+
+``` js
+// https://tc39.github.io/ecma262/#sec-function.prototype.bind
+module.exports = Function.bind || function bind(that){
+	var $this = this;
+	if(typeof $this !== 'function'){ // [1]
+		throw TypeError(string($this) + 'is not function');
+	}
+	var partArgs = [].slice.call(arguments, 1); // [2]
+	var boundFunction = function(){ // [3]
+		var args = partArgs.concat(arguments); // 合并参数
+		// 1 this 是不是boundFunction 的实例 说明返回的boundFunction被当做new的构造函数调用
+		return $this instanceof boundFunction ?
+			construct($this, args.length, args)
+			// new $this(args.join())
+			: 
+			$this.apply(that, args);
+	}
+	if($this.prototype){
+		// 维护原型，不然无法访问原型内方法
+		boundFunction.prototype = $this.prototype
+	}
+	return boundFunction;
+}
+var factories = {};
+function construct(C, argsLength, args){
+	if(!(argsLength in factories)){
+		for (var list = [], i = 0; i < argsLength; i++) list[i] = 'a[' + i + ']';
+		factories[argsLength] = Function('C,a', 'return new C(' + list.join(',') + ')');
+		return factories[argsLength](C, args);
+	}
+}
+```
+
 实际环境中还是需要`lodashjs`库
 
 

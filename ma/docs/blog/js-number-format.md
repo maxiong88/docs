@@ -3,8 +3,8 @@ title: 'js number'
 description: '数字格式化、小数乘除加减、科学计数法、进制换算'
 sidebar: 'auto'
 time: '2018-01-02'
-prev: './js-math'
-next: './js-debounce-throttle'
+prev: ''
+next: ''
 tag: 'js number方法'
 ---
 
