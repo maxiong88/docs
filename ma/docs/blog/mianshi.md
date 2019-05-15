@@ -9,7 +9,9 @@ next: ''
 
 ## new操作符
 
-我们先来通过两个例子来了解 `new` 的作用
+构造函数的工作原理
+
+要明白构造函数工作原理，关键在于了解运算符new都做了些什么？
 
 ``` js
 function Test(name) {
@@ -19,8 +21,6 @@ Test.prototype.sayName = function () {
     console.log(this.name)
 }
 const t = new Test('yck')
-console.log(t.name) // 'yck'
-t.sayName() // 'yck'
 
 // 以下是conosle.log(t)输出
 Test {
@@ -40,6 +40,15 @@ Test {
     }
 }
 ```
+
+我们来跟踪一下其执行过程。
+
++ new 首先创建一个新的空对象
++ 接下来，new设置this，使其指向这个新对象
+	- 这个this存储了一个引用，指向代码当前处理的对象
++ 设置this后，调用函数Test，并将yck当作实参传递给它
++ 接下来，执行这个函数代码，与大多数构造函数一样，Test给新创建的this对象的属性赋值
++ 最后，Test函数执行完毕后，运算符new返回this--指向新创建的对象的引用。请注意，它会自动为你返回this，你无需在代码中显式地返回。指向新对象的引用被返回后，我们将其赋给变量t
 
 从上面一个例子中我们可以得出这些结论：
 
