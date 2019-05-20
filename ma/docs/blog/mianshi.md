@@ -101,6 +101,64 @@ function create(Con, ...args) {
 }
 ```
 
+## js数据存储
+
+栈(stack)会自动分配内存空间，会自动释放。堆(heap)动态分配的内存，大小不定也不会自动释放
+
+基本类型：基本数据类型，值存放在栈内存中，占据固定大小的空间，访问方式是按值访问。`Undefined,String,Boolean,Null,Number,Symbol`
+
+从一个变量复向另一个变量复制基本类型的值，会创建这个值的副本
+
+`var a = 1`
+|||
+|----:|----:|
+|a|1|
+操作的是变量实际保存的值
+`a = 2`
+|||
+|----:|----:|
+|a|2|
+基本类型变量的复制：从一个变量向一个变量复制时，会在栈中创建一个新值，然后把值复制到为新变量分配的位置上`var b= a`
+|||
+|----:|----:|
+|a|1|
+|b|1|
+`b = 2;`
+|||
+|----:|----:|
+|a|1|
+|b|2|
+
+引用类型：指那些可能由多个值构成的对象，值保存在堆内存中,包含引用类型的变量实际上保存的不是变量本身，而是指向该对象的指针，访问方式是按引用访问。`Object，Array，Function`
+
+从一个向另一个变量复制引用类型的值，复制的其实是指针，因此两个变量最终指向同一个对象。即复制的是栈中的地址而不是堆中的对象
+
+`var a = new Object();`
+|栈内存||堆内存|
+|----:|----:|----:|
+|a|引用指针|object{}|
+
+当操作时，需要先从栈中读取内存地址，然后再延指针找到保存在堆内存中的值再操作。`a.name= 'xz';`
+
+|栈内存||堆内存|
+|----:|----:|----:|
+|a|引用指针|object{name:'xz'}|
+
+引用类型变量的复制：复制的是存储在栈中的指针，将指针复制到栈中未新变量分配的空间中，而这个指针副本和原指针指向存储在堆中的同一个对象；复制操作结束后，两个变量实际上将引用同一个对象。因此，在使用时，改变其中的一个变量的值，将影响另一个变量 `var b= a;`
+|栈内存||堆内存|
+|----:|----:|----:|
+|a|引用指针|object{name:'xz'}|
+|b|引用指针|同上|
+`b.sex ='boy';`
+|栈内存||堆内存|
+|----:|----:|----:|
+|a|引用指针|object{name:'boy'}|
+|b|引用指针|同上|
+
+同上： 指的是a,b的指针都指向同一个地址object{}
+
+
+分享自:[这里](//blog.csdn.net/sinat_15951543/article/details/79228675)
 
 ## 在 Vue 中，子组件为何不可以修改父组件传递的 Prop，如果修改了，Vue 是如何监控到属性的修改并给出警告的。
 
@@ -168,6 +226,8 @@ function create(Con, ...args) {
 	});
 
 ```
+
+## vue双向数据绑定
 
 ## vue $attr $listeners 用法
 
@@ -406,7 +466,9 @@ function debounce(func, timeout) {
 
 ```
 
-## js 克隆
+## js 克隆、拷贝
+
+`Object.assign({},)` 无法实现多层深拷贝
 
 只针对  object number string boolean date function
 
@@ -515,3 +577,42 @@ function construct(C, argsLength, args){
 + [throttle-debounce](//github.com/niksy/throttle-debounce)
 + [juejin.im](//juejin.im/post/5b7298de51882561126f0389)
 + [taobaofed.org](//taobaofed.org/blog/2016/11/17/react-components-communication/)
+
+
+
+
+双向数据绑定
+
+#### Object.defineProperty()
+
++ 该静态方法允许对对象上的属性进行精确的添加或修改。
+
++ 对象中存在的属性描述符有两种主要形式：`data descriptors` 和 `accessor descriptors`
+
++ data descriptors
+	- value
+	- writable
+
++ accessor descriptors
+	- set
+	- get
+
+``` js
+let data = {price:5,quantity:2}
+
+Object.keys(data).forEach(key =>{
+	let internalValue = data[key];
+	Object.defineProperty(data, key, {
+		get(){
+			console.log(`Getting ${key} : ${internalValue}`)
+			return internalValue
+		},
+		set(newVal){
+			console.log(`Setting ${key} to : ${newVal}`)
+			internalValue = newVal;
+		}
+	})
+})
+total = data.price * data.quantity;
+data.price = 20;
+```
