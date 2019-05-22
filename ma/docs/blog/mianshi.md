@@ -2,7 +2,7 @@
 title: '笔记'
 description: ''
 sidebar: 'auto'
-time: '2000-01-01'
+time: '2099-01-01'
 prev: ''
 next: ''
 ---
@@ -229,9 +229,239 @@ function create(Con, ...args) {
 
 ## vue双向数据绑定
 
+### A Dependency Class 依赖类
+
+#### 解决的问题
+
+扩展我们的应用程序，维护一个类，当我们需要他们重新运行时，他们会得到通知
+
+#### 用法及含义
+
++ 标准编程观察者模式的依赖类
+
+``` js
+class Dep { // 依赖类
+	constructor () {
+		this.subscribers = [] // 订阅池，当我们调用 notify() 时来运行
+	}
+	depend() {  // 收集目标到订阅池
+		if (target && !this.subscribers.includes(target)) {
+			// 如果目标存在且不在订阅池
+			this.subscribers.push(target)
+		} 
+	}
+	notify() {  // 重复更新
+		this.subscribers.forEach(sub => sub()) // 运行
+	}
+}
+
+const dep = new Dep()
+    
+let price = 5
+let quantity = 2
+let total = 0
+let target = () => { total = price * quantity }
+dep.depend() // Add this target to our subscribers
+target()  // Run it to get the total
+
+console.log(total) // => 10 .. The right number
+price = 20
+console.log(total) // => 10 .. No longer the right number
+dep.notify()       // Run the subscribers 
+console.log(total) // => 40  .. Now the right number
+```
+
+### A Watcher Function 观察者功能
+
+#### 解决的问题
+
+``` js
+target = () => { total = price * quantity }
+dep.depend() 
+target() 
+```
+
+更好的封装创建需要监视更新的匿名函数的行为，可修改
+
+``` js
+watcher(() => {
+	total = price * quantity
+})
+```
+
+#### 用法及含义
+
+``` js
+function watcher(myFunc) {
+	target = myFunc // Set as the active target
+	dep.depend()       // Add the active target as a dependency
+	target()           // Call the target
+	target = null      // Reset the target
+}
+```
+该watcher函数接受一个myFunc参数，将其设置为我们的全局target属性，调用dep.depend() 将我们的目标添加为订阅者，调用该target 函数，然后重置该函数target。
+
+### Object.defineProperty()
+
+#### 解决的问题
+
+我们有一个`Dep`类，我们希望每个变量都要有自己的`Dep`
+
+#### 用法及含义
+
++ 该静态方法允许对对象上的属性进行精确的添加或修改。
+
++ 对象中存在的属性描述符有两种主要形式：`data descriptors` 和 `accessor descriptors`
+
++ data descriptors
+	- value 属性对应的值
+	- writable 当且仅当该属性的writable为true时，value才能被赋值运算符改变。默认为 false
+
++ accessor descriptors
+	- set 当属性值修改时，触发执行该方法。该方法将接受唯一参数，即该属性新的参数值。
+	- get 当访问该属性时，该方法会被执行，方法执行时没有参数传入，但是会传入this对象
+
+``` js
+let data = {price:5,quantity:2}
+
+Object.keys(data).forEach(key =>{
+	let internalValue = data[key];
+	Object.defineProperty(data, key, {
+		get(){
+			console.log(`Getting ${key} : ${internalValue}`)
+			return internalValue
+		},
+		set(newVal){
+			console.log(`Setting ${key} to : ${newVal}`)
+			internalValue = newVal;
+		}
+	})
+})
+total = data.price * data.quantity;
+data.price = 20;
+```
+
+### Putting both ideas together 结合
+
+#### 解决的问题
+
+`total = data.price * data.quantity`
+
+当像这样的一段代码运行并获得值时price，我们想要price记住这个匿名函数（target）。这样，如果price更改，或设置为新值，它将触发此函数以重新运行，因为它知道此行依赖于它
+
++ 方案1
+	- get => (读取属性值的时候) 记住这个匿名函数，当我们的值发生变化时，我们会再次运行它。
+	- set => (设置属性值的时候) 运行保存的匿名函数，我们的值刚改变。
++ 方案2
+	- 调用dep.depend()以保存当前target
+	- 调用dep.notify()，重新运行全部targets
+
+让我们结合这两个想法，并完成我们的最终代码。
+
+``` js
+let data = {price: 5, quantity: 2}
+let target = null;
+
+// dep 类
+class Dep{
+	constructor(){
+		this.subscribers = []
+	}
+	depend(){
+		if(target && !this.subscribers.includes(target)){
+			this.subscribers.push(target)
+		}
+	}
+	notify(){
+		this.subscribers.forEach(sub => sub())
+	}
+}
+
+// 监听数据每个属性
+Object.keys(data).forEach(key => {
+	let internalValue = data[key];
+	// 每个属性都获取依赖项实例
+	const dep = new Dep();
+	Object.defineProperty(data, key, {
+		get(){ // 读取属性值时
+			dep.depend(); // 收集依赖（目标）到订阅池
+			return internalValue;
+		},
+		set(newVal){ // 设置属性值
+			internalValue = newVal;
+			dep.notify(); // 重新运行 存储的函数	
+		}
+	})
+})
+
+// 我的观察者不再调用dep.depend，因为它是从get方法内部调用的。
+function watcher(myFunc){
+	target = myFunc;
+	target();
+	target = null;
+}
+
+watcher(() => {
+	data.total = data.price * data.quantity
+})
+```
+
+![data](../.vuepress/public/assets/img/observe-data-1.png)
+
++ 看到一个紫色数据圈`data circle` 带有 `getter setter` 属性
++ 每个组件实例有一个 `watcher` (观察者)实例， 
+	- 当读取属性值，它从 `getter`中收集依赖(目标)
+	- 当设置属性值，它从 `setter`中通知观察者，从而导致组件重新呈现
++ 如图：
+
+![data](../.vuepress/public/assets/img/observe-data-2.png)
+
+### 总结
+
++ 创建一个Dep类来收集依赖项(依赖) 并重新运行所有依赖项(botify)
++ 创建一个观察程序来管理我们正在运行的代码，这些代码可能需要作为依赖项添加(目标)
++ 使用Object.defineProperty() 为每个属性创建getter setter，让每个属性都有dep实例
+
+双向数据绑定 [参考](https://www.vuemastery.com/courses/advanced-components/build-a-reactivity-system/)
+
 ## vue $attr $listeners 用法
 
+## vue.use()
 
+### 初始化
+
++ initGlobalAPI(obj)
+	- initUse(obj)
+
+``` js
+obj.use = function (plugin: Function | Object) {
+	const installedPlugins = (this._installedPlugins || (this._installedPlugins = [])) // 已安装的插件
+	if (installedPlugins.indexOf(plugin) > -1) {
+		return this
+	}
+
+	// additional parameters 传递给函数的参数的类数组对象
+	const args = toArray(arguments, 1)
+	// 将一个或多个元素添加到数组的开头，并返回该数组的新长度
+	args.unshift(this)
+	// plugin 是对象
+	if (typeof plugin.install === 'function') {
+		plugin.install.apply(plugin, args)
+	// plugin 是函数
+	} else if (typeof plugin === 'function') {
+		plugin.apply(null, args)
+	}
+	// 插入到数组池
+	installedPlugins.push(plugin)
+	return this
+}
+// apply 改变当前函数的this指针
+```
+
++ this指向 一个是当前组件 一个是null
++ 会自动阻止多次注册相同插件，届时只会注册一次该插件
+
+[具体参考](//css-tricks.com/getting-started-with-vue-plugins/)
 
 ## Vue和React组件通信
 
@@ -580,39 +810,3 @@ function construct(C, argsLength, args){
 
 
 
-
-双向数据绑定
-
-#### Object.defineProperty()
-
-+ 该静态方法允许对对象上的属性进行精确的添加或修改。
-
-+ 对象中存在的属性描述符有两种主要形式：`data descriptors` 和 `accessor descriptors`
-
-+ data descriptors
-	- value
-	- writable
-
-+ accessor descriptors
-	- set
-	- get
-
-``` js
-let data = {price:5,quantity:2}
-
-Object.keys(data).forEach(key =>{
-	let internalValue = data[key];
-	Object.defineProperty(data, key, {
-		get(){
-			console.log(`Getting ${key} : ${internalValue}`)
-			return internalValue
-		},
-		set(newVal){
-			console.log(`Setting ${key} to : ${newVal}`)
-			internalValue = newVal;
-		}
-	})
-})
-total = data.price * data.quantity;
-data.price = 20;
-```

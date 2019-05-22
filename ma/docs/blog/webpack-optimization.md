@@ -165,6 +165,20 @@ next: ''
 
 + 通过NODE_ENV 设置环境 变量 来减少代码
 
+## webpack 插件
+
++ `npm i compression-webpack-plugin --save-dev` 压缩大小提高渲染速度
+    - 通过Webpack插件 CompressionPlugin，对JS文件进行gzip压缩，压缩后为*.js.gz
+    ``` js
+    const CompressionPlugin = require('compression-webpack-plugin');
+
+    module.exports = {
+    plugins: [
+        new CompressionPlugin()
+    ]
+    }
+    ```
+    - 并且需要后端人员配合，将返回的Response Headers 对 Content-Encoding 设置为 gzip;
 
 
 ## 工具
