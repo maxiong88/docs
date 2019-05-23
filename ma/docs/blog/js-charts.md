@@ -25,3 +25,23 @@ series.data = series.data.map((item) => {
 })
 
 ```
+
+## y轴是类目轴，x轴是数值轴, x轴如何实现向类目轴那样的 坐标轴分割间隔
+
+用 formatter，不要的值返回空字符串
+
+``` js
+axisLabel:{
+	formatter:function(value, index){
+		// 刻度标签的内容格式器，支持字符串模板和回调函数两种形式。
+		if(index % 2 !== 0){
+			return '';
+		}
+		return value;
+	}
+}
+```
+
+## legend的问题
+
+如果`legend`也是通过接口实时变化的话，需要单独拿出，不然图表会一闪一闪的更新

@@ -138,6 +138,8 @@ export function nextTick (cb?: Function, ctx?: Object) {
 
 ## MutationObserver
 
+`MutationObserver` 接口提供了监视对DOM树所做更改的能力
+
 `var observer = new MutationObserver(callback);`
 
 参数

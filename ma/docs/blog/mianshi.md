@@ -803,6 +803,32 @@ function construct(C, argsLength, args){
 
 
 
+## 点击li，输出其索引 0 1 2
+
+``` js
+<ul>
+	<li>1</li>
+	<li>1</li>
+	<li>1</li>
+	<li>1</li>
+	<li>1</li>
+</ul>
+
+document.addEventListener('DOMContentLoaded', function(){
+	var ul = document.querySelectorAll('ul li');
+	ul.forEach((item, index) => {
+		item.onclick = (function(index){
+			return function (){
+				alert(index)
+			}
+		})(index)
+	})
+})
+```
+
+
+
+
 + [jquery-throttle-debounce-plugin](//benalman.com/projects/jquery-throttle-debounce-plugin/)
 + [throttle-debounce](//github.com/niksy/throttle-debounce)
 + [juejin.im](//juejin.im/post/5b7298de51882561126f0389)
