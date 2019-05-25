@@ -8,7 +8,8 @@
                     >
                         <h3>{{item.title}}</h3>
                         <p>{{item.frontmatter.description}}</p>
-                        <p>发布时间：{{item.frontmatter.time}}</p>
+                        <p>作者：光头强</p>
+                        <!-- <p>发布时间：{{item.frontmatter.time}}</p> -->
                     </router-link>
                 </li>
             </ul>
@@ -42,9 +43,9 @@ export default {
         }
     },
     mounted(){
-        console.log(this.$site, '==========1')
-        console.log(this.$page, '===========2')
-        console.log(this.$pagination, '============3')
+        // console.log(this.$site, '==========1')
+        // console.log(this.$page, '===========2')
+        // console.log(this.$pagination, '============3')
         const {pages} = this.$site;
         let {
             pageSize
@@ -60,7 +61,7 @@ export default {
         this.urlList.sort(this.timeSort);
         this.page.totalPage = this.urlList.length || 0;
         this.urlSizeList = this.urlList.slice(0, pageSize);
-        console.log(this.urlList, this.urlSizeList)
+        // console.log(this.urlList, this.urlSizeList)
     },
     methods:{
         handleSizeChange(n){

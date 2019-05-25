@@ -4,7 +4,7 @@ description: '闭包、作用域'
 sidebar: 'auto'
 time: '2019-02-28'
 tags: 'javascript'
-prev: ''
+prev: './js-function'
 next: ''
 ---
 
@@ -106,6 +106,27 @@ b()
 
 ```
 
+`闭包带来的问题是JavaScript的作用域是如何工作的。`
+
++ breakpoints 断点
++ scope 作用域
+	- local 局部作用域
+	- global 全局作用域
+	- Closure 闭包
+
+## 执行上下文
++ 全局执行上下文，只有一个
++ 函数执行上下文，每次调用就会创建一个新的
+
+## 理解闭包
+
+闭包允许函数访问并操作函数外部的变量。<br />
+只要变量或函数存在于声明函数时的作用域内，闭包即可使函数能够访问这些变量或函数。
+
+## 闭包工作原理
+
+
+
 ### js闭包
 
 在程序语言中，闭包，指语法域位于某个特定的区域，具有持续参照位于该区域内自身范围之外的执行域上的非持久型变量值能力的段落。这些外部执行域的非持久型变量神奇地保留它们在闭包最初定义时的值
@@ -169,3 +190,79 @@ dwn(outerObj.X) // 通过外部接口访问
 
 
 
+## 什么是闭包
+
+闭包就是一个内部函数。那什么是内部函数呢？它是在另一个函数内部的函数
+
+``` js
+function outer(){
+	function inner(){
+
+	}
+}
+```
+这就是闭包，函数inner称为闭包函数。闭包如此强大的原因在于它对作用域链(或作用域层级)的访问。
+
+闭包有3个作用域层级：
+1，在它自身声明之内声明的变量
+	``` js
+	function outer(){
+		function inner(){
+			let a = 5;
+			console.log(a)
+		}
+		inner();
+	}
+	// 输出5，闭包函数可以访问所有在其声明内部声明的变量
+	```
+2，对全局变量的访问
+	``` js
+	let global = 'global';
+	function outer(){
+		function inner(){
+			let a = 5;
+			console.log(global)
+		}
+		inner();
+	}
+	// 输出global，闭包能访问全局变量
+	```
+3，对外部函数变量的访问
+	``` js
+	let global = 'global';
+	function outer(){
+		let outer = 'outer';
+		function inner(){
+			let a = 5;
+			console.log(outer)
+		}
+		inner();
+	}
+	// 输出outer，闭包能访问外部函数的变量。此处外部函数的含义是包裹闭包函数的函数
+	```	
+
+## 闭包可以记住它的上下文
+
+``` js
+var fn = arg => {
+	let outer = 'v'
+	let innerFn = () => {
+		console.log(outer)
+		console.log(arg)
+	}
+	return innerFn;
+}
+
+var closureFn = fn(5) [1]
+closureFn(); [2]
+// 输出 v， 5
+```
+
+innerFn 对于 fn 来说是一个闭包函数，并且 fn 被调用时返回了 innerFn。
+
+控制台为啥打印出 v 5，背后发生了什么？分析
+
++ [1]被调用时，返回 innerFn
++ 当innerFn被返回时，js执行引擎视innerFn为一个闭包，并相应地设置了它的作用域。当closureFn通过作用域链被调用时就记住了 arg outer 的值
+	- 当它被创建的时候记住它的上下文的（作用域，也就是outer arg）
++ 我们最后调用closureFn

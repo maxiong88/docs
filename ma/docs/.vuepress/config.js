@@ -1,6 +1,9 @@
 module.exports = {
-    title: '熊大家',
-    description: '熊大熊二日志',
+    title: '熊大的理想家',
+    description: '熊大的日志生活',
+    head: [
+        ['link', { rel: 'icon', href: '/icons/favicon.ico' }]
+    ],
     plugins: [
         [
             '@vuepress/medium-zoom',

@@ -1,6 +1,6 @@
 ---
 title: '马记'
-description: 'ES6 解构赋值、instanceof类型检测、== 与 === 你真的明白吗'
+description: 'ES6 解构赋值、instanceof类型检测、== 与 === 你真的明白吗、navigator.sendBeacon'
 sidebar: 'auto'
 time: '2049-03-29'
 prev: ''
@@ -475,3 +475,11 @@ ECMAScript语言根据需要隐式执行自动类型转换。
 ||Math、Error对象没有valueOf方法|
 
 + [stackoverflow.com](https://stackoverflow.com/questions/359494/which-equals-operator-vs-should-be-used-in-javascript-comparisons/359509#359509)
+
+## navigator.sendBeacon
+
+`navigator.sendBeacon()` 方法可用于通过HTTP将少量数据异步传输到Web服务器
+
+这个方法主要用于满足统计和诊断代码的需要，这些代码通常尝试在卸载（unload）文档之前向web服务器发送数据
+
+[navigator.sendBeacon](https://developer.mozilla.org/zh-CN/docs/Web/API/Navigator/sendBeacon)

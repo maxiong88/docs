@@ -4,7 +4,7 @@ description: '再看axios源码的时候看到了 module.exports module.exports.
 sidebar: 'auto'
 time: '2015-01-03'
 prev: ''
-next: './js-modal'
+next: ''
 ---
 
 
