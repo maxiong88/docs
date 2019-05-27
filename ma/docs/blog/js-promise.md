@@ -6,10 +6,8 @@ time: '2015-01-09'
 prev: ''
 next: ''
 ---
-
-![部分promise解析](../.vuepress/public/assets/img/promise-1.jpg)
-
-### 了解promise
+// https://www.ecma-international.org/ecma-262/6.0/#sec-promise-objects
+### 初识promise
 
 英文翻译：许诺，希望，期望
 
@@ -17,33 +15,20 @@ Promise/A+ 表示异步操作的最终结果
 
 ECMAscript 规范定义为延时或异步计算最终结果的占位符
 
-excutor[ig 再 k te]
+### promise 规范
 
++ Promise 
 
-### 理解
+任何Promise对象都处于三种相互排斥的状态，只能使其中一个：fulfilled、rejected、pending
 
-Promise 是一个美好的承诺，承诺本身会做出正确延时或异步操作。
-
-承诺会解决callback处理异步回调可能产生的调用过早，调用过晚、调用次数过多过少、吞掉可能出现的错误或异常问题等。
-
-另外承诺只接受首次 resolve(..)或 reject(..) 决议，
-
-承诺本身状态转变后不会再变，
-
-承诺所有通过 then(..) 注册的回调总是依次异步调用，
-
-承诺所有异常总会被捕获抛出。
-
-她，是一个可信任的承诺。
-
-Promise 是一种封装和组合未来值得易于复用机制，实现关注点分离、异步流程控制、异常冒泡、串行/并行控制等
-
-
-当promise状态改变的时候遍历内部数组队列存放事件池 ，统一执行`fulfail`或者`rejected`的回调（并传入promise的value值），生成的结果分别设置then和catch的state和value
+状态只能改变一次，如果试图再次改变无效
 
 
 ### 书写
+excutor[ig 再 k te]
+![部分promise解析](../.vuepress/public/assets/img/promise-1.jpg)
 
+当promise状态改变的时候遍历内部数组队列存放事件池 ，统一执行`fulfail`或者`rejected`的回调（并传入promise的value值），生成的结果分别设置then和catch的state和value
 
 从谷歌控制台输出new Promise我们可以看到
 
