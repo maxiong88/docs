@@ -1,12 +1,13 @@
 ---
-title: 理解Promise原理
-description: ''
+title: 理解Promise原理--未完成
+description: 'https://www.ecma-international.org/ecma-262/6.0/#sec-promise-objects'
 sidebar: 'auto'
 time: '2015-01-09'
 prev: ''
 next: ''
 ---
-// https://www.ecma-international.org/ecma-262/6.0/#sec-promise-objects
+
+
 ### 初识promise
 
 英文翻译：许诺，希望，期望
@@ -23,189 +24,100 @@ ECMAscript 规范定义为延时或异步计算最终结果的占位符
 
 状态只能改变一次，如果试图再次改变无效
 
+### Promise Abstract Operations 抽象操作
+
++ PromiseCapability 
+  - 
+
++ PromiseReaction 
+
++ CreateResolvingFunctions
+
++ FulfillPromise 
+
++ NewPromiseCapability ( C )
+  - 使用C的构造方法来创建promise对象，并提取resolve、rejected函数
+  - 然后使用promise对象、reslove、rejected三个作为参数，初始化
+
++ IsPromise ( x ) 检测是否是promise对象
+  - typeof x 如果不是对象，返回false
+  - 如果x没有[[promiseState]]内置属性，返回false
+  - 返回true
+
++ RejectPromise ( promise, reason)
+
++ TriggerPromiseReactions ( reactions, argument )
+
+### Promise Jobs 任务
+
+### The Promise Constructor
+
+constructor[构造方法] 是Promise构造函数的内部对象和全局对象的Promise属性的初始值
+只能当作构造函数调用，他创建并初始化一个新的Promise对象；否则抛出异常
+
++ Promise ( executor ) 
+  - executor 如果不是函数，抛出类型错误 `Uncaught TypeError: Promise resolver undefined is not a function`
+  - 定义promise属性[[PromiseState]]设置值为pending
+  - 执行executor
+  - 返回promise
+
+### Promise构造函数的属性 Promise.prototype
+
++ Promise.all ( iterable[可迭代对象] )
+  - 返回一个promise实例，如果全部成功则返回全部值(数组)；如果有一个失败则返回rejected；传入的iterable会被解析为promise
++ Promise.prototype
+##### Promise.race ( iterable[可迭代对象] )
+  - 返回一个promise实例，该promise与传入的第一个promise的结果相同
+  - 定义 let Constructor = this，如果Constructor不是对象，抛出数据类型错误
+  - 定义 let S = Constructor[@@species] 返回 Constructor的构造函数(Promise的构造函数)
+  - 如果S不是null、undefined，则 let Constructor = S
+###### 调用 PerformPromiseRace ( iteratorRecord, promiseCapability, C )
+调用的是 resolve
+
++ Promise.reject ( r )
++ Promise.resolve ( x )
+
+### Promise原型对象的属性
+
++ Promise.prototype.catch ( onRejected )
+  - 用v表示当前值
+  - 返回 invoke(v, 'then')
+
++ Promise.prototype.constructor
+  - 初始值是Promise构造函数
+
++ Promise.prototype.then(onfulfilled, onrejected)
+  - 检测当前promise是否是Promise实例(promise instanceof Promise)/IsPromise(promise),如果不是 抛出 throw TypeError
+  - 通过new运算符，在通过Promise构造函数的constructor(构造方法),创建一个新的promise对象，
+  - 执行 PerformPromiseThen
+    + enqueuejob
+  - 返回新的promise对象
+
++ Promise.prototype[@@toStringTag]
+  - 不可写、不可枚举、不可配置
+  - 是一个内置 symbol ，值：promise
+  - Object.prototype.toString.call(new Promise(() =>{})) ===> '[object promise]'
+
+### Promise的实例属性
+
+Promise实例是从Promise原型对象继承属性的普通对象
+
+|属性名|描述|
+|:---|:---|
+|[[PromiseState]]|promise状态；string类型；它控制Promise对其then方法的传入调用的响应方式；值：pending、fulfilled、rejected|
+|[[PromiseResult]]|promise结果；fulfilled或rejected的结果值，pending的结果默认undefined|
+|[[PromiseFulfillReactions]]|promise fulfill的反应；promise状态变成fulfilled的记录列表|
+|[[PromiseRejectReactions]]|promise rejected的反应；状态变成rejected的记录列表|
+
 
 ### 书写
 excutor[ig 再 k te]
+status[s dei 特 s]
 ![部分promise解析](../.vuepress/public/assets/img/promise-1.jpg)
-
-当promise状态改变的时候遍历内部数组队列存放事件池 ，统一执行`fulfail`或者`rejected`的回调（并传入promise的value值），生成的结果分别设置then和catch的state和value
-
-从谷歌控制台输出new Promise我们可以看到
-
-> Promise是一个构造函数
-> Promise包含一个参数，这个参数类型是一个 `匿名函数`（函数回调。这个回调是同步或立即调用的）
-> 匿名函数包括2两个形参，分别是reject与resolve
-> 这两个形参类型是`函数`，且reject与resolve都有一个参数，参数类型不限定
-> 实例是个Promise
-> 实例的 原型上面挂载了两个方法 catch then ，同时then可以有多个，所以需要一个回调函数列队
-> 实例上有2个属性，分别是PromiseStatus PromiseValue
-> Promise根据定义PromiseStatus需要有3种状态 pending fulfilled(resolve) rejected(rejected)
-
-
-> promise 返回的值 需要塞到第一个then中函数的value上
-> 链式调用,多次调用
-> then返回的是一个新的Promise
-> then可以接受2个函数作为参数，一个是成功函数，一个是失败函数
-> return 的值 直接作为下个 then 中匿名函数的入参
-
-根据Promise返回的实例[谷歌浏览器开发者模式去输出一下]，我们可看出来then是挂载在 Promise 的原型链上。
-
-
-
-### 思路
-
-1. 首先构造一个类Promise，传入一个参数executor方法；
-
-2. 用status[s dei 特 s]记录Promise状态，默认是pending,成功态是resolved，失败态是rejected, execuotor执行时，重写resolve、reject方法，执行到这两个方法时，将promise状态修改，并将参数存储起来，以便then方法调用；
-
-3.当实例执行then方法时，依据promise状态来执行成功方法或失败方法。
-
-这样就实现了这个简单的peomise，代码如下：
-
-``` js
-function Promise(executor){
-	let self = this;
-	self.status = 'pending';
-	self.value = undefined;
-	self.reason = undefined;
-	function resolve(value){
-		if(self.status === 'pending'){
-			self.value = value;
-			self.status = 'resolved';
-		}
-	}
-	function rejected(reason){
-		if(self.status === 'pending'){
-			self.reason = reason;
-			self.status = 'rejected';
-		}
-	}
-	try{
-		executor(resolve, rejected); //第一步：先执行executor,根据里面resolve和reject的调用，执行上面的resolve和reject方法
-	}catch(e){
-		rejected(e)
-	}
-}
-Promise.prototype.then = function(onFulfilled, onRejected){
-	let self = this;// 第二步：then被调用的时候根据已经记录的promise状态，执行成功方法或失败方法
-	if(self.status === 'resolved'){
-		onFulfilled(self.value)
-	}
-	if(self.status === 'rejected'){
-		onRejected(self.reason)
-	}
-}
-module.export = Promise
-```
-
-二、实现Promise executor中的异步调用
-
-我们应该设定触发回掉函数执行的标识，也就是在状态和值发生改变之后在执行回调函数
-
-先来看一下简单使用小例子：
-``` js
-var promise=new Promise(function(resolve,reject){
-    console.log('hello')
-    setTimeout(function(){
-        resolve('ok')
-    },1000);
-})
-promise.then(function(data){
-    console.log('success'+data)
-},function(err){
-    console.log('fail'+err)
-})        
-// 先打印hello  过1秒输出 success ok
-```
-
-注意点：
-1. executor执行一秒之后再调用resolve方法，才会执行then中的成功方法；
-
-思路：
-1. executor中方法没调用resolve之前，Promise方法一直是pending状态，这时候执行器已经执行完了then方法，这时我们把then方法中的成功方法和失败方法存入数组，当resolve方法调用时，去执行这些存储起来的方法；
-2. 没有异步调用的话，executor执行时resolve方法，还是在then方法中去执行成功或失败方法。
-
-``` js
-function Promise(executor){
-	let self = this;
-	self.status = 'pending'
-	self.value = undefined;
-	self.season = undefined;
-	self.onResolvedCallbacks = [];
-	self.onRejectedCallbacks = [];
-	function resolve(value){
-		if(self.status === 'pending'){
-			self.value = value;
-			self.status = 'resolved';
-			self.onResolvedCallbacks.forEach(item => item())
-		}
-	}
-	function reject(reason){
-		if(self.status === 'pending'){
-			self.reason = reason;
-			self.status = 'rejected';
-			self.onRejectedCallbacks.forEach(item => item())
-		}
-	}
-	try{
-		executor(resolve, reject)
-	}catch(e){
-		reject(e)
-	}
-}
-Promise.prototype.then = function(onFulfilled, onRejected){
-	let self = this;
-	onFulfilled = typeof fullfilled === 'function' ? fullfilled : (value) => {return value}; // 来判断值穿透
-	onRejected = typeof onRejected === 'function' ? onRejected : (value) => {throw value};
-	if(self.status === 'resolved'){
-		onFulfilled(self.value)
-	}
-	if(self.status === 'rejected'){
-		onRejected(self.reason)
-	}
-	if(self.status === 'pending'){ //执行then的时候是等待态，就将成功方法存入onResolvedCallbacks数组，将失败方法存入onRejectedCallbacks数组
-		if(onFulfilled){
-			self.onRejectedCallbacks.push(function(){
-				onFulfilled(self.value)
-			})
-		}
-		if(onRejected){
-			self.onResolvedCallbacks.push(function(){
-				onRejected(self.reason)
-			})
-		}
-		
-	}
-}
-module.exports = Promise
-```
-
-调用then方法，将想要在Promise异步操作成功时执行的回调放入callbacks队列，其实也就是注册回调函数，
-
-创建Promise实例时传入的函数会被赋予一个函数类型的参数，
-即resolve，它接收一个参数value，代表异步操作返回的结果，当一步操作执行成功后，用户会调用resolve方法，
-这时候其实真正执行的操作是将callbacks队列中的回调一一执行；反之 reject
-
-
-三、实现Promise then的链式调用
-链式调用是Promise中的核心方法，也是最重要的一个方法，先来看一下链式调用的用法：
-
-promise/A+ 规范 返回一个new promise
-
 
 
 
 ### promise类库
-
-
-
-
-
-
-
-
-
-
 
 ``` js
 
@@ -866,12 +778,10 @@ function all(entries) {
 }
 
 /**
-  `Promise.race` returns a new promise which is settled in the same way as the
-  first passed promise to settle.
+  `Promise.race`
 
   Example:
 
-  ```javascript
   let promise1 = new Promise(function(resolve, reject){
     setTimeout(function(){
       resolve('promise 1');
@@ -888,15 +798,7 @@ function all(entries) {
     // result === 'promise 2' because it was resolved before promise1
     // was resolved.
   });
-  ```
 
-  `Promise.race` is deterministic in that only the state of the first
-  settled promise matters. For example, even if other promises given to the
-  `promises` array argument are resolved, but the first settled promise has
-  become rejected before the other promises became fulfilled, the returned
-  promise will become rejected:
-
-  ```javascript
   let promise1 = new Promise(function(resolve, reject){
     setTimeout(function(){
       resolve('promise 1');
@@ -915,25 +817,21 @@ function all(entries) {
     // reason.message === 'promise 2' because promise 2 became rejected before
     // promise 1 became fulfilled
   });
-  ```
 
   An example real-world use case is implementing timeouts:
 
-  ```javascript
   Promise.race([ajax('foo.json'), timeout(5000)])
-  ```
+
 
   @method race
   @static
-  @param {Array} promises array of promises to observe
-  Useful for tooling.
-  @return {Promise} a promise which settles in the same way as the first passed
-  promise to settle.
+  @param {Array} 入参必须是数组或为iterable对象，否则抛出 类型错误
+  @return {Promise} 返回 第一个完成的promise对象，不管第一个是resolve还是reject
 */
 function race(entries) {
   /*jshint validthis:true */
   var Constructor = this;
-
+  // 判断是否是数组
   if (!isArray(entries)) {
     return new Constructor(function (_, reject) {
       return reject(new TypeError('You must pass an array to race.'));
@@ -1423,10 +1321,12 @@ Promise$1.Promise = Promise$1;
 return Promise$1;
 
 })));
+```
 
 
 
-//# sourceMappingURL=es6-promise.map
+
+
 
 
 
