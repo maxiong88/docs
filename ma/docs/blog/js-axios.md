@@ -1,5 +1,5 @@
 ---
-title: axios 源码解析--
+title: axios 源码解析-- 知识点
 description: ''
 sidebar: 'auto'
 time: '2015-01-10'
@@ -7,27 +7,7 @@ prev: './js-axios-canceltoken'
 next: ''
 ---
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-## 解决问题
+## encodeURI 知识点
 
 + encodeURI
 
@@ -61,4 +41,4 @@ function encode(val) {
 }
 ```
 
-参数做了一次 encodeURLComponent(), 然后又将具有功能的字符串转成正常值
+参数做了一次 encodeURLComponent(), 然后又将具有功能的字符串替转成正常值

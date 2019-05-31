@@ -10,6 +10,7 @@ next: ''
 [仓库地址](https://github.com/maxiong88/demo-react-webpack)
 [参考](https://developers.google.com/web/fundamentals/performance/webpack)
 [参考](https://webpack.js.org/configuration/optimization/)
+[参考](https://nystudio107.com/blog/an-annotated-webpack-4-config-for-frontend-web-development)
 
 ## webpack 4.0
 
@@ -180,6 +181,34 @@ next: ''
     ```
     - 并且需要后端人员配合，将返回的Response Headers 对 Content-Encoding 设置为 gzip;
 
+
+## webpack 中，module，chunk 和 bundle 的区别是什么？
+
++ 所谓 `chunk`, 指的是一个或者几个 `module` 组成的一个独立的 `js` 文件, 而 `chunk` 分为以下几个类型:
+    - Entry Chunks: Entry Chunks是我们最常见的Chunks类型, 包含了我们自己写的业务逻辑相关代码(大多数情况下是独有的代码, 即不会被提取到公共 chunks 中的代码), 一般会等到 Initial Chunks 加载完成才会执行(或者是遇到 module 编号为 0 的 module).
+    - Normal Chunks: Normal Chunks 主要指代那些应用运行时动态加载的模块,Webpack会为我们创建类似于 JSONP 这样合适的加载器来进行动态加载.
+    - Initial Chunks: Initial Chunks 本质上还是 Normal Chunks, 不过其会在应用初始化时完成加载, 往往这个类型的Chunks由split-chunks-plugin生成, 这个这个里面包含了全局的模块位置信息, Entry chunks 中的代码执行依赖这个 chunk, 因此应该优先加载这个 js.
++ module就是我们代码中通过import或require引入的一个文件，可以是js，css或图片等等。注意它和chunk的不同：chunk是最终的输出文件，而module是编码时的内部引用
++ bundle chunk是指代码块，而bundle是指打包后的代码
+
+## filename 和 chunkFilename 的区别
+
++ filename 就是对应于 entry 里面的输入文件，确定每个输出包的名称
++ chunkFilename 需要被打包出来的文件的名称
+
+## webpackPrefetch、webpackPreload 和 webpackChunkName 到底是干什么的？
+
+## hash、chunkhash、contenthash 有什么不同？
+
++ hash（所有文件哈希值相同，只要改变内容跟之前的不一致，所有哈希值都改变，没有做到缓存意义） `工程级别的`
++ chunkhash（同一个模块，就算将js和css分离，其哈希值也是相同的，修改一处，js和css哈希值都会变，同hash，没有做到缓存意义）
++ contenthash（只要文件内容不一样，产生的哈希值就不一样）  `针对文件内容级别的`
+    - css 用的contenthash
+    - js 用的chunkhash
+        + main bundle 会随着自身的新增内容的修改，而发生变化。
+        + vendor bundle 会随着自身的 module.id 的变化，而发生变化。
+        + manifest bundle 会因为现在包含一个新模块的引用，而发生变化。
+        + 添加 HashedModuleIdsPlugin 可避免 不论是否添加任何新的本地依赖，对于前后两次构建，vendor hash 都应该保持一致：
 
 ## 工具
 
