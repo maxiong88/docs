@@ -1,23 +1,79 @@
 ---
-title: '理解交互'
-description: 'schema、window全局上下文、JSBridge'
+title: '与原生交互'
+description: 'schema、window全局上下文'
 sidebar: 'auto'
 time: '2019-06-01'
 prev: ''
 next: ''
 ---
 
-bridge [不睿之] 桥梁
+## 技术选型的几项原则
+
++ 易用性
++ 平台通用性
++ 社区支持
++ 侵入性
++ 可维护性
++ 其他
+
+## 为啥是JSBridge
+
+前端web还是javascript，bridge 桥梁的意思
+
+就是连接native与js前端的桥梁
+
+WebView作为承载H5页面的容器，有一个特性是非常重要，即`它可以捕捉到所有在容器中发起的网络请求`。其实想要`JS唤起Native`的方法，只要建立起`JS与Native通信`的桥梁即可，而这一点正好被WebView的这一特性所实现。
+
+## WKWebView、UIWebView
+
++ WKWebView很多交互都是异步的
++ 比 UIWebView 内存占用小那么多，主要是因为网页的载入和渲染这些耗内存和性能的过程都是由 WKWebView 进程去实现的
+
+## 实现方式
+
+我们公司的
+
+### schema (拦截url)
+
+不支持return、callback，而且还是单向的；
+
+但是native可以调用js,传入参数
+
+``` js
+// 前端
+window.getSystemInfo = function(res){console.log(res)}
+// 原生
+[webView evaluateJavaScript:@“ getSystemInfo ” completionHandler:^(id _Nullable response, NSError * _Nullable error) {
+  NSLog(@"value: %@ error: %@", response, error);
+}];
+```
+
++ iframe
++ window.location.href
+
+### window
+
+在window下注入方法供我们调用
+
+###### 拦截url
+
+这个可能就需要原生编写大量代码 去拦截url了
+
+###### schema
+通过解析url内的伪协议来实现Native与JS之间的数据传输。
 
 schame url的不紧可以在native内交互，也是可以跨app来交互的
 
-WKWebView很多交互都是异步的，所以在很大程度上，在和m页通信的时候，提高了开发成本
+###### window.prompt
++ 
 
-入 WKWebView 之后，相对比 UIWebView 内存占用小那么多，主要是因为网页的载入和渲染这些耗内存和性能的过程都是由 WKWebView 进程去实现的
+### window注入方法
 
-通过解析url内的伪协议来实现Native与JS之间的数据传输。
 
-WebView作为承载H5页面的容器，有一个特性是非常重要，即`它可以捕捉到所有在容器中发起的网络请求`。其实想要`JS唤起Native`的方法，只要建立起`JS与Native通信`的桥梁即可，而这一点正好被WebView的这一特性所实现。
+
+
+
+
 
 ## 传递消息
 
@@ -49,3 +105,5 @@ function schemeJump (url) { // 通过iframe子窗口发起网络请求
 js 端可以封装一层队列，所有 js 代码调用消息都先进入队列并不立刻发送，然后 h5 会周期性比如 500 毫秒，清空一次队列，保证在很快的时间内绝对不会连续发 2 次请求通信。
 
 + window.prompt 
+
+bridge [不睿之] 桥梁
