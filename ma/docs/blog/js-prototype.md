@@ -19,7 +19,7 @@ JavaScript对象可从其他对象那里继承属性和行为。更具体地 说
 
 ## 原型
 
-`Object.setPrototypeOf`需要传入两个对象作为参数，并将第二个对象设置为第一个对象的原型。
+`Object.setPrototypeOf`需要传入两个对象作为参数，并 将第二个对象设置为第一个对象的原型。
 
 ![当访问对象上不存在的属性时，将查询对象的原型。在这里，我们可以通过对象yoshi访 问hattori的属性sneak，因为hattori是yoshi的原型](../.vuepress/public/assets/img/js-renzhe-prototype-1.png)
 
