@@ -55,19 +55,6 @@ window.getSystemInfo = function(res){console.log(res)}
 
 在window下注入方法供我们调用
 
-###### 拦截url
-
-这个可能就需要原生编写大量代码 去拦截url了
-
-###### schema
-通过解析url内的伪协议来实现Native与JS之间的数据传输。
-
-schame url的不紧可以在native内交互，也是可以跨app来交互的
-
-###### window.prompt
-+ 
-
-### window注入方法
 
 
 
