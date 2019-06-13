@@ -19,30 +19,73 @@ next: ''
   - `this` 生来局部，而且一直都保持局部态
   - 箭头函数所改变的并非把 `this` 局部化，而是完全不把 `this` 绑定到里面去
 
-+ [this关键字](//www.ecma-international.org/ecma-262/6.0/#sec-resolvethisbinding)：使用正在运行的执行上下文的词汇环境`lexicalenvironment`确定关键字this的绑定。
++ [this关键字](//www.ecma-international.org/ecma-262/6.0/#sec-resolvethisbinding)：
+  - 使用正在运行的执行上下文的词汇环境`lexicalenvironment`确定关键字this的绑定。
 
-## 全局上下文
+## 摘要
++ JavaScript的 `this` 总是指向一个对象，而具体指向哪个对象是在运行时基于函数的执行环境动态绑定的，而非函数被声明时的环境。 
++ this 的指向大致可以分为以下 4种
+  - 作为对象的方法调用
+  - 作为普通函数调用
+  - 构造器调用
+  - Function.prototype.call 或 Function.prototype.apply 调用
 
-`this` 都指向全局对象
 
 ## 函数(`运行内\时`)上下文
 
 在函数内部，`this`的值取决于函数被调用的方式
 
-### this在函数调用中
+## this在函数调用中
 
-在函数调用中，执行上下文(this)是全局对象。`全局对象由执行环境决定。在浏览器中，它是window对象。`
-
-+ 严格模式 `undefined`
-+ 非严格模式 `window`
+当函数不作为对象的属性被调用时，也就是我们常说的普通函数方式，此时的 this 总是指向全局对象。在浏览器的`JavaScript`里，这个全局对象是`window`对象。 
 
 ::: tip 注意
 内部函数的上下文仅取决于调用，而不取决于外部函数的上下文
 :::
 
+``` js
+window.name = 'globalName'; 
+ 
+var getName = function(){     
+  return this.name; 
+}; 
+console.log( getName() );    // 输出：globalName 
+或者： 
+window.name = 'globalName'; 
+ 
+var myObject = {     
+  name: 'sven',     
+  getName: function(){         
+    return this.name;     
+  } 
+}; 
+var getName = myObject.getName; 
+console.log( getName() );    // globalName
+```
+有时候我们会遇到一些困扰，比如在 div 节点的事件函数内部，有一个局部的 callback 方法， callback 被作为普通函数调用时，callback 内部的 this 指向了 window，但我们往往是想让它指向 该 div 节点，见如下代码： 
+``` js
+<html>     
+<body>         
+<div id="div1">我是一个 div</div>     
+</body>     
+<script> 
+ window.id = 'window'; 
+ document.getElementById( 'div1' ).onclick = function(){
+    alert ( this.id );        // 输出：'div1'         
+    var callback = function(){             
+      alert ( this.id );        // 输出：'window'         
+    }         
+    callback();     
+};
+  </script> 
+</html> 
+```
+
+此时有一种简单的解决方案，可以用一个变量保存 div 节点的引用： 
+
 为了获得预期this，使用间接调用修改内部函数的上下文（使用.call()或.apply()）或创建绑定函数（使用.bind()）。
 
-### 作为对象方法调用
+## 作为对象方法调用
 
 在 JavaScript 中，函数也是对象，因此函数可以作为一个对象的属性，此时该函数被称为该对象的方法，在使用这种调用方式时，this被自然绑定到该对象。
 
@@ -83,20 +126,6 @@ myDog.sayName(); // => 'Milo'
 Object.create()创建一个新对象myDog并设置原型。myDog对象继承sayName方法。何时myDog.sayName()执行，myDog是调用的上下文。
 
 在ECMAScript 6 class语法中，方法调用上下文也是实例本身;
-
-### 将方法与其对象分离
-
-``` js
-var myObj = {
-	myMethod:function(){
-		console.log(this)
-	}
-}
-var alone = myObj.myMethod;
-alone(); // window
-```
-
-可通过 `apply()、call()、bind()`解决
 
 ### 构造函数调用
 
