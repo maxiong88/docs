@@ -232,3 +232,22 @@ VM32579:20 3
 VM32579:25 Uncaught (in promise) '抛出3次错误'
 
 ```
+
+### setTimeout
+
+setTimeout不是一个async函数，所以你不能在ES7 async-await中使用它。但您可以sleep使用ES6 Promise实现您的功能：
+
+``` js
+function sleep (arg) {
+  return new Promise((resolve) => {
+    setTimeout(() => resolve(arg), 3000)
+  })
+}
+async function a(){
+
+  console.log(1)
+  console.log(await sleep(3))
+  console.log(2)
+}
+a();// 1,3,2
+```

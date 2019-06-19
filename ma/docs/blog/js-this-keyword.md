@@ -2,7 +2,7 @@
 title: 来呀 快活呀 反正有大把时光 了解一下this 关键字
 description: '来呀 快活呀 反正有大把时光 了解一下this'
 sidebar: 'auto'
-time: '2019-04-30'
+time: '2019-06-14'
 prev: ''
 next: ''
 ---
@@ -28,7 +28,7 @@ next: ''
   - 作为对象的方法调用
   - 作为普通函数调用
   - 构造器调用
-  - Function.prototype.call 或 Function.prototype.apply 调用
+  - [Function.prototype.call 或 Function.prototype.apply 调用](./js-this-call-apply)
 
 
 ## 函数(`运行内\时`)上下文
@@ -83,7 +83,15 @@ console.log( getName() );    // globalName
 
 此时有一种简单的解决方案，可以用一个变量保存 div 节点的引用： 
 
-为了获得预期this，使用间接调用修改内部函数的上下文（使用.call()或.apply()）或创建绑定函数（使用.bind()）。
+``` js
+document.getElementById( 'div1' ).onclick = function(){     
+  var that = this;    // 保存 div 的引用     
+  var callback = function(){         
+    alert ( that.id );    // 输出：'div1'     
+  }     
+  callback(); 
+};
+```
 
 ## 作为对象方法调用
 
@@ -127,17 +135,47 @@ Object.create()创建一个新对象myDog并设置原型。myDog对象继承sayN
 
 在ECMAScript 6 class语法中，方法调用上下文也是实例本身;
 
-### 构造函数调用
+## 构造函数调用
 
-`this`指向的是构造函数调用中新创建的对象
+普通函数跟构造函数区别在于被调用的方式。当时用new运算符调用函数时，该函数总返回一个对象，通常情况下，构造器里的`this`指向返回的这个对象
 
-### 间接调用
+``` js
+var MyClass = function(){     
+  this.name = 'sven'; 
+}; 
+ 
+var obj = new MyClass(); 
+alert ( obj.name );     // 输出：sven 
+```
 
-使用 call() 、 apply()方法调用函数时执行间接调用
+如果构造器显示式地返回了一个 object 类型的对象，那么此次运算结果终会返回这个对象，而不是我们之前期待的 this
 
-JavaScript中的函数是第一类对象，这意味着函数是一个对象。这个对象的类型是Function。
+``` js
+var MyClass = function(){     
+  this.name = 'sven';     
+  return {    // 显式地返回一个对象         
+  name: 'anne'     
+  } 
+}; 
+ 
+var obj = new MyClass(); 
+alert ( obj.name );     // 输出：anne
+```
 
-this在间接调用中是作为第一个参数传递给`.call()`或`.apply()`的值
+如果构造器不显式地返回任何数据，或者是返回一个非对象类型的数据，就不会造成上述问题： 
+``` js
+var MyClass = function(){    
+  this.name = 'sven'    
+  return 'anne';    // 返回 string 类型 
+}; 
+ 
+var obj = new MyClass(); 
+alert ( obj.name );     // 输出：sve
+```
+
+## Function.prototype.call 或 Function.prototype.apply 或 Function.prototype.bind 调用 
+
+跟普通的函数调用相比，用 Function.prototype.call 或 Function.prototype.apply 可以动态地改变传入函数的 this
 
 ``` js
 var rabbit = { name: 'White Rabbit' };  
@@ -149,9 +187,6 @@ function concatName(string) {
 concatName.call(rabbit, 'Hello ');  // => 'Hello White Rabbit'  
 concatName.apply(rabbit, ['Bye ']); // => 'Bye White Rabbit'  
 ```
-
-当函数作用在特定的上下文执行时，间接调用是有用的。
-例如，用于解决函数调用的上下文问题，其中在严格模式下，它总是window或undefined 
 
 ### bind()
 
@@ -218,7 +253,7 @@ const cat = {
   }
 }
 ```
-~~这是因为对象不构成单独的作用域，导致jumps箭头函数定义时的作用域就是全局作用域。~~
+~~这是因为对象不构成单独的作用域，导致箭头函数定义时的作用域就是全局作用域。~~
 
 定义时 `cat` 没有运行，所以 this 指向全局环境。
 
@@ -290,6 +325,56 @@ this对象的指向是可变的，但是在箭头函数中，它是固定的。
 + 非箭头函数
   - this是运行时绑定的
 
+## 丢失的this
+这是一个经常遇到的问题，我们先看下面的代码
+``` js
+var obj = {     
+  myName: 'sven',     
+  getName: function(){         
+    return this.myName;     
+  } 
+}; 
+ 
+console.log( obj.getName() );    // 输出：'sven' 
+ 
+var getName2 = obj.getName; 
+console.log( getName2() );    // 输出：undefined 
+```
+当调用 obj.getName 时，getName 方法是作为 obj 对象的属性被调用的，根据提到的规律，此时的 this 指向 obj 对象，所以 obj.getName()输出'sven'
+
+当用另外一个变量 getName2 来引用 obj.getName，并且调用 getName2 时，根据提到的规律，此时是普通函数调用方式，this 是指向全局 window 的，所以程序的执行结果是 undefined
+
+再看另一个例子，document.getElementById 这个方法名实在有点过长，我们大概尝试过用一 个短的函数来代替它
+
+``` js
+var getId = function( id ){     
+  return document.getElementById( id ); 
+}; 
+ 
+getId( 'div1' );
+```
+我们也许思考过为什么不能用下面这种更简单的方式： 
+``` js
+var getId = document.getElementById;  
+getId( 'div1' ); 
+```
+这段代码抛出了一个异常。这是因为许多 引擎的 document.getElementById 方法的内部实现中需要用到 this。这个 this 本来被期望指向 document，当 getElementById 方法作为 document 对象的属性被调用时，方法内部的 this 确实是指 向 document 的。<br/>
+但当用 getId 来引用 document.getElementById 之后，再调用 getId，此时就成了普通函数调用， 函数内部的 this 指向了 window，而不是原来的 document
+
+我们可以尝试利用 apply 把 document 当作 this 传入 getId 函数，帮助“修正”this
+``` js
+document.getElementById = (function( func ){     
+  return function(){         
+    return func.apply( document, arguments );     
+  } 
+})( document.getElementById ); 
+ 
+var getId = document.getElementById; 
+var div = getId( 'div1' ); 
+ 
+alert (div.id);    // 输出： div1 
+```
+
 ## 参考资料
 
 + [dmitripavlutin.com](//dmitripavlutin.com/gentle-explanation-of-this-in-javascript/)
@@ -298,28 +383,3 @@ this对象的指向是可变的，但是在箭头函数中，它是固定的。
 + [yehudakatz.com](//yehudakatz.com/2011/08/10/understanding-javascript-function-invocation-and-this/)
 
 ![bind-3](../.vuepress/public/assets/img/bind-3.jpg)
-
-## polyfillBind
-
-``` js
-function polyfillBind (fn, ctx) {
-  function boundFn (a) {
-    var l = arguments.length;
-    return l
-      ? l > 1
-        ? fn.apply(ctx, arguments)
-        : fn.call(ctx, a)
-      : fn.call(ctx)
-  }
-
-  boundFn._length = fn.length;
-  return boundFn
-}
-function nativeBind (fn, ctx) {
-  return fn.bind(ctx)
-}
-
-var bind = Function.prototype.bind
-  ? nativeBind
-  : polyfillBind;
-```
