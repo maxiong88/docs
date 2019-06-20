@@ -1,6 +1,6 @@
 ---
 title: '笔记'
-description: ''
+description: 'new操作符、js数据类型'
 sidebar: 'auto'
 time: '2099-01-01'
 prev: ''
@@ -8,27 +8,6 @@ next: ''
 ---
 
 ## new操作符
-
-
-+ `new` 是一个与构造函数一起用来创建对象的运算符。
-	- 运算符：对操作数进行操作
-+ `new`运算符 只操作一种操作数，那就是函数调用
-	- 如何操作
-+ 首先，我创建一个新对象。人人都以为这是构造函数做的，但实际上是我做的。
-+ 接下来，我调用构造函数，并确保在构造函数的函数体内，关键字this指向了我创建的新对象。 
-	- 为何要这么做
-+ 让构造函数中的语句能够引用这个对象。毕 竟，给这个对象添加属性和方法才是构造函数的全 部意义所在
-+ 接下来，我确保从构造函数返回创建的新对 象。这提供了极大的便利，让开发人员不用显式地返 回它。
-+ 我和对象字面量交情匪浅。这个家伙很了不 起，需要快速创建对象时，我也会毫不犹豫地使用 它。但需要创建大量类似的对象，确保对象能够利用 代码重用，需要确保对象一致以及支持一些高级对象 用法时，就要用到我了
-
-
-
-要明白如何 使用我，必须先明白对象的工作原理、函数的工作原 理、this的工作原理等。只有掌握了大量的知识后， 你才会考虑了解我！
-
-
-构造函数的工作原理
-
-要明白构造函数工作原理，关键在于了解运算符new都做了些什么？
 
 ``` js
 function Test(name) {
@@ -67,29 +46,17 @@ Test {
 + 接下来，执行这个函数代码，与大多数构造函数一样，Test给新创建的this对象的属性赋值
 + 最后，Test函数执行完毕后，运算符new返回this--指向新创建的对象的引用。请注意，它会自动为你返回this，你无需在代码中显式地返回。指向新对象的引用被返回后，我们将其赋给变量t
 
-从上面一个例子中我们可以得出这些结论：
-
-+ `new` 通过构造函数 `Test` 创建出来的实例可以访问到构造函数中的属性
-+ `new` 通过构造函数 `Test` 创建出来的实例可以访问到构造函数原型链中的属性，也就是说通过 `new` 操作符，实例与构造函数通过原型链连接了起来
-
-关于构造函数返回值的问题：
-
-+ 构造函数会默认返回this，也就是新的实例对象
-+ 普通函数如果没有return值的话，返回undefined
-+ return的是五种简单数据类型：String,Number,Boolean,Null,Undefined的话，构造函数会忽略return的值，依然返回this对象
-+ 如果return的是引用类型：Array,Date,Object,Function,RegExp,Error的话，构造函数和普通函数都会返回return后面的值,构造函数的原型不被使用
-
-`Object.create(prototype/null)`返回值是一个新对象，带着指定的原型对象和属性。
-
-`Object.setPrototypeOf({},prototype/null)`设置一个指定的对象的原型 ( 即, 内部[[Prototype]]属性）到另一个对象或  null。
-
-原理
+从上面我们可以知道
 
 + new 操作符会返回一个新对象，所以我们需要在内部创建一个对象
 + 这个对象可以访问构造函数上的任意属性,可以访问到构造函数原型上的属性，所以需要将对象与构造函数链接起来
 + 返回原始值需要忽略，返回对象需要正常处理
 
 回顾了这些作用，我们就可以着手来实现功能了
+
+`Object.create(prototype/null)`返回值是一个新对象，带着指定的原型对象和属性。
+
+`Object.setPrototypeOf({},prototype/null)`设置一个指定的对象的原型 ( 即, 内部[[Prototype]]属性）到另一个对象或null。
 
 ```js
 function create(Con, ...args) {
@@ -101,64 +68,246 @@ function create(Con, ...args) {
 }
 ```
 
-## js数据存储
+关于构造函数返回值的问题：
 
-栈(stack)会自动分配内存空间，会自动释放。堆(heap)动态分配的内存，大小不定也不会自动释放
++ 构造函数会默认返回this，也就是新的实例对象
++ 普通函数如果没有return值的话，返回undefined
++ return的是五种简单数据类型：String,Number,Boolean,Null,Undefined的话，构造函数会忽略return的值，依然返回this对象
++ 如果return的是引用类型：Array,Date,Object,Function,RegExp,Error的话，构造函数和普通函数都会返回return后面的值,构造函数的原型不被使用
 
-基本类型：基本数据类型，值存放在栈内存中，占据固定大小的空间，访问方式是按值访问。`Undefined,String,Boolean,Null,Number,Symbol`
+## js数据类型
 
-从一个变量复向另一个变量复制基本类型的值，会创建这个值的副本
+栈(stack)会自动分配内存空间，会自动释放。<br>
+堆(heap)动态分配的内存，大小不定也不会自动释放
 
-`var a = 1`
-|||
-|----:|----:|
-|a|1|
-操作的是变量实际保存的值
-`a = 2`
-|||
-|----:|----:|
-|a|2|
-基本类型变量的复制：从一个变量向一个变量复制时，会在栈中创建一个新值，然后把值复制到为新变量分配的位置上`var b= a`
-|||
-|----:|----:|
-|a|1|
-|b|1|
-`b = 2;`
-|||
-|----:|----:|
-|a|1|
-|b|2|
+基本数据类型：值存放在栈内存中，占据固定大小的空间，访问方式是按值访问。`Undefined,String,Boolean,Null,Number,Symbol`
 
-引用类型：指那些可能由多个值构成的对象，值保存在堆内存中,包含引用类型的变量实际上保存的不是变量本身，而是指向该对象的指针，访问方式是按引用访问。`Object，Array，Function`
+引用类型：值保存在堆内存中,包含引用类型的变量实际上保存的不是变量本身，而是指向该对象的指针，访问方式是按引用访问。`Object，Array，Function`
 
-从一个向另一个变量复制引用类型的值，复制的其实是指针，因此两个变量最终指向同一个对象。即复制的是栈中的地址而不是堆中的对象
+js弱类型语言，变量的类型由其值所决定, 赋值过程中发生了强制类型转换
 
-`var a = new Object();`
-|栈内存||堆内存|
-|----:|----:|----:|
-|a|引用指针|object{}|
+#### 类型转换的原理
 
-当操作时，需要先从栈中读取内存地址，然后再延指针找到保存在堆内存中的值再操作。`a.name= 'xz';`
++ ToPrimitive
++ ToString
++ ToNumber
++ ToBoolean
++ toObject
 
-|栈内存||堆内存|
-|----:|----:|----:|
-|a|引用指针|object{name:'xz'}|
+### js转换规则不同场景应用
 
-引用类型变量的复制：复制的是存储在栈中的指针，将指针复制到栈中未新变量分配的空间中，而这个指针副本和原指针指向存储在堆中的同一个对象；复制操作结束后，两个变量实际上将引用同一个对象。因此，在使用时，改变其中的一个变量的值，将影响另一个变量 `var b= a;`
-|栈内存||堆内存|
-|----:|----:|----:|
-|a|引用指针|object{name:'xz'}|
-|b|引用指针|同上|
-`b.sex ='boy';`
-|栈内存||堆内存|
-|----:|----:|----:|
-|a|引用指针|object{name:'boy'}|
-|b|引用指针|同上|
++ 什么时候自动转换为string类型
+	- (在没有对象情况下)字符串的自动转换，主要发生在字符串的`加法运算`时。当一个值为字符串，另一个值为非字符串，则后者转为字符串。
+	``` js
+	'2' + 1 // '21'
+	'2' + true // "2true"
+	'2' + false // "2false"
+	'2' + undefined // "2undefined"
+	'2' + null // "2null"
+	```
+	- 当有对象且与对象+时候
+	``` js
+	//toString的对象
+	var obj2 = {
+		toString:function(){
+			return 'a'
+		}
+	}
+	console.log('2'+obj2)
+	//输出结果2a
 
-同上： 指的是a,b的指针都指向同一个地址object{}
+	//常规对象
+	var obj1 = {
+	a:1,
+	b:2
+	}
+	console.log('2'+obj1)；
+	//输出结果 2[object Object]
+
+	//几种特殊对象
+	'2' + {} // "2[object Object]"
+	'2' + [] // "2"
+	'2' + function (){} // "2function (){}"
+	'2' + ['koala',1] // 2koala,1
+	```
+
++ 什么时候自动转换为Number类型
+	- 加减乘除运算符
+	``` js
+	true + 0 // 1
+	true + true // 2
+	true + false //1
+	'5' - '2' // 3
+	'5' * '2' // 10
+	true - 1  // 0
+	false - 1 // -1
+	'1' - 1   // 0
+	'5' * []    // 0
+	false / '5' // 0
+	'abc' - 1   // NaN
+	null + 1 // 1
+	undefined + 1 // NaN
+
+	//一元运算符（注意点）
+	+'abc' // NaN
+	-'abc' // NaN
+	+true // 1
+	-false // 0	
+	```
+	::: tip 注意：
+	null转为数值时为0，而undefined转为数值时为NaN。
+	:::
+
++ 什么时候进行布尔转换
+	- if、while判断
+	- 三元运算符、逻辑运算符
+	``` js
+	if ( !undefined
+		&& !null
+		&& !0
+		&& !NaN
+		&& !''
+	) {
+		console.log('true');
+	} // true
+
+	//下面两种情况也会转成布尔类型
+	expression ? true : false
+	!! expression
+	```
+
+## == 与 === 你真的明白吗
+
+### 抽象运算：
+
+这些操作不是ECMAScript语言的一部分；它们在这里的定义只是为了帮助规范ECMAScript语言的语义。
+
+ECMAScript语言根据需要隐式执行自动类型转换。
+
++ ToPrimitive(input, [PreferredType]) 将输入的参数转化为非对象类型
+	- input 输入参数
+	- preferredType 可选参数，需要转化成什么类型
+	- 如果是基本类型`Undefined Null Boolean Number String Symbol` 返回他们本身
+	- 如果是`Object`
+		+ preferredType = string
+			- 先调用toString(), 如果返回原始值则return；否则调用valueOf()
+		+ preferredType = number
+			- 先调用valueOf(), 如果返回原始值则return；否则调用toString()
+		+ preferredType = ''
+			- 如果对象是Date，则 preferredType被设置为string
+			- 否则preferredType 被设置为number
+	- Object.prototype.toString() 对象的字符串
+	- Object.prototype.valueOf() 对象的原始值
+	
++ ToBoolean(argument) 将参数转为boolean类型
+	- 如果是`Undefined Null` 则返回“false”
+	- 如果是`Object Symbol` 则返回“true”
+	- 如果是`Number` 
+		+ 如果是`+0 -0 NaN` 则返回 “false”
+		+ 否则返回“true”
+	- 如果是`String` 
+		+ 如果是空字符串 则返回“false”
+		+ 否则返回“true”
+
++ ToNumber(argument) 将参数转为number类型
+	- 如果是`Undefined` 则返回 “NaN”
+	- 如果是 `Null` 则返回 “+0”
+	- 如果是 `Boolean` 
+		+ 如果入参论据“true” 返回 “+1”
+		+ 如果入参论据“false” 返回 “+0”
+	- 如果是 `String` 则 涉及到编码自己看吧
+		+ 如果无法将字符串解释为`StringNumericLiteral`的扩展，则ToNumber(string) 返回NaN
+		+ 如果是空、空格(whatespace)返回‘0’
+		+ [规则](//www.ecma-international.org/ecma-262/6.0/index.html#sec-tonumber)
+	- 如果是`Symbol` 则 抛出“typeError”
+	- 如果是`Object` 则 “ToNumber(ToPrimitive(argument, hint Number))”
+
++ ToString(argument) 将参数转换为string类型
+	- 如果是 `undefined` 返回 ‘undefined’
+	- 如果是 `Null` 返回 ‘null’
+	- 如果是 `Boolean` 
+		+ 如果是 ·true· 返回 ‘true’
+		+ 如果是  `false` 返回 ‘false’
+	- 如果是`Number` 则
+		+ 如果argument是NaN,则返回字符串NaN
+		+ 如果argument是+0、-0，则返回字符串0
+		+ 如果argument小于0，则返回字符串argument
+		+ 如果argument是正无穷大， 则返回字符串 "Infinity"
+		+ 剩下的就是进制的区别，自己去看吧
+	- 如果是 `string` 返回 本身
+	- 如果是`Symbol` 返回 ‘TypeError’
+	- 如果是`Object` 返回 ‘ToString(ToPrimivite(argument, hint String))’
+
++ toObject(argument) 将参数转换为object类型
+	- 如果是 `undefined` 返回 抛出‘TypeError’
+	- 如果是 `Null` 返回 抛出‘TypeError’
+	- 如果是 `Boolean` 返回一个boolean对象
+	- 如果是`Number` 返回一个Number对象
+	- 如果是 `string` 返回一个string对象
+	- 如果是`Symbol` 返回一个ymbol对象
+	- 如果是`Object` 返回 本身
+
+接下来正题：
+
+### 抽象相等比较
+
++ 如果类型x与类型y相同，如果值相同则true，值不同返回false
++ 如果x为空，y未定义，则返回true
++ 如果x未定义，y为空，则返回true
++ 如果x的类型是number，y的类型是字符串，则比较结果x == ToNumber(y)
++ 如果x的类型是string，y的类型是number，则比较结果ToNumber(x) == y
++ 如果x的类型是boolean，则比较结果ToNumber(x) == y
++ 如果y的类型是boolean，则比较结果 x == ToNumber(y)
++ 如果x的类型是string、number、symbol，y的类型是object，则比较结果是 x == ToPrimitive(y, [string\number\symbol\])
++ 如果x的类型是object，y的类型是string、number、symbol ，则比较ToPrimitive(x) == y
 
 
-分享自:[这里](//blog.csdn.net/sinat_15951543/article/details/79228675)
+### 严格相等比较
+
++ 如果x的类型与y的类型不同，返回false
++ 如果x,y的类型是Undefined,返回true
++ 如果x,y的类型是Null,返回true
++ 如果x,y的类型是number
+	- 如果是 x是NaN，返回false
+	- 如果是 y是NaN，返回false
+	- 如果x，y返回的值相同，返回true
+	- 如果x是+0，y是-0，返回true
+	- 如果x是-0，y是+0，返回true
++ 如果x，y是string
+	- 如果是相同的编码，相同的长度，返回true
+	- 否则返回false
++ 如果x，y是boolean
+	- 如果x，y都是true或者false，返回true
+	- 否则返回false
++ 如果x，y是相同的symbol值，返回true
++ 如果x,y是相同的object值，返回true
+
+
+### 案例
+
+`'' == NaN `
+根据规范 左边是string，右边是number，则 ToNumber('') == 0 ,false
+
+`'' == 0`
+根据规范 左边是string，右边是number，则 ToNumber('') == 0 ,true
+
+[ecma-262/6.0](//www.ecma-international.org/ecma-262/6.0/index.html#sec-type-conversion)
+
+`valueOf()` 他是返回一个指定类型[Number、Object、Boolean、Date]的原始值
+
+|类型|返回值|
+|----|:-----|
+|Array|返回数组本身|
+|Boolean|布尔值|
+|Date|当前毫秒数|
+|Function|函数本身|
+|Number|数字值|
+|Object|对象本身|
+|String|字符串值|
+||Math、Error对象没有valueOf方法|
+
++ [stackoverflow.com](https://stackoverflow.com/questions/359494/which-equals-operator-vs-should-be-used-in-javascript-comparisons/359509#359509)
+
 
 ## 在 Vue 中，子组件为何不可以修改父组件传递的 Prop，如果修改了，Vue 是如何监控到属性的修改并给出警告的。
 
