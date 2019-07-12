@@ -1,6 +1,6 @@
 ---
 title: '笔记'
-description: 'new操作符、js数据类型'
+description: 'new操作符、js数据类型、== 与 === 你真的明白吗、vue双向数据绑定、js 克隆、拷贝、防抖节流、JSONP原理'
 sidebar: 'auto'
 time: '2099-01-01'
 prev: ''
@@ -628,7 +628,46 @@ obj.use = function (plugin: Function | Object) {
 	- 父组件可以使用`$ref` 来访问子组件的实例或者DOM元素
 	- `provide(父组件定义) / inject(子组件获取)`
 	- `$attr / $listeners`
+		+ $attrs 父组件通信子组件
+		+ 子组件通过 $attrs 可以获取没有被子组件作为 props 特性绑定的传递过来的值
+		``` js
+			//父组件
+			<A msg='1111' df='222'>
+			//子组件
+			{
+				props:['msg'],
+				mounted(){
+					console.log(this.$attrs) // 输出 {df:'222'}
+				}
+			}
+		```
+		+ 子组件可以通过 v-bind='$attrs' 显性的绑定 可手动绑定到子组件的其他位置
+		+ 父组件通信子组件，如果子组件中没有通过props来接受父组件传递的值，那么将会在子组件根元素通过html属性的方式追加
+		``` js
+			//父组件
+			<AB msg='1111' sd='2222'>
+			//子组件
+			<div sd='2222'>{{msg}}</div>
+			{
+				props:['msg']
+			}
+		```
+		+ 我们可以通过 inheritAttrs : false 这些默认行为将会被去掉,但是我们还是可以通过$attr获取
+		``` js
+			//父组件
+			<zi msg='sss' es='eee' />
+			//子组件
+			<zi v-bind='$attr'>
+			//孙组件
+			<sun>
+			{
+				mounted(){
+					console.log(this.$attr) // {msg:'sss', es:'eee'}
+				}
+			}
+		```
 	- `v-model`
+
 
 + vue 子组件 传 父组件
 	- 子组件可以使用`$parent`来访问父组件实例
@@ -975,7 +1014,49 @@ document.addEventListener('DOMContentLoaded', function(){
 })
 ```
 
+## JSONP原理
 
+浏览器同源策略
+
++ 可嵌入跨源的资源的一些示例
+	- `script`、`link`、`img`、`video`、`object`、`@font-face`、`iframe`
+
+``` js
+function sajax(request){
+	return new Promise(resolve => {
+		var callback = request.jsonpCallback || '_jsonp' + Math.random().toString(36).substr(2),
+			body = null,
+			handler,
+			script;
+			handler = ({type}) => {
+				var status = 0;
+				if(type === 'load' && body !== null){
+					status = 200
+				}else if(type === 'error'){
+					status = 500
+				}
+				if(status && window[callback]){
+					delete window[callback];
+					document.body.removeChild(script);
+				}
+				resolve(body, status)
+			}
+			window[callback] = result => {
+				body = JSON.stringify(result);
+			}
+	
+			var fragment = document.createDocumentFragment();
+			script = document.createElement('script');
+			script.src = `${request.url}&callback=${callback}`;
+			script.async = true;
+			script.type = 'text/javascript';
+			script.onload = handler;
+			script.onerror = handler;
+			fragment.appendChild(script);
+			document.body.appendChild(fragment);
+	})
+}
+```
 
 
 + [jquery-throttle-debounce-plugin](//benalman.com/projects/jquery-throttle-debounce-plugin/)

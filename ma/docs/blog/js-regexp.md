@@ -286,6 +286,8 @@ var re = new RegExp("ab+c")
 
 ``` js
 
+industr(?:y|ies)  就是一个比  industry | industries 更简略的表达式
+
 var regular = /^Subject:(?:\d)/
 var str = "Subject:1 as something";
 var result = regular.exec(str);
