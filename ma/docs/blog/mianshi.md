@@ -1018,6 +1018,8 @@ document.addEventListener('DOMContentLoaded', function(){
 
 浏览器同源策略
 
++ 跨越方式：不同协议、不同端口、不同域名
+
 + 可嵌入跨源的资源的一些示例
 	- `script`、`link`、`img`、`video`、`object`、`@font-face`、`iframe`
 
@@ -1057,6 +1059,35 @@ function sajax(request){
 	})
 }
 ```
+
+## session、cookie、token
+因为HTTP是无状态的（无法保存状态），会话使HTTP变为有状态。
++ cookie
+	- 定义：是在浏览器端一个储存少量资料的空间。当浏览器跟server互动时cookie就会随着http request、response来回传送
+	- 特点
+		+ 有少量存储空间 4kb
+		+ 特定网域：不可跨不同域名
+		+ 有时效限制：到了设定的生命期之后会失效
+		+ cookie容易被修改，如果数据量大影响传输效率，为解决此问题出现了session
++ session
+	- 定义：是存储在服务器上并与给定用户相关联的数据集合
+	- 特点：
+		+ session依赖cookie
+	- 取消session
+		+ 主动删除cookie
+		+ 从网站登出
+		+ 设置失效时间
+	- session存储方式
+		+ 内存
+		+ cookie
+		+ 缓存 redis memcache
+		+ 资料库
++ 如何防止攻擊
+	- session 记录ip，如使用者換IP就得重新取得
+	- cookie 防止 XSS & CSRF
++ sessionStorage、localStorage
+	- local的数据可以长期保存，页面关闭sessionstorage数据被清除
+	- local无过期时间设置
 
 
 + [jquery-throttle-debounce-plugin](//benalman.com/projects/jquery-throttle-debounce-plugin/)

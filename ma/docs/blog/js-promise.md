@@ -115,7 +115,23 @@ excutor[ig 再 k te]
 status[s dei 特 s]
 ![部分promise解析](../.vuepress/public/assets/img/promise-1.jpg)
 
+### promise.race 
 
+``` js
+Promise.race = function(arr){
+    let Constructor = this;
+    return new Constructor((resolve, reject){
+        if(Object.prototype.toString.call(arr) !== '[Object Array]'){
+            return reject(new TypeError('arr must be array'))
+        }else{
+          let len = arr.length;
+          for(let i = 0;i< len;i++){
+            Constructor.resolve(arr[i]).then(resolve, reject)
+          }
+        }
+    })
+}
+```
 
 ### promise类库
 
@@ -1134,45 +1150,9 @@ var Promise$1 = function () {
   }
   ```
    Errback Example
-   ```js
-   function foundBooks(books) {
-   }
-   function failure(reason) {
-   }
-   findAuthor(function(author, err){
-    if (err) {
-      failure(err);
-      // failure
-    } else {
-      try {
-        findBoooksByAuthor(author, function(books, err) {
-          if (err) {
-            failure(err);
-          } else {
-            try {
-              foundBooks(books);
-            } catch(reason) {
-              failure(reason);
-            }
-          }
-        });
-      } catch(error) {
-        failure(err);
-      }
-      // success
-    }
-  });
-  ```
+
    Promise Example;
-   ```javascript
-  findAuthor().
-    then(findBooksByAuthor).
-    then(function(books){
-      // found books
-  }).catch(function(reason){
-    // something went wrong
-  });
-  ```
+
    @method then
   @param {Function} onFulfilled
   @param {Function} onRejected
@@ -1183,21 +1163,7 @@ var Promise$1 = function () {
   /**
   `catch` is simply sugar for `then(undefined, onRejection)` which makes it the same
   as the catch block of a try/catch statement.
-  ```js
-  function findAuthor(){
-  throw new Error('couldn't find that author');
-  }
-  // synchronous
-  try {
-  findAuthor();
-  } catch(reason) {
-  // something went wrong
-  }
-  // async with promises
-  findAuthor().catch(function(reason){
-  // something went wrong
-  });
-  ```
+
   @method catch
   @param {Function} onRejection
   Useful for tooling.
@@ -1215,33 +1181,11 @@ var Promise$1 = function () {
   
     Synchronous example:
   
-    ```js
-    findAuthor() {
-      if (Math.random() > 0.5) {
-        throw new Error();
-      }
-      return new Author();
-    }
-  
-    try {
-      return findAuthor(); // succeed or fail
-    } catch(error) {
-      return findOtherAuther();
-    } finally {
-      // always runs
-      // doesn't affect the return value
-    }
-    ```
+
   
     Asynchronous example:
   
-    ```js
-    findAuthor().catch(function(reason){
-      return findOtherAuther();
-    }).finally(function(){
-      // author was either found, or not
-    });
-    ```
+
   
     @method finally
     @param {Function} callback
@@ -1322,11 +1266,6 @@ return Promise$1;
 
 })));
 ```
-
-
-
-
-
 
 
 
