@@ -24,12 +24,24 @@ next: ''
 
 ## 摘要
 + JavaScript的 `this` 总是指向一个对象，而具体指向哪个对象是在运行时基于函数的执行环境动态绑定的，而非函数被声明时的环境。 
++ 一般情况下`this`值由函数是如何被调用来确定的，它不能在执行期间通过赋值设置，并且每次调用函数时它可能不同
 + this 的指向大致可以分为以下 4种
   - 作为对象的方法调用
   - 作为普通函数调用
   - 构造器调用
   - [Function.prototype.call 或 Function.prototype.apply 调用](./js-this-call-apply)
 
+## 全局调用
+
+``` js
+function myFunction(){}
+myFunction();
+```
+在非严格模式下 this 值是window；在严格模式下 this 值是 undefined
+
+## 立即调用表达式中 this永远是window
+
+## js事件处理程序中 this 值等于触发事件的元素
 
 ## 函数(`运行内\时`)上下文
 
@@ -381,5 +393,6 @@ alert (div.id);    // 输出： div1
 + [ibm.com](//www.ibm.com/developerworks/cn/web/1207_wangqf_jsthis/index.html)
 + [javascriptweblog.com](//javascriptweblog.wordpress.com/2010/08/30/understanding-javascripts-this/)
 + [yehudakatz.com](//yehudakatz.com/2011/08/10/understanding-javascript-function-invocation-and-this/)
++ [童趣](http://blog.leapoahead.com/2015/08/31/understanding-js-this-keyword/)
 
 ![bind-3](../.vuepress/public/assets/img/bind-3.jpg)

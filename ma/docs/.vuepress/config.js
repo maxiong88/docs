@@ -36,9 +36,10 @@ module.exports = {
                 text: '参考',
                 items: [
                     {text: 'H5案例', link: 'https://www.h5anli.com/'},
-					{text: '仿微博m站部分组件', link: './blog/weibo'},
+					// {text: '仿微博m站部分组件', link: './blog/weibo'},
                     {text: 'vue-weibo', link: ''},
-                    {text: 'vue-cms', link: ''}
+                    {text: 'vue-cms', link: ''},
+                    {text: '优质站点', link: './site/q-site'}
                 ]
             },
             {text: 'MEME', link: '/about/'},

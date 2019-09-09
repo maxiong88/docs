@@ -1089,11 +1089,82 @@ function sajax(request){
 	- local的数据可以长期保存，页面关闭sessionstorage数据被清除
 	- local无过期时间设置
 
+## margin 无效情形解析
 
-+ [jquery-throttle-debounce-plugin](//benalman.com/projects/jquery-throttle-debounce-plugin/)
-+ [throttle-debounce](//github.com/niksy/throttle-debounce)
-+ [juejin.im](//juejin.im/post/5b7298de51882561126f0389)
-+ [taobaofed.org](//taobaofed.org/blog/2016/11/17/react-components-communication/)
+:::tip 先来看看 [W3C](//www.w3.org/TR/CSS2/box.html#collapsing-margins) 对于外边距叠加的定义：
+In CSS, the adjoining margins of two or more boxes (which might or might not be siblings) can combine to form a single margin. Margins that combine this way are said to collapse, and the resulting combined margin is called a collapsed margin.
+:::
+
++ 什么是margin合并：在CSS中，两个或多个毗邻的普通流中的盒子（可能是父子元素，也可能是兄弟元素）在垂直方向上的外边距会发生叠加，这种形成的外边距称之为外边距叠加。
+	- 毗邻: 毗邻说明了他们的位置关系，没有被 `padding`、`border`、`clear` 和 `line box` 分隔开
+	- 两个或多个: 两个或多个盒子是指元素之间的相互影响，单个元素不会存在外边距叠加的情况
+	- 垂直方向: 只有垂直方向的外边距会发生外边距叠加。水平方向的外边距不存在叠加的情况。
+	- 普通流 : `An element is called out of flow if it is floated, absolutely positioned, or is the root element. An element is called in-flow if it is not out-of-flow. The flow of an element A is the set consisting of A and all in-flow elements whose nearest out-of-flow ancestor is A.`
+
++ margin合并的意义：特种特性是故意这么设计的；
+	- 兄弟合并：都是让图文信息的排版更加舒服自然，合并机制可以保证元素上下间距一致
+	- 父子合并：在页面中任何地方嵌套或直接放入任何裸`<div>`，都不会 影响原来的块状布局
+	- 自身合并（空块元素）：义在于可以避免不小心遗落或者生成的空标签影响排版和布局
+
+``` html
+<p>第一行</p> <p></p> <p></p> <p></p> <p></p> <p>第二行</p>
+// 其和下面这段 HTML 终视觉效果是一模一样的： 
+<p>第一行</p> <p>第二行</p> 
+// 若是没有自身 margin 合并特性的话，怕是上面的 HTML 第一行和第二行之间要隔了很多 行吧。 
+```
+
+知道了 margin 合并的意义以及作用，而且合并规则的兼容性良好，所以，我自己平时网 页制作的时候，遇到列表或者模块，全部都是保留上下 margin 设置。例如： 
+
+``` html
+<style>
+.list {   margin-top: 15px;    margin-bottom: 15px; } 
+</style>
+// 而不是战战兢兢地使用：
+<style>
+.list {   margin-top: 15px;} 
+</style>
+```
+
+因为 margin 合并特性，所以我们无须担心列表之间的间距会很大。不会的，就是 15px！ 相反，这种设置让我们的页面结构容错性更强了，比方说后一个元素移除或位置调换，均不 会破坏原来的布局，也就是我们的 CSS 无须做任何调整。 
 
 
+## IIFE 立即调用函数表达式
 
++ Function Declaration 函数声明
+	``` js
+		function foo(){}
+	```
++ Function Expression 函数表达式	
+	``` js
+		const foo = function(){}
+		+function foo(){}
+		true === function foo(){}
+		(function foo(){})
+	```
+
+``` js
+function foo(){}()
+// 如何改成立即执行函数
++function foo(){}()
+2===function foo(){}()
+(function(){})
+```
+
+[我们要记住FE和FD之间的区别](./js-function)
+
+## 如何写一个函数F，new F === F？
+
+这里考察new 构造函数返回的是一个什么
+
+``` js
+function F(){
+	return F;
+}
+new F === F;
+```
+
+## 当你打开网页的时候，世界都发生了什么
+
+URL 统一资源定位符；URI 统一资源标识符；
+
+俗称说的网址URL，就像互联网上的门牌一样，而浏览器就好像的士司机，你告诉浏览器你想要看的网页的URL，它就会把你再到那里啦！
