@@ -31,7 +31,15 @@ module.exports = {
         search: true,
         nav: [
             {text: 'Home', link: '/'},
-            {text: '博客', link: '/blog/'},
+            {
+                text: '博客', 
+                items: [
+                    {text:'blog', link:'/blog/'},
+                    {text:'javascript', link:'/javascript/'},
+                    {text:'vue',link:'/vue/'},
+                    {text:'html',link:'/html/'},
+                ]
+            },
             {
                 text: '参考',
                 items: [

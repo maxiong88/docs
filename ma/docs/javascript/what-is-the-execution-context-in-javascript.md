@@ -1,6 +1,6 @@
 ---
-title: [转]JavaScript中的执行上下文和堆栈是什么？ 
-description: '在这篇文章中，我将深入探讨JavaScript的一个最基本的部分，即`Execution Context`。 在本文结束时，您应该更清楚地了解解释器尝试做什么，为什么在声明它们之前可以使用某些函数/变量以及它们的值是如何确定的'
+title: '[转]JavaScript中的执行上下文和堆栈是什么？'
+description: '了解解释器尝试做什么，为什么在声明它们之前可以使用某些函数/变量以及它们的值是如何确定的'
 sidebar: 'auto'
 time: ''
 prev: ''
