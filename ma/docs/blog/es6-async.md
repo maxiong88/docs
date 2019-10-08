@@ -27,7 +27,26 @@ f().then(v => console.log(v))
 ```
 上面代码中，函数f内部return命令返回的值，会被then方法回调函数接收到。
 
+## await 命令
+
++ await命令后面是一个 Promise 对象，返回该对象的结果。如果不是 Promise 对象，就直接返回对应的值。
+
+``` js
+async function f() {
+  // 等同于
+  // return 123;
+  return await 123;
+}
+
+f().then(v => console.log(v))
+// 123
+```
+
++ await命令后面是一个对象的实例。这个实例不是 Promise 对象，但是因为定义了then方法，await会将其视为Promise处理。
+
 ## async 注意事项
+
+
 
 第一点，await命令后面的Promise对象，运行结果可能是rejected
 `任何一个await语句后面的 Promise 对象变为reject状态，那么整个async函数都会中断执行。`，
@@ -101,13 +120,56 @@ async function dbFuc(db) {
 
 ## async 案例
 
++ 实现多次重复尝试。
+
+``` js
+// for while
+const superagent = require('superagent');
+const NUM_RETRIES = 3;
+
+async function test() {
+  let i;
+  for (i = 0; i < NUM_RETRIES; ++i) {
+    try {
+      await superagent.get('http://google.com/this-throws-an-error');
+      break;
+    } catch(err) {}
+  }
+  console.log(i); // 3
+}
+
+test();
+```
+
++ 如何实现休眠效果
+
+``` js
+function sleep(interval) {
+  return new Promise(resolve => {
+    setTimeout(resolve, interval);
+  })
+}
+
+// 用法
+async function one2FiveInAsync() {
+  for(let i = 1; i <= 5; i++) {
+    console.log(i);
+    await sleep(1000);
+  }
+}
+
+one2FiveInAsync();
+```
+
 + 按顺序完成异步操作
 
 ``` js
 // 继发
 async function logInOrder(urls) {
   for (const url of urls) {
-    const response = await new Promise((resolve,reject) => {setTimeout(() => {resolve(url+'@'+Date.now())}, url*1000)});
+    const response = await new Promise((resolve,reject) => {
+      setTimeout(() => {resolve(url+'@'+Date.now())}, url*1000)
+    });
     console.log(await response);
   }
 }
