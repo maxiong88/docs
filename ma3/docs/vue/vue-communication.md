@@ -2,7 +2,7 @@
 title: 'Vue 组件通信'
 description: ''
 sidebar: 'auto'
-time: ''
+time: '2019-08-01'
 prev: ''
 next: ''
 ---
