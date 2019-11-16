@@ -947,13 +947,33 @@ function _clone(value, refFrom, refTo, deep){
 
 [规范](//tc39.github.io/ecma262/#sec-function.prototype.bind)
 
-+ 让 目标 成为this
-+ 是否是一个包含[[call]]内部方法的有效函数，如果不是`TypeError` [1]
-+ args 是一个新的集合，它是由除thisArg以外所有参数组成 [2]
-+ 创建一个 包装函数 [3]
-+ return 包装函数
+`bind()` 方法创建一个新的函数，在`bind()`被调用时，这个新函数的`this`被bind的第一个参数指定，其余参数将作为新函数的参数供调用时使用.
+
++ 语法`function.bind(thisArg,arg....)`
+	- thisArg: 
+		+ 调用绑定函数时，此参数将作为目标函数（新函数）的`this`
+		+ 使用new运算符构造绑定函数，则忽略该值
+		+ 当使用bind在setTimeout中创建一个函数（作为回调提供）时，作为thisArg传递的任何原始值都将转换为object
+		+ 如果bind函数的参数列表为空，执行作用域的this将被视为新函数的thisArg
+	- 返回值：返回一个原函数的拷贝，并拥有指定的`this`值和初始参数
+
++ 原理 bind()函数会创建一个新绑定函数，绑定函数具有以下属性
+	+ 包装的函数（原函数）对象
+	+ this 
+	+ 参数列表
+	+ this与包装函数关联代码`[[call]]`
+
+当调用绑定函数时，他调用`包装的函数对象`上面的内部方法`[[call]]`,就像`call(this, 参数列表)`.
+
+
+
 
 ``` js
+// + 让 目标 成为this
+// + 是否是一个包含[[call]]内部方法的有效函数，如果不是`TypeError` [1]
+// + args 是一个新的集合，它是由除thisArg以外所有参数组成 [2]
+// + 创建一个 包装函数 [3]
+// + return 包装函数
 // https://tc39.github.io/ecma262/#sec-function.prototype.bind
 module.exports = Function.bind || function bind(that){
 	var $this = this;
@@ -984,9 +1004,13 @@ function construct(C, argsLength, args){
 		return factories[argsLength](C, args);
 	}
 }
+
 ```
 
-实际环境中还是需要`lodashjs`库
++ [规范](//tc39.github.io/ecma262/#sec-function.prototype.bind)
++ [MDN-bind](//developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Function/bind)
+
+
 
 
 
@@ -1163,8 +1187,31 @@ function F(){
 new F === F;
 ```
 
+## 0.1+0.2 !== 0.3
+
+[http://0.30000000000000004.com/](http://0.30000000000000004.com/)
+
+现在大多数语言采用“使用了IEEE754浮点数格式” IEEE二进制浮点数算术标准
+然而约定是 它用科学记数法以底数为2的小数来表示浮点数
+对于十进制整数N，必要时表示为N10以与二进制的数的表示N2相区分。
+
+:::tip
+十进制中，10的素数(是指在大于1的自然数中，除了1和它本身以外不再有其他因数的自然数)是2，5.
+因此，由于分母都使用10的素数，所以1/2、1/4、1/5、1/8和1/10都可以清楚地表示。 1/3、1/6和1/7都是重复的小数，因为它们的分母使用3或7的质数。
+在二进制中，只有唯一的质数是2.因此，您只能清楚地表达小数仅包含2作为主要因子。以二进制形式，1 / 2、1 / 4、1 / 8都将干净地表示为小数。而1/​​5或1/10将重复小数。因此，在以10为基数的系统中使用干净的小数时，0.1和0.2（1/10和1/5）在计算机运行的以2为基数的系统中重复小数。
+:::
+
 ## 当你打开网页的时候，世界都发生了什么
 
 URL 统一资源定位符；URI 统一资源标识符；
 
 俗称说的网址URL，就像互联网上的门牌一样，而浏览器就好像的士司机，你告诉浏览器你想要看的网页的URL，它就会把你再到那里啦！
+
+## flex概念
+
+`flexbox`，是一种一维的布局模型。它给 `flexbox` 的子元素之间提供了强大的空间分布和对齐能力。
+
+我们说 `flexbox` 是一种一维的布局，是因为一个 `flexbox` 一次只能处理一个维度上的元素布局，一行或者一列。作为对比的是另外一个二维布局 `CSS Grid Layout`，可以同时处理行和列上的布局。
+
+## css 多行/单行省略
+
