@@ -947,7 +947,7 @@ function _clone(value, refFrom, refTo, deep){
 
 [规范](//tc39.github.io/ecma262/#sec-function.prototype.bind)
 
-`bind()` 方法创建一个新的函数，在`bind()`被调用时，这个新函数的`this`被bind的第一个参数指定，其余参数将作为新函数的参数供调用时使用.
+`bind()` 方法创建一个新的函数，该新函数在被调用时`新函数的this`指针指向传入的值
 
 + 语法`function.bind(thisArg,arg....)`
 	- thisArg: 
@@ -969,6 +969,23 @@ function _clone(value, refFrom, refTo, deep){
 
 
 ``` js
+// 简易版，没有在绑定函数上使用new，可参考
+
+Function.prototype.bind = function(){
+	let thatFunc = this;
+	if(typeof thatFunc !== 'function'){
+		throw new TypeError('如果不是函数就没有call方法')
+	}
+	let slice = Array.prototype.slice;// 将数组的一部分进行浅拷贝
+	let thatArg = arguments[0];// 获取第一个参数
+	let args = slice.call(arguments, 1);// 获取剩余参数并转为数组
+	return function(){
+		let funcArgs = args.concat(slice.call(arguments));// 合并传入参数
+		return thatFunc.apply(thatArg, funcArgs);// 改变新函数this，并传入参数，执行
+	}
+}
+
+
 // + 让 目标 成为this
 // + 是否是一个包含[[call]]内部方法的有效函数，如果不是`TypeError` [1]
 // + args 是一个新的集合，它是由除thisArg以外所有参数组成 [2]
@@ -1008,7 +1025,7 @@ function construct(C, argsLength, args){
 ```
 
 + [规范](//tc39.github.io/ecma262/#sec-function.prototype.bind)
-+ [MDN-bind](//developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Function/bind)
++ [MDN-bind](//developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/bind)
 
 
 
@@ -1215,65 +1232,3 @@ URL 统一资源定位符；URI 统一资源标识符；
 
 ## css 多行/单行省略
 
-
-
-var bind = _curry2(function bind(fn, thisObj) {
-  return _arity(fn.length, function() {
-    return fn.apply(thisObj, arguments);
-  });
-});
-function _arity(n, fn) {
-  /* eslint-disable no-unused-vars */
-  switch (n) {
-    case 0: return function() { return fn.apply(this, arguments); };
-    case 1: return function(a0) { return fn.apply(this, arguments); };
-    case 2: return function(a0, a1) { return fn.apply(this, arguments); };
-    case 3: return function(a0, a1, a2) { return fn.apply(this, arguments); };
-    case 4: return function(a0, a1, a2, a3) { return fn.apply(this, arguments); };
-    case 5: return function(a0, a1, a2, a3, a4) { return fn.apply(this, arguments); };
-    case 6: return function(a0, a1, a2, a3, a4, a5) { return fn.apply(this, arguments); };
-    case 7: return function(a0, a1, a2, a3, a4, a5, a6) { return fn.apply(this, arguments); };
-    case 8: return function(a0, a1, a2, a3, a4, a5, a6, a7) { return fn.apply(this, arguments); };
-    case 9: return function(a0, a1, a2, a3, a4, a5, a6, a7, a8) { return fn.apply(this, arguments); };
-    case 10: return function(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9) { return fn.apply(this, arguments); };
-    default: throw new Error('First argument to _arity must be a non-negative integer no greater than ten');
-  }
-}
-
- */
-function _curry2(fn) {
-  return function f2(a, b) {
-    switch (arguments.length) {
-      case 0:
-        return f2;
-      case 1:
-        return _isPlaceholder(a)
-          ? f2
-          : _curry1(function(_b) { return fn(a, _b); });
-      default:
-        return _isPlaceholder(a) && _isPlaceholder(b)
-          ? f2
-          : _isPlaceholder(a)
-            ? _curry1(function(_a) { return fn(_a, b); })
-            : _isPlaceholder(b)
-              ? _curry1(function(_b) { return fn(a, _b); })
-              : fn(a, b);
-    }
-  };
-}
-
-function _curry1(fn) {
-  return function f1(a) {
-    if (arguments.length === 0 || _isPlaceholder(a)) {
-      return f1;
-    } else {
-      return fn.apply(this, arguments);
-    }
-  };
-}
-
-unction _isPlaceholder(a) {
-  return a != null &&
-         typeof a === 'object' &&
-         a['@@functional/placeholder'] === true;
-}
