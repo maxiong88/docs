@@ -37,7 +37,8 @@ module.exports = {
                 items: [
                     {text: 'H5案例', link: 'https://www.h5anli.com/'},
                     {text: 'vue-weibo', link: ''},
-                    {text: 'vue-cms', link: ''}
+                    {text: 'vue-cms', link: ''},
+                    {text: 'koa-email', link: 'https://github.com/maxiong88/email-koa-webpack-phantom'}
                 ]
             },
             {text: 'MEME', link: '/about/'},
