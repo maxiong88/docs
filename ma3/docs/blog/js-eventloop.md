@@ -1,5 +1,5 @@
 ---
-title: eventLoop 事件循环
+title: eventLoop 事件循环机制
 description: ''
 sidebar: 'auto'
 time: '2019-05-01'
@@ -10,7 +10,7 @@ next: ''
 ## 定义
 
 
-事件循环有一个或多个任务队列。任务队列是按顺序排列的任务列表，可以是：
+事件循环有一个或多个任务队列[task queue]。任务队列是按顺序排列的任务列表，可以是：
 
 + Events
     - 并非所有事件都是使用任务队列调度的
@@ -25,4 +25,6 @@ next: ''
     - 有些元素具有响应DOM操作而触发的任务，例如，当该元素插入到文档中时。
 
 [官网](//www.w3.org/TR/2011/WD-html5-20110525/webappapis.html#event-loop)
+
+只要事件循环存在，它就必须连续运行以下步骤：
 

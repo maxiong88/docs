@@ -1,4 +1,12 @@
+---
+title: '我是博客列表页'
+layout: ListLayout
+description: '博客列表页描述'
+---
 
+<bloglist tab='javascript'/>
+
+<!--
 闭包
 
 https://www.telerik.com/blogs/javascript?page=1
@@ -24,3 +32,5 @@ http://davidshariff.com/blog/what-is-the-execution-context-in-javascript/
 http://jibbering.com/faq/notes/closures/
 
 http://developer.51cto.com/art/201907/599732.htm
+
+-->

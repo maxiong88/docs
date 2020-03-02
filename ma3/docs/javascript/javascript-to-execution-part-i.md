@@ -1,5 +1,11 @@
 ---
-title: JavaScript之旅：从下载脚本到执行 - 第一部分
+title: "JavaScript之旅：从下载脚本到执行 - 第一部分"
+description: '.'
+sidebar: 'auto'
+time: '2019-02-02'
+tags: 'javascript'
+prev: ''
+next: ''
 ---
 
 

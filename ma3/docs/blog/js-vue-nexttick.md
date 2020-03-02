@@ -19,7 +19,7 @@ next: ''
 + setTimeout
 
 ``` js{1}
-监听DOM的修改，并作出反应
+// 监听DOM的修改，并作出反应
 /* globals MutationObserver */ 
 
 import { noop } from 'shared/util'
