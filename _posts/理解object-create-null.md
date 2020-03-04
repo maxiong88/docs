@@ -25,12 +25,12 @@ Object.create(proto, [properitiesObject])
 
 ## Object.create()、{}的区别
 
-先看一下我们将长使用的{}创建的对象是什么样子：
+先看一下我们经常使用的`{}`创建的对象是什么样子：
 
-`
+``` js
 var o = {maxiong: 123}
 console.log(o)
-`
+```
 
 打印如下：
 
