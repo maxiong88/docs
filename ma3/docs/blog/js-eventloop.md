@@ -87,7 +87,9 @@ JavaScript语言的设计者意识到，这时CPU完全可以不管IO设备，�
 
 每个事件循环都有一个执行微任务检查点布尔值，初始值为false。它用于防止执行微任务检查点算法的可重入调用。
 
-## 任务列队
+## 列队 Queuing tasks
+
+
 
 ## Processing model
 
@@ -115,3 +117,27 @@ JavaScript语言的设计者意识到，这时CPU完全可以不管IO设备，�
 
 [w3官网](//www.w3.org/TR/2011/WD-html5-20110525/webappapis.html#event-loop)
 [whatwg官网](//html.spec.whatwg.org/multipage/webappapis.html#event-loops)
+
+
+
+
+我是一种单线程并发语言。
+
+我有一个`call stack`[调用栈、调用堆栈、函数调用栈]，一个`event loop`[事件循环]，一个`callback queue`[回调列队]，以及一些api和特性[APIS and stuff]
+
+为什么回调是一种事件，回调地狱
+
+什么是JavaScript运行时的简化视图：
+
+heap 是内存分配发生的地方，
+
+然后调用堆栈`call stack`，也就是堆栈帧所在位置，诸如此类的东西
+
+js是一种单线程编程语言，单线程运行时，它有一个调用堆栈。它一次只能做一件事，这就是单线程的意思，程序可以一次运行一段代码
+
+
+
+
+
+理解事件循环如何运行对于代码优化是重要的，有时对于正确的架构也很重要。
+
