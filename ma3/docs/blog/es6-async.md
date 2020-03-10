@@ -1,8 +1,8 @@
 ---
-title: es6 async await用法
+title: async promise 性能对比
 description: '含义、常例'
 sidebar: 'auto'
-time: '2019-03-01'
+time: '2020-03-01'
 prev: ''
 next: ''
 ---
