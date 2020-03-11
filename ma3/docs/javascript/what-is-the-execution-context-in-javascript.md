@@ -2,7 +2,7 @@
 title: '[转]JavaScript中的执行上下文和堆栈是什么？'
 description: '了解解释器尝试做什么，为什么在声明它们之前可以使用某些函数/变量以及它们的值是如何确定的'
 sidebar: 'auto'
-time: ''
+time: '2019-02-03'
 prev: ''
 next: ''
 ---

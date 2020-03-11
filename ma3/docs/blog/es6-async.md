@@ -1,11 +1,25 @@
 ---
-title: es6 async await用法
+title: async promise 性能对比
 description: '含义、常例'
 sidebar: 'auto'
-time: '2019-03-01'
+time: '2020-03-01'
 prev: ''
 next: ''
 ---
+
+## 知识点
+
++ [构造函数](./js-function.html)
+
+
+## 定义
+
++ 通过`AsyncFunction`构造函数创建一个`async function`对象 【1】 `Object.getPrototypeOf(async function(){}).constructor`
++ 使用`async function expression`函数声明方式创建一个`async function`对象 【2】 `async function [name](){}`
+
+2的声明并在代码中调用效率比1高（AsyncFunction构造函数创建的对象将在创建函数时进行解析、声明式是与其他代码一起解析）
+
+
 
 ## 原理
 

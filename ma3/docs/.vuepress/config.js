@@ -47,11 +47,8 @@ module.exports = {
 					// {text: '仿微博m站部分组件', link: './blog/weibo'},
                     {text: 'vue-weibo', link: ''},
                     {text: 'vue-cms', link: ''},
-<<<<<<< HEAD:ma/docs/.vuepress/config.js
-                    {text: 'koa-email', link: 'https://github.com/maxiong88/email-koa-webpack-phantom'}
-=======
-                    {text: '优质站点', link: './site/q-site'}
->>>>>>> 9233654255e1326d263b7008035b8eab0d47d8d4:ma3/docs/.vuepress/config.js
+                    {text: 'koa-email', link: 'https://github.com/maxiong88/email-koa-webpack-phantom'},
+                    {text: '优质站点', link: '/site/q-site'}
                 ]
             },
             {text: 'MEME', link: '/about/'},

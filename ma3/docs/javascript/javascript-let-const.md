@@ -1,6 +1,13 @@
 ---
-title: JavaScript之旅：let const 暂时性死区
+title: 'JavaScript之旅：let const 暂时性死区、let VS const'
+description: ''
+sidebar: 'auto'
+time: '2019-12-02'
+prev: ''
+next: ''
 ---
+
+## var let const 对比
 
 || redeclare 重复声明 | hositing 变量提升 | block scope 块级作用域 | create global props 创建全局 |
 |-----| ------ | ----------- |----------- |----------- |
@@ -26,7 +33,7 @@ a = '111'
 
 #### 什么是变量提升
 
-在编译阶段，在代码执行前几微秒，将扫描函数和变量声明。所有这些函数和变量声明都被添加到名为Lexical Environment的JavaScript数据结构内的内存中。这样它们甚至可以在源代码中实际声明之前使用。
+在编译阶段，在代码执行前几微秒，将扫描函数和变量声明。所有这些函数和变量声明都被添加到名为Lexical Environment['词汇环境']的JavaScript数据结构内的内存中。这样它们甚至可以在源代码中实际声明之前使用。
 
 #### 提升var变量
 
@@ -35,14 +42,15 @@ console.log(a) // outputs 'undefined'
 var a = '222';
 ```
 
-请记住JavaScript仅提升声明，而不是初始化。也就是说，在编译期间，JavaScript只 在内存中存储函数和变量声明，而不是它们的赋值（值）。
+请记住JavaScript仅提升声明，而不是初始化。也就是说，在编译期间，JavaScript只在内存中存储函数和变量声明，而不是它们的赋值（值）。
 当JavaScript引擎var在编译阶段找到变量声明时，它会将该变量添加到词法环境中并在执行期间将其初始化值为`undefined`，当它到达在代码中完成实际赋值的行时，它将分配该值到变量。
 
 ## const
 
 ::: tip
-const实际上保证的，并不是变量的值不得改动，而是变量指向的那个内存地址所保存的数据不得改动。对于简单类型的数据（数值、字符串、布尔值），值就保存在变量指向的那个内存地址，因此等同于常量。但对于复合类型的数据（主要是对象和数组），变量指向的内存地址，保存的只是一个指向实际数据的指针，const只能保证这个指针是固定的（即总是指向另一个固定的地址），至于它指向的数据结构是不是可变的，就完全不能控制了。因此，将一个对象声明为常量必须非常小心。 
+const实际上保证的，并不是变量的值不得改动，++而是变量指向的那个内存地址所保存的数据不得改动++。对于简单类型的数据（数值、字符串、布尔值），值就保存在变量指向的那个内存地址，因此等同于常量。但对于复合类型的数据（主要是对象和数组），变量指向的内存地址，保存的只是一个指向实际数据的指针，const只能保证这个指针是固定的（即总是指向另一个固定的地址），至于它指向的数据结构是不是可变的，就完全不能控制了。因此，将一个对象声明为常量必须非常小心。 
 :::
+
 
 ## 暂时性死区
 
@@ -72,3 +80,11 @@ for（let num = 0; num <3; num ++）{
  } 
 console.log（num）; // 10
 ```
+
+## 总结
+
+引入 [Dan Abramov](https://overreacted.io/on-let-vs-const/)
+
+I don’t care. remember that linters exist(存在) to serve you
+
+This is something that can be linted and auto-fixed. You can have an opinion if you want, just like tabs vs. spaces, but it's something that automation handles in the day-to-day.
