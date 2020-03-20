@@ -1249,3 +1249,61 @@ currying 又称部分求值。一个 currying 的函数首先会接受一些参�
 + 硬件、软件优化
 + 减少数据传输--采用减少文件大小的技术，以便快速进行初始页面加载
 
+
+## webpack  loader原理
+
++ [官网](//webpack.docschina.org/concepts/loaders/)
+
+首先要明白loader是干嘛的：
+loader用于对模块的源代码进行转换。loader 可以使你在 import 或"加载"模块时预处理文件。因此，loader 类似于其他构建工具中“任务(task)”，并提供了处理前端构建步骤的强大方法。loader 可以将文件从不同的语言（如 TypeScript）转换为 JavaScript 或将内联图像转换为 data URL。loader 甚至允许你直接在 JavaScript 模块中 import CSS文件！
+
+loader 特性：支持链式传递，可以同步可以异步，等
+
+### 编写
+
+loader是继承为一个函数的节点模块。该函数在loader转换资源的时候调用。给定的函数将调用loader API，并通过this上下文访问
+
+
+loader 安装使用方法
+
++ resolveLoader.moduels 
+``` js
+ resolveLoader: {
+    modules: ['node_modules', 'loaders'] // 先从node_modules中查找，没有从loaders文件夹中查找loader1.js
+  },
+  module: {
+    rules: [
+      {
+        test: /\.js/,
+        use: ['loader1']
+      }
+    ]
+  }
+```
+
++ resolveLoader.alias
+``` js
+resolveLoader: {
+    alias: {// 绝对路径
+      loader1: path.resolve(__dirname, 'loaders', 'loader1.js')
+    }
+  },
+```
+
++ loader的绝对路径
+``` js
+  module: {
+    rules: [
+      {
+        test: /\.js/,
+        use: [path.resolve(__dirname, 'loaders', 'loader1.js')]
+      }
+    ]
+  }
+```
+
++ npm 安装
+
+loader 的标准
+
+https://www.bbsmax.com/A/obzbjKoMzE/

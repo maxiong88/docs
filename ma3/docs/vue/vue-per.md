@@ -71,6 +71,48 @@ next: ''
             ```
     - 在现代浏览器中删除polyfill
 
++ webpack
+    - 1、内嵌小图片，通过url-loader对1-10kb转base64，即使使用http2也有用
+    - [http2到了但是雪碧图没死](https://blog.octo.com/en/http2-arrives-but-sprite-sets-aint-no-dead/)
+    ``` js
+        module.exports = {
+        module: {
+            rules: [
+            {
+                test: /\.(jpe?g|png|gif)$/,
+                loader: 'url-loader',
+                options: {
+                // Images larger than 10 KB won’t be inlined
+                limit: 10 * 1024
+                }
+            }
+            ]
+        }
+        };
+    ```
+    - 2、内嵌小型SVG图像，通过 svg-url-loader
+    - 该加载程序的工作方式类似于url-loader，但是它使用URL编码而不是Base64 编码文件。因为SVG是文本，所以URL编码的结果较小。
+    ``` js
+        // webpack.config.js
+        module.exports = {
+        module: {
+            rules: [
+            {
+                test: /\.svg$/,
+                loader: 'svg-url-loader',
+                options: {
+                // Images larger than 10 KB won’t be inlined
+                limit: 10 * 1024,
+                // Remove quotes around the encoded URL –
+                // they’re rarely useful
+                noquotes: true,
+                }
+            }
+            ]
+        }
+        };
+    ```
+    - 3、压缩图片  tinify
 
 
 
