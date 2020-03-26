@@ -21,7 +21,7 @@ git commit -m 'deploy'
 
 # 如果发布到 https://<USERNAME>.github.io/<REPO>
 # https://github.com/maxiong88/maxiong88.github.io.git
-git push -f git@github.com:maxiong88/maxiong88.github.io.git master
+git push -f https://github.com/maxiong88/maxiong88.github.io.git master
 
 rm -r -f dist
 
