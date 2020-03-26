@@ -330,65 +330,502 @@ Module imports are hoisted (internally moved to the beginning of the current sco
 foo();
 
 import { foo } from 'my_module';
+
 ```
 
-## CommonJS模块规范
+## 16.4 Importing and exporting in detail 
 
-exports 
-
-module.exports
-
-::: tip
-通过 require('') 导出
-exports是引用 module.exports的值。
-module.exports 被改变的时候，exports不会被改变，而模块导出的时候，
-真正导出的执行是module.exports，而不是exports
-:::
+### 16.4.1 Importing styles import关键字
+ECMAScript 6 provides several styles of importing2:
+提供几种类型的导入
 
 ``` js
-module.exports = Axios
-module.exports.default = Axios
+// Default import:
+  import localName from 'src/my_lib';
+// Namespace import: imports the module as an object (with one property per named export). 命名空间
+  import * as my_lib from 'src/my_lib';
+// Named imports: 名称导入
+  import { name1, name2 } from 'src/my_lib';
+// You can rename named imports: 重命名导入
 
-会使Axios陷入无限引用状态
+  // Renaming: import `name1` as `localName1`
+  import { name1 as localName1, name2 } from 'src/my_lib';
 
+  // Renaming: import the default export as `foo` 
+  import { default as foo } from 'src/my_lib';
+// Empty import: only loads the module, doesn’t import anything. The first such import in a program executes the body of the module.
+// 空导入，只加载模块，不导入任何内容
+  import 'src/my_lib';
+// There are only two ways to combine these styles and the order in which they appear is fixed; the default export always comes first.
+// 只有两种方法可以组合这些样式，并且它们的显示顺序是固定的；默认的导出总是排在第一位。
+
+// Combining a default import with a namespace import:
+  import theDefault, * as my_lib from 'src/my_lib';
+// Combining a default import with named imports
+  import theDefault, { name1, name2 } from 'src/my_lib';
 ```
 
-## ES6模块规范
+### 16.4.2 Named exporting styles: inline versus clause 导出
+There are two ways in which you can export named things inside modules.
+有两种方法可以在模块中导出命名对象。
 
-export 输出
+On one hand, you can mark declarations with the keyword export.
+一方面，可以使用关键字export标记声明。
 
-import 输出进口引入
+``` js
+export var myVar1 = ···;
+export let myVar2 = ···;
+export const MY_CONST = ···;
 
-export default 输出 未定义
-
-::: tip
-用export default，import语句不需要使用大括号；
-使用export default命令，为模块指定默认输出；
-一个模块只能有一个默认输出，所以export default只能使用一次；
-用export，对应的import语句需要使用大括号；
-如果在一个页面 既包含export  有包含export default 只能通过 import * as obj from '' 导出，
-按 es6 的规范 import * as obj from "xxx" 会将 "xxx" 中所有 export 导出的内容组合成一个对象返回。如果都使用 es6 的规范，这个是很明确的。
-:::
-
-
-## babel
-
-我们在写export、export default的时候babel都会给我们转化成
-
-``` js{7}
-export var name="李四";
-
-export default {}
-
-转
-
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-var name = exports.name = "李四";
-
-exports.default = {};
+export function myFunc() {
+    ···
+}
+export function* myGeneratorFunc() {
+    ···
+}
+export class MyClass {
+    ···
+}
 ```
+
+On the other hand, you can list everything you want to export at the end of the module (which is similar in style to the revealing module pattern).
+另一方面，您可以在模块末尾列出要导出的所有内容（在样式上类似于显示模块模式）。
+
+``` js
+const MY_CONST = ···;
+function myFunc() {
+    ···
+}
+
+export { MY_CONST, myFunc };
+// You can also export things under different names: 您还可以导出不同名称的内容：
+
+export { MY_CONST as FOO, myFunc };
+```
+
+### 16.4.3 Re-exporting 
+Re-exporting means adding another module’s exports to those of the current module. You can either add all of the other module’s exports:
+重新导出意味着将另一个模块的导出添加到当前模块的导出中。您可以添加其他模块的所有导出：
+
+`export * from 'src/other_module';`
+Default exports are ignored3 by export *.
+
+Or you can be more selective (optionally while renaming):
+
+``` js
+export { foo, bar } from 'src/other_module';
+
+// Renaming: export other_module’s foo as myFoo
+export { foo as myFoo, bar } from 'src/other_module';
+```
+
+### 16.4.4 All exporting styles 
+ECMAScript 6 provides several styles of exporting4:
+ECMAScript 6提供了几种类型的导出
+
+``` js
+// Re-exporting:
+// Re-export everything (except for the default export):
+  export * from 'src/other_module';
+// Re-export via a clause:
+  export { foo as myFoo, bar } from 'src/other_module';
+
+  export { default } from 'src/other_module';
+  export { default as foo } from 'src/other_module';
+  export { foo as default } from 'src/other_module';
+// Named exporting via a clause:
+  export { MY_CONST as FOO, myFunc };
+  export { foo as default };
+// Inline named exports:
+// Variable declarations:
+  export var foo;
+  export let foo;
+  export const foo;
+// Function declarations:
+  export function myFunc() {}
+  export function* myGenFunc() {}
+// Class declarations:
+  export class MyClass {}
+// Default export:
+// Function declarations (can be anonymous here):
+  export default function myFunc() {}
+  export default function () {}
+
+  export default function* myGenFunc() {}
+  export default function* () {}
+// Class declarations (can be anonymous here):
+  export default class MyClass {}
+  export default class {}
+// Expressions: export values. Note the semicolons at the end.
+  export default foo;
+  export default 'Hello world!';
+  export default 3 * 7;
+  export default (function () {});
+```
+### 16.4.5 Having both named exports and a default export in a module  在模块中同时具有命名导出和默认导出
+The following pattern is surprisingly common in JavaScript: A library is a single function, but additional services are provided via properties of that function. Examples include jQuery and Underscore.js. The following is a sketch of Underscore as a CommonJS module:
+以下模式在JavaScript中非常常见：一个库是一个单独的函数，但是其他服务是通过该函数的属性提供的。例如jQuery和underline.js。以下是作为CommonJS模块的下划线示意图：
+``` js
+//------ underscore.js ------
+var _ = function (obj) {
+    ···
+};
+var each = _.each = _.forEach =
+    function (obj, iterator, context) {
+        ···
+    };
+module.exports = _;
+
+//------ main.js ------
+var _ = require('underscore');
+var each = _.each;
+```
+
+With ES6 glasses, the function _ is the default export, while each and forEach are named exports. As it turns out, you can actually have named exports and a default export at the same time. As an example, the previous CommonJS module, rewritten as an ES6 module, looks like this:
+对于ES6，函数是默认的导出，而每个和forEach都被命名为导出。事实证明，您实际上可以同时拥有命名导出和默认导出。例如，先前的CommonJS模块重写为ES6模块，如下所示：
+``` js
+//------ underscore.js ------
+export default function (obj) {
+    ···
+}
+export function each(obj, iterator, context) {
+    ···
+}
+export { each as forEach };
+
+//------ main.js ------
+import _, { each } from 'underscore';
+
+```
+Note that the CommonJS version and the ECMAScript 6 version are only roughly similar. The latter has a flat structure, whereas the former is nested.
+注意CommonJS版本和ECMAScript 6版本只是大致相似的。后者有一个扁平的结构，而前者是嵌套的。
+
+#### 16.4.5.1 Recommendation: avoid mixing default exports and named exports  建议：避免混合默认导出和命名导出
+I generally recommend to keep the two kinds of exporting separate: per module, either only have a default export or only have named exports.
+我通常建议将这两种导出分开：每个模块，要么只有默认导出，要么只有命名导出。
+
+However, that is not a very strong recommendation; it occasionally may make sense to mix the two kinds. One example is a module that default-exports an entity. For unit tests, one could additionally make some of the internals available via named exports.
+然而，这并不是一个很有力的建议；有时将这两种方法混合起来可能是有意义的。一个例子是默认导出实体的模块。对于单元测试，还可以通过命名导出使一些内部组件可用。
+
+#### 16.4.5.2 The default export is just another named export  默认导出只是另一个命名导出
+The default export is actually just a named export with the special name default. That is, the following two statements are equivalent:
+默认导出实际上只是一个具有特殊名称默认值的命名导出。也就是说，以下两个语句是等价的：
+``` js
+import { default as foo } from 'lib';
+import foo from 'lib';
+```
+Similarly, the following two modules have the same default export:
+类似地，以下两个模块具有相同的默认导出：
+``` js
+//------ module1.js ------
+export default function foo() {} // function declaration!
+
+//------ module2.js ------
+function foo() {}
+export { foo as default };
+```
+#### 16.4.5.3 default: OK as export name, but not as variable name 默认：可以作为导出名，但不能作为变量名
+You can’t use reserved words (such as default and new) as variable names, but you can use them as names for exports (you can also use them as property names in ECMAScript 5). If you want to directly import such named exports, you have to rename them to proper variables names.
+不能将保留字（如default和new）用作变量名，但可以将它们用作导出的名称（也可以在ECMAScript 5中将它们用作属性名）。如果要直接导入此类命名导出，则必须将它们重命名为适当的变量名。
+
+That means that default can only appear on the left-hand side of a renaming import:
+这意味着默认值只能出现在重命名导入的左侧：
+``` js
+import { default as foo } from 'some_module';
+//And it can only appear on the right-hand side of a renaming export:
+
+export { foo as default };
+//In re-exporting, both sides of the as are export names:
+
+export { myFunc as default } from 'foo';
+export { default as otherFunc } from 'foo';
+
+// The following two statements are equivalent: 等效
+export { default } from 'foo';
+export { default as default } from 'foo';
+```
+#### 16.4.3.1 Making a re-export the default export  使重新导出成为默认导出
+
+The following statement makes the default export of another module foo the default export of the current module:
+`export { default } from 'foo';`
+
+The following statement makes the named export myFunc of module foo the default export of the current module:
+`export { myFunc as default } from 'foo';`
+
+## 16.7 Details: imports as views on exports 细节：
+
+Imports work differently in CommonJS and ES6: 差异
+
++ In CommonJS, imports are copies of exported values. CommonJS 导入时导出值的副本
++ In ES6, imports are live read-only views on exported values. ES6 导入时对导出值的实时只读视图
+The following sections explain what that means.
+以下各节解释这意味着什么。
+
+### 16.7.1 In CommonJS, imports are copies of exported values 在CommonJS中，导入是导出值的副本
+With CommonJS (Node.js) modules, things work in relatively familiar ways.
+于CommonJS（Node.js）模块，事情以相对熟悉的方式工作。
+
+If you import a value into a variable, the value is copied twice: once when it is exported (line A) and once it is imported (line B).
+如果将值导入变量，则会复制两次：一次是导出时（a行），一次是导入时（B行）。
+``` js
+//------ lib.js ------
+var counter = 3;
+function incCounter() {
+    counter++;
+}
+module.exports = {
+    counter: counter, // (A)
+    incCounter: incCounter,
+};
+
+//------ main1.js ------
+var counter = require('./lib').counter; // (B)
+var incCounter = require('./lib').incCounter;
+
+// The imported value is a (disconnected) copy of a copy
+console.log(counter); // 3
+incCounter();
+console.log(counter); // 3
+
+// The imported value can be changed
+counter++;
+console.log(counter); // 4
+```
+If you access the value via the exports object, it is still copied once, on export:
+如果通过导出对象访问该值，则在导出时仍会复制该值一次：
+
+``` js
+//------ main2.js ------
+var lib = require('./lib');
+
+// The imported value is a (disconnected) copy
+console.log(lib.counter); // 3
+lib.incCounter();
+console.log(lib.counter); // 3
+
+// The imported value can be changed
+lib.counter++;
+console.log(lib.counter); // 4
+```
+
+### 16.7.2 In ES6, imports are live read-only views on exported values 
+In contrast to CommonJS, imports are views on exported values. In other words, every import is a live connection to the exported data. Imports are read-only:
+与CommonJS相反，imports是关于导出值的视图。换句话说，每个导入都是到导出数据的实时连接。导入是只读的：
+
+Unqualified `imports (import x from 'foo')` are like const-declared variables.
+The properties of a module object foo `(import * as foo from 'foo')` are like the properties of a frozen object.
+The following code demonstrates how imports are like views:
+``` js
+//------ lib.js ------
+export let counter = 3;
+export function incCounter() {
+    counter++;
+}
+
+//------ main1.js ------
+import { counter, incCounter } from './lib';
+
+// The imported value `counter` is live
+console.log(counter); // 3
+incCounter();
+console.log(counter); // 4
+
+// The imported value can’t be changed
+counter++; // TypeError
+```
+If you import the module object via the asterisk (*), you get the same results:
+``` js
+//------ main2.js ------
+import * as lib from './lib';
+
+// The imported value `counter` is live
+console.log(lib.counter); // 3
+lib.incCounter();
+console.log(lib.counter); // 4
+
+// The imported value can’t be changed
+lib.counter++; // TypeError
+```
+Note that while you can’t change the values of imports, you can change the objects that they are referring to. For example:
+请注意，虽然不能更改导入的值，但可以更改它们所引用的对象。例如：
+``` js
+//------ lib.js ------
+export let obj = {};
+
+//------ main.js ------
+import { obj } from './lib';
+
+obj.prop = 123; // OK
+obj = {}; // TypeError
+```
+#### 16.7.2.1 Why a new approach to importing? 
+Why introduce such a relatively complicated mechanism for importing that deviates from established practices?
+
+Cyclic dependencies: The main advantage is that it supports cyclic dependencies even for unqualified imports.
+Qualified and unqualified imports work the same. In CommonJS, they don’t: a qualified import provides direct access to a property of a module’s export object, an unqualified import is a copy of it.
+You can split code into multiple modules and it will continue to work (as long as you don’t try to change the values of imports).
+On the flip side, module folding, combining multiple modules into a single module becomes simpler, too.
+In my experience, ES6 imports just work, you rarely have to think about what’s going on under the hood.
+
+## 16.8 Design goals for ES6 modules 设计目标
+
+
+If you want to make sense of ECMAScript 6 modules, it helps to understand what goals influenced their design. The major ones are:
+如果您想理解EcmaScript6模块，那么了解哪些目标影响了它们的设计将有助于理解。主要是：
+
++ Default exports are favored 默认导出受到青睐
++ Static module structure 静态模块结构
++ Support for both synchronous and asynchronous loading 支持同步和异步加载
++ Support for cyclic dependencies between modules 支持模块之间的循环依赖关系
+
+The following subsections explain these goals. 以下小节解释这些目标。
+
+### 16.8.1 Default exports are favored
+
+ECMAScript 6 favors the single/default export style, and gives the sweetest syntax to importing the default. 
+Importing named exports can and even should be slightly less concise.
+
+### Static module structure 静态模块结构
+
+当前的JavaScript模块格式具有动态结构：导入和导出的内容可以在运行时更改。ES6引入自己的模块格式的一个原因是启用静态结构，这有几个好处。但是在我们开始之前，让我们来看看静态结构意味着什么。
+这意味着您可以在编译时（静态地）确定导入和导出—您只需要查看源代码，不必执行它。ES6在语法上强制执行此操作：您只能在顶层导入和导出（永远不能嵌套在条件语句中）。并且导入和导出语句没有动态部分（不允许变量等）。
+下面是两个没有静态结构的CommonJS模块示例。
+
+``` js
+// 在第一个示例中，必须运行代码以了解它导入的内容：
+var my_lib;
+if (Math.random()) {
+    my_lib = require('foo');
+} else {
+    my_lib = require('bar');
+}
+// 在第二个示例中，必须运行代码以了解它导出的内容：
+if (Math.random()) {
+    exports.baz = ···;
+}
+```
+
+EcmaScript6模块的灵活性较差，并强制您保持静态。因此，您将获得几个好处，下面将介绍这些好处。
+
+#### 16.8.2.1 Benefit: dead code elimination during bundling  构建期间消除无用代码
+In frontend development, modules are usually handled as follows:
+在前端开发中，模块通常处理如下：
+
++ During development, code exists as many, often small, modules. 在开发过程中，代码存在于尽可能多的（通常是小的）模块中。
++ For deployment, these modules are bundled into a few, relatively large, files. 对于部署，这些模块被捆绑成几个相对较大的文件。
+The reasons for bundling are: 捆绑的原因是：
+
+1、Fewer files need to be retrieved in order to load all modules. 为了加载所有模块，需要检索的文件更少。
+2、Compressing the bundled file is slightly more efficient than compressing separate files. 压缩捆绑的文件比压缩单独的文件稍微高效一些。
+3、During bundling, unused exports can be removed, potentially resulting in significant space savings. 在绑定期间，可以删除未使用的导出，这可能会显著节省空间。
+
+Reason #1 is important for HTTP/1, where the cost for requesting a file is relatively high. That will change with HTTP/2, which is why this reason doesn’t matter there.
+原因1对于HTTP/1很重要，因为请求文件的成本相对较高。这将随着HTTP/2而改变，这就是为什么这个原因在那里并不重要。
+
+Reason #3 will remain compelling. It can only be achieved with a module format that has a static structure.
+第三个理由仍将令人信服。它只能用具有静态结构的模块格式来实现。
+
+
+[David Herman](http://esdiscuss.org/topic/moduleimport#content-0)
+
+#### 16.8.2.6 Benefit: ready for types  优点：适合类型
+Static type checking imposes constraints similar to macros: it can only be done if type definitions can be found statically. Again, types can only be imported from modules if they have a static structure.
+静态类型检查强制执行类似于宏的约束：只有在可以静态找到类型定义时才能执行。同样，类型只能从具有静态结构的模块中导入。
+
+Types are appealing because they enable statically typed fast dialects of JavaScript in which performance-critical code can be written. One such dialect is [Low-Level JavaScript](http://lljs.org/) (LLJS).
+类型之所以吸引人，是因为它们支持JavaScript的静态类型快速方言，在这种方言中可以编写性能关键的代码。其中一种方言是低级JavaScript（LLJS）。
+
+#### 16.8.2.7 Benefit: supporting other languages 优点：支持其他语言
+If you want to support compiling languages with macros and static types to JavaScript then JavaScript’s modules should have a static structure, for the reasons mentioned in the previous two sections.
+如果您希望支持将带有宏和静态类型的语言编译为JavaScript，那么JavaScript的模块应该具有静态结构，原因在前两节中提到。
+
+#### 16.8.2.8 Source of this section 
+[“Static module resolution” by David Herman,静态模块分析](http://calculist.org/blog/2012/06/29/static-module-resolution/)
+
+### 16.8.3 Support for both synchronous and asynchronous loading 同步和异步加载支持
+ECMAScript 6 modules must work independently of whether the engine loads modules synchronously (e.g. on servers) or asynchronously (e.g. in browsers). Its syntax is well suited for synchronous loading, asynchronous loading is enabled by its static structure: Because you can statically determine all imports, you can load them before evaluating the body of the module (in a manner reminiscent of AMD modules).
+ECMAScript 6模块必须独立于引擎,无论是同步加载模块（例如在服务器上）还是异步加载模块（例如在浏览器中）。其语法非常适合同步加载，异步加载由其静态结构启用：
+因为可以静态地确定所有导入，所以可以在评估模块主体之前加载它们（以类似于AMD模块的方式）。
+
+### 16.8.4 Support for cyclic dependencies between modules 支持模块之间的循环依赖性
+Support for cyclic dependencies was a key goal for ES6 modules. Here is why:
+支持循环依赖性是ES6模块的一个关键目标。原因如下：
+
+Cyclic dependencies are not inherently evil. Especially for objects, you sometimes even want this kind of dependency. For example, in some trees (such as DOM documents), parents refer to children and children refer back to parents. In libraries, you can usually avoid cyclic dependencies via careful design. In a large system, though, they can happen, especially during refactoring. Then it is very useful if a module system supports them, because the system doesn’t break while you are refactoring.
+循环依赖并不是天生的邪恶。尤其是对于对象，有时甚至需要这种依赖关系。例如，在某些树（如DOM文档）中，父对象引用子对象，子对象引用回父对象。在库中，通常可以通过仔细设计避免循环依赖。但是，在大型系统中，它们可能会发生，特别是在重构期间。如果一个模块系统支持它们，这将非常有用，因为在重构时系统不会崩溃。
+
+The Node.js documentation acknowledges the importance of cyclic dependencies and Rob Sayre provides additional evidence:
+Node.js文档承认循环依赖的重要性
+
+## 16.9 FAQ: modules 模块，常见问题
+
+### 16.9.1 Can I use a variable to specify from which module I want to import? 是否可以使用变量指定要从哪个模块导入？
+The import statement is completely static: its module specifier is always fixed. 
+If you want to dynamically determine what module to load, you need to use [the programmatic loader API](#sec_module-loader-api):
+import语句是完全静态的：它的模块说明符总是固定的。如果要动态确定要加载的模块，则需要使用编程加载程序API：
+
+``` js
+const moduleSpecifier = 'module_' + Math.random();
+System.import(moduleSpecifier)
+.then(the_module => {
+    // Use the_module
+})
+```
+
+### 16.9.2 Can I import a module conditionally or on demand? 我可以有条件地或按需导入模块吗？
+Import statements must always be at the top level of modules. 
+That means that you can’t nest them inside if statements, functions, etc. 
+Therefore, you have to use [the programmatic loader API](#sec_module-loader-api) if you want to load a module conditionally or on demand:
+导入语句必须始终位于模块的顶层。这意味着您不能将它们嵌套在if语句、函数等内部。因此，如果要有条件或按需加载模块，必须使用编程加载程序API：
+
+``` js
+if (Math.random()) {
+    System.import('some_module')
+    .then(some_module => {
+        // Use some_module
+    })
+}
+```
+
+### 16.9.3 Can I use variables in an import statement? 是否可以在import语句中使用变量？ 不能
+No, you can’t. Remember – what is imported must not depend on anything that is computed at runtime. Therefore:
+记住-导入的内容不能依赖于运行时计算的任何内容。
+``` js
+// Illegal syntax:
+import foo from 'some_module'+SUFFIX;
+```
+
+### 16.9.4 Can I use destructuring in an import statement? 可以再import语句中使用解构吗？不能
+No you can’t. The import statement only looks like destructuring, but is completely different (static, imports are views, etc.).
+`import`语句看起来只是解构，但完全不同（static、imports是视图等）
+Therefore, you can’t do something like this in ES6:
+
+``` js
+// Illegal syntax: 非法语法
+import { foo: { bar } } from 'some_module';
+```
+
+### 16.9.5 Are named exports necessary? Why not default-export objects? 是否需要命名导出？为什么不使用 `export default`导出对象
+You may be wondering – why do we need named exports if we could simply default-export objects (like in CommonJS)? 
+The answer is that you can’t enforce a static structure via objects and lose all of the associated advantages (which are explained in this chapter).
+答案是，您不能通过对象强制执行静态结构，从而失去所有相关的优点（本章将对此进行解释）。
+
+### 16.9.6 Can I eval() the code of module? 能用eval执行模块代码
+
+模块对于`eval()`来说是 height-level a construct;
+
+语法上，`eval()`接受脚本(不允许`import`、`export`)，而不是模块
+
+## 16.10 Advantages of ECMAScript 6 modules es6 模块优势
+
++ More compact syntax 更紧凑的语法
++ Static module structure (helping with dead code elimination, optimizations, static checking and more) 静态模块结构（有助于消除死代码、优化、静态检查等）
++ Automatic support for cyclic dependencies 自动支持循环依赖项
+
++ No more UMD 通用模块重新定义
++ New browser APIs become modules instead of global variables or properties of navigator.新的浏览器api成为模块，而不是导航器的全局变量或属性。
++ No more objects-as-namespaces 不再有对象作为命名空间
+
+## 16.11 Further reading 延伸阅读
+
++ [avaScript Modules--Yehuda Katz](https://github.com/wycats/jsmodules)

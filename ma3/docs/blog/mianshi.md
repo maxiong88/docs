@@ -1307,3 +1307,92 @@ resolveLoader: {
 loader 的标准
 
 https://www.bbsmax.com/A/obzbjKoMzE/
+
+## 条件比较多的时候 if-else 和 switch 性能哪个高
+
+条件比较多就倾向于switch. if-else的附加条件的增量成本大于switch的增量成本
+一般来说，如果有两个不同范围或几个不同范围的值要测试，那么最好使用if else。当要测试的范围超过两个时，switch语句是最理想的选择。
+
+switch 使用全等运算符，不会发生类型转换的消耗
+
+使用嵌套语句，减少判断次数
+``` js
+if (value == 0){
+    return result0;
+} else if (value == 1){
+    return result1;
+} else if (value == 2){
+    return result2;
+} else if (value == 3){
+    return result3;
+} else if (value == 4){
+    return result4;
+} else if (value == 5){
+    return result5;
+} else if (value == 6){
+    return result6;
+} else if (value == 7){
+    return result7;
+} else if (value == 8){
+    return result8;
+} else if (value == 9){
+    return result9;
+} else {
+    return result10;
+}
+if (value < 6){
+
+    if (value < 3){
+        if (value == 0){
+            return result0;
+        } else if (value == 1){
+            return result1;
+        } else {
+            return result2;
+        }
+    } else {
+        if (value == 3){
+            return result3;
+        } else if (value == 4){
+            return result4;
+        } else {
+            return result5;
+        }
+    }
+
+} else {
+
+    if (value < 8){
+        if (value == 6){
+            return result6;
+        } else {
+            return result7;
+        }
+    } else {
+        if (value == 8){
+            return result8;
+        } else if (value == 9){
+            return result9;
+        } else {
+            return result10;
+        }
+    }
+}
+```
+::: tip
+我们可以使用数组或对象 查找表的方式，性能最好
+:::
+
+## 0 1 1 2 3 5 8，假设第 0 个是 0，第 1 个是 1，求第 n 个数的实现方式？
+
+``` js
+function a(n){
+    var m = '';
+    if(n === 0){return m = 0}
+    if(n === 1 || n ===2){return m = 1}
+    if(n ===3){return m = 2}
+    if(n > 3){
+        return m =a(n-1)+a(n-2)
+    }
+}
+```
