@@ -1396,3 +1396,67 @@ function a(n){
     }
 }
 ```
+
+## nth-child 匹配父级子元素
+
+``` js
+p:nth-child(odd){
+	// 奇数 2n+1
+}
+p:nth-child(even){
+	// 偶数 2n+2
+}
+
+```
+
+## 选择器优先级？在任何情况下都会遵循优先级吗？
+
+
+优先级是基于不同种类选择器组成的匹配规则
+
+优先级就是分配给指定的 CSS 声明的一个权重，它由 匹配的选择器中的 每一种选择器类型的 数值 决定。
+
++ 类型选择器：标签`<html>`、伪元素`::after`
++ 类选择器：`class`、属性选择器`[type="XX"]`、伪类`:hover`
++ ID 选择器
+
+通配选择符`（universal selector）（*）`关系选择符`（combinators）（+, >, ~, ' ', ||）`和 否定伪类`（negation pseudo-class）（:not()）`对优先级没有影响。（但是，在 `:not() `内部声明的选择器会影响优先级）。
+
+给元素添加的内联样式 (例如，`style="font-weight:bold"`) 总会覆盖外部样式表的任何样式 ，因此可看作是具有最高的优先级。
+
+important>内联>id>class = 属性 = 伪类 >标签 = 伪元素 > 通配符（*）
+
++ important 优先级最高
++ :not() 否定伪类在优先级计算中不会被看作是伪类
+	- 可以利用这个伪类提高规则的优先级。例如，` #foo:not(#bar)` 和` #foo `会匹配相同的元素，但是前者的优先级更高。
+
+## 伪元素和伪类有哪些？为什么要有伪类和伪元素？为什么伪元素用一个冒号也可以？
+
++ [伪元素](//developer.mozilla.org/zh-CN/docs/Web/CSS/Pseudo-elements)
+	- `::after`、`::before`、`::first-line`、`::selection`、`::cue (:cue)`、`::placeholder`、`::first-letter (:first-letter)`、`::slotted()`
++ [伪类](//developer.mozilla.org/zh-CN/docs/Web/CSS/Pseudo-classes)
+	- `:link`、`:hover`、`:active`、`:first-child`、`:focus`、`:last-child`。。。。
+
+## css的margin-top、padding-top、translate-x、background-size、line-height、分别相对于谁？
+
+## 对于传进来null，会不会触发默认赋值。
+
++ es5 会 
+``` js
+function a(d){
+	d = d || ''
+	return d
+}
+// null,NaN,undefined,'',0 都会触发默认fu值
+```
++ es6 不会
+``` js
+function a(d = 1){
+	return d
+}
+// null,NaN,'' 不会触发默认赋值 kong会
+```
+
+## ES6数组扁平化方法的polyfill
+
+`falt()`
