@@ -60,7 +60,7 @@
     margin-bottom: 20px;}
 .theme-default-content:not(.custom){
     max-width: 660px;
-    padding:6rem 0 0;
+    padding:6rem 12px;
     }
 .page-nav{
     display: none;}
@@ -73,4 +73,33 @@
     margin-top: 0;
     padding: 1rem 0;
     margin-bottom: 0;
+}
+@media screen and (max-width: 1300px) {
+  .theme-default-content {
+    margin-left: 290px!important;
+  }
+  #ad {
+    z-index: 1;
+    position: relative;
+    padding: 0;
+    bottom: 0;
+    right: 0;
+    float: right;
+    padding: 0 0 20px 30px;
+  }
+}
+@media screen and (max-width: 900px) {
+      .theme-default-content {
+    margin: 0 auto!important;
+  }
+  .sidebar {
+    top: 0;
+    padding-top: 3.6rem;
+    transform: translateX(-100%);
+    transition: transform 0.2s ease;
+}
+
+}
+.sidebar{
+    max-width: 16rem
 }

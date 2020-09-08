@@ -7,13 +7,13 @@ prev: ''
 next: ''
 ---
 
-ECAMScript3给Function的原型定义了两个方法，它们是`Function.prototype.call`和`Function. prototype.apply`
+ECAMScript3给Function的原型定义了两个方法，它们是`Function.prototype.call`和`Function.prototype.apply`
 
 ## 区别
 
 作用一模一样，区别在于传入参数形式的不同
 + apply第一参数this，指定了函数体内this对象的指向；第二参数 数组或者类数组
-+ apply第一参数this，指定了函数体内this对象的指向；第二参数 多个字符串
++ call第一参数this，指定了函数体内this对象的指向；第二参数 多个字符串
 
 有时候我们使用 call 或者 apply 的目的不在于指定 this 指向，而是另有用途，比如借用其他对象的方法。那么我们可以传入 null 来代替某个具体的对象
 

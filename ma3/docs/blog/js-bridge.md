@@ -39,6 +39,13 @@ WebView作为承载H5页面的容器，有一个特性是非常重要，即`它�
 
 但是native可以调用js,传入参数
 
++ iframe
++ window.location.href
+
+### window
+
+在window下注入方法供我们调用
+
 ``` js
 // 前端
 window.getSystemInfo = function(res){console.log(res)}
@@ -47,19 +54,6 @@ window.getSystemInfo = function(res){console.log(res)}
   NSLog(@"value: %@ error: %@", response, error);
 }];
 ```
-
-+ iframe
-+ window.location.href
-
-### window
-
-在window下注入方法供我们调用
-
-
-
-
-
-
 
 
 ## 传递消息
@@ -91,6 +85,5 @@ function schemeJump (url) { // 通过iframe子窗口发起网络请求
 
 js 端可以封装一层队列，所有 js 代码调用消息都先进入队列并不立刻发送，然后 h5 会周期性比如 500 毫秒，清空一次队列，保证在很快的时间内绝对不会连续发 2 次请求通信。
 
-+ window.prompt 
 
 bridge [不睿之] 桥梁

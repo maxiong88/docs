@@ -38,6 +38,7 @@ module.exports = {
                     {text:'javascript', link:'/javascript/'},
                     {text:'vue',link:'/vue/'},
                     {text:'html',link:'/html/'},
+                    {text:'ms',link:'/ms/'},
                 ]
             },
             {

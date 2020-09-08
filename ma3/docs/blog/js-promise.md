@@ -1,5 +1,5 @@
 ---
-title: 理解Promise原理--未完成
+title: 理解Promise原理
 description: 'https://www.ecma-international.org/ecma-262/6.0/#sec-promise-objects'
 sidebar: 'auto'
 time: '2015-01-09'
@@ -7,50 +7,30 @@ prev: ''
 next: ''
 ---
 
+### 面试常题
 
-### 初识promise
++ 了解Promise吗
+  - Promise单词翻译：许诺，希望，期望
+  - Promise是一个对象
+  - Promise/A+ 表示异步操作的最终结果（完成/失败）
+  - ECMAscript 规范定义为延时或异步计算最终结果的占位符
+  - 有三种状态：`fulfilled`、`rejected`、`pending`，每个状态只能改变一次（不可逆的）
 
-英文翻译：许诺，希望，期望
++ Promise解决了什么？
+  - 代码简洁
+    + Promise的链式调用解决了 函数无止境地狱回调( 嵌套调用)
+    + 可以帮助您自然地处理错误，简化了`try{}catch(e){}`
+    + 处理多个异步请求并发
+  - 在nodejs与浏览器中都可以使用
+  - 是异步编程的一种解决方案：Promise.all、Promise.race等
 
-Promise/A+ 表示异步操作的最终结果
++ Promise 事件循环、手写Promise
+  - 单独下面说
 
-ECMAscript 规范定义为延时或异步计算最终结果的占位符
 
-### promise 规范
+### Promise内部结构
 
-+ Promise 
-
-任何Promise对象都处于三种相互排斥的状态，只能使其中一个：fulfilled、rejected、pending
-
-状态只能改变一次，如果试图再次改变无效
-
-### Promise Abstract Operations 抽象操作
-
-+ PromiseCapability 
-  - 
-
-+ PromiseReaction 
-
-+ CreateResolvingFunctions
-
-+ FulfillPromise 
-
-+ NewPromiseCapability ( C )
-  - 使用C的构造方法来创建promise对象，并提取resolve、rejected函数
-  - 然后使用promise对象、reslove、rejected三个作为参数，初始化
-
-+ IsPromise ( x ) 检测是否是promise对象
-  - typeof x 如果不是对象，返回false
-  - 如果x没有[[promiseState]]内置属性，返回false
-  - 返回true
-
-+ RejectPromise ( promise, reason)
-
-+ TriggerPromiseReactions ( reactions, argument )
-
-### Promise Jobs 任务
-
-### The Promise Constructor
+#### Promise构造函数
 
 constructor[构造方法] 是Promise构造函数的内部对象和全局对象的Promise属性的初始值
 只能当作构造函数调用，他创建并初始化一个新的Promise对象；否则抛出异常
@@ -61,36 +41,42 @@ constructor[构造方法] 是Promise构造函数的内部对象和全局对象�
   - 执行executor
   - 返回promise
 
-### Promise构造函数的属性 Promise.prototype
+#### Promise参数-executor
 
-+ Promise.all ( iterable[可迭代对象] )
-  - 返回一个promise实例，如果全部成功则返回全部值(数组)；如果有一个失败则返回rejected；传入的iterable会被解析为promise
+executor是带有 resolve 和 reject 两个参数的函数 。Promise构造函数执行时立即调用executor 函数， resolve 和 reject 两个函数作为参数传递给executor（executor 函数在Promise构造函数返回所建promise实例对象前被调用）。resolve 和 reject 函数被调用时，分别将promise的状态改为fulfilled（完成）或rejected（失败）。executor 内部通常会执行一些异步操作，一旦异步操作执行完毕(可能成功/失败)，要么调用resolve函数来将promise状态改成fulfilled，要么调用reject 函数将promise的状态改为rejected。如果在executor函数中抛出一个错误，那么该promise 状态为rejected。executor函数的返回值被忽略。
+
+
+
+#### Promise的方法
+
++ Promise.all(iterable)
+  - 这个方法返回一个新的promise对象，该promise对象在iterable参数对象里所有的promise对象都成功的时候才会触发成功，一旦有任何一个iterable里面的promise对象失败则立即触发该promise对象的失败。这个新的promise对象在触发成功状态以后，会把一个包含iterable里所有promise返回值的数组作为成功回调的返回值，顺序跟iterable的顺序保持一致；如果这个新的promise对象触发了失败状态，它会把iterable里第一个触发失败的promise对象的错误信息作为它的失败错误信息。Promise.all方法常被用于处理多个promise对象的状态集合
 + Promise.prototype
-##### Promise.race ( iterable[可迭代对象] )
-  - 返回一个promise实例，该promise与传入的第一个promise的结果相同
-  - 定义 let Constructor = this，如果Constructor不是对象，抛出数据类型错误
-  - 定义 let S = Constructor[@@species] 返回 Constructor的构造函数(Promise的构造函数)
-  - 如果S不是null、undefined，则 let Constructor = S
-###### 调用 PerformPromiseRace ( iteratorRecord, promiseCapability, C )
-调用的是 resolve
+  - 返回被创建的实例函数.  默认为 Promise 函数.
++ Promise.race(iterable)
+  - 当iterable参数里的任意一个子promise被成功或失败后，父promise马上也会用子promise的成功返回值或失败详情作为参数调用父promise绑定的相应句柄，并返回该promise对象。
++ Promise.reject
+  - 返回一个状态为失败的Promise对象，并将给定的失败信息传递给对应的处理方法
++ Promise.resolve
+  - 返回一个状态由给定value决定的Promise对象。如果该值是thenable(即，带有then方法的对象)，返回的Promise对象的最终状态由then方法执行决定；否则的话(该value为空，基本类型或者不带then方法的对象),返回的Promise对象状态为fulfilled，并且将该value传递给对应的then方法。通常而言，如果你不知道一个值是否是Promise对象，使用Promise.resolve(value) 来返回一个Promise对象,这样就能将该value以Promise对象形式使用
 
-+ Promise.reject ( r )
-+ Promise.resolve ( x )
-
-### Promise原型对象的属性
+#### Promise原型对象的属性
 
 + Promise.prototype.catch ( onRejected )
-  - 用v表示当前值
-  - 返回 invoke(v, 'then')
+  - 添加一个拒绝(rejection) 回调到当前 promise, 返回一个新的promise。当这个回调函数被调用，新 promise 将以它的返回值来resolve，否则如果当前promise 进入fulfilled状态，则以当前promise的完成结果作为新promise的完成结果.
 
 + Promise.prototype.constructor
   - 初始值是Promise构造函数
+
++ Promise.prototype.finally(onFinally)
+  - 添加一个事件处理回调于当前promise对象，并且在原promise对象解析完毕后，返回一个新的promise对象。回调会在当前promise运行完毕后被调用，无论当前promise的状态是完成(fulfilled)还是失败(rejected)
 
 + Promise.prototype.then(onfulfilled, onrejected)
   - 检测当前promise是否是Promise实例(promise instanceof Promise)/IsPromise(promise),如果不是 抛出 throw TypeError
   - 通过new运算符，在通过Promise构造函数的constructor(构造方法),创建一个新的promise对象，
   - 执行 PerformPromiseThen
     + enqueuejob
+    + 添加解决(fulfillment)和拒绝(rejection)回调到当前 promise,
   - 返回新的promise对象
 
 + Promise.prototype[@@toStringTag]
@@ -98,7 +84,7 @@ constructor[构造方法] 是Promise构造函数的内部对象和全局对象�
   - 是一个内置 symbol ，值：promise
   - Object.prototype.toString.call(new Promise(() =>{})) ===> '[object promise]'
 
-### Promise的实例属性
+#### Promise的实例属性
 
 Promise实例是从Promise原型对象继承属性的普通对象
 
@@ -110,40 +96,34 @@ Promise实例是从Promise原型对象继承属性的普通对象
 |[[PromiseRejectReactions]]|promise rejected的反应；状态变成rejected的记录列表|
 
 
-### 书写
-excutor[ig 再 k te]
-status[s dei 特 s]
-![部分promise解析](../.vuepress/public/assets/img/promise-1.jpg)
+::: tip ???
+不管是Promise原型对象上的方法还是Promise函数对象上的方法 ，它们的执行结果都将返回一个Promise对象
+:::
 
-### promise.race 
+#### 手写 Promise.race 
 
 ``` js
-Promise.race = function(arr){
-    let Constructor = this;
-    return new Constructor((resolve, reject){
-        if(Object.prototype.toString.call(arr) !== '[Object Array]'){
-            return reject(new TypeError('arr must be array'))
-        }else{
-          let len = arr.length;
-          for(let i = 0;i< len;i++){
-            Constructor.resolve(arr[i]).then(resolve, reject)
-          }
-        }
+// 返回第一个成功或者失败的promise对象
+function race (arr){
+  let That = this;
+  if(Array.isArray(arr)){
+    return new That(function(resolve, reject){
+      let length = arr.length;
+      for(let i =0; i<length;i++){
+        That.resolve(arr[i]).then(resolve, reject)
+      }
     })
+  }else{
+    return new That(function(null, reject){
+      return reject(new TypeError('必须是数组'))
+    })
+  }
 }
 ```
 
 ### promise类库
 
 ``` js
-
-/*!
- * @overview es6-promise - a tiny implementation of Promises/A+.
- * @copyright Copyright (c) 2014 Yehuda Katz, Tom Dale, Stefan Penner and contributors (Conversion to ES6 API by Jake Archibald)
- * @license   Licensed under MIT license
- *            See https://raw.githubusercontent.com/stefanpenner/es6-promise/master/LICENSE
- * @version   v4.2.5+7f2b526d
- */
 
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
@@ -334,37 +314,6 @@ function then(onFulfillment, onRejection) {
   return child;
 }
 
-/**
-  `Promise.resolve` returns a promise that will become resolved with the
-  passed `value`. It is shorthand for the following:
-
-  ```javascript
-  let promise = new Promise(function(resolve, reject){
-    resolve(1);
-  });
-
-  promise.then(function(value){
-    // value === 1
-  });
-  ```
-
-  Instead of writing the above, your code now simply becomes the following:
-
-  ```javascript
-  let promise = Promise.resolve(1);
-
-  promise.then(function(value){
-    // value === 1
-  });
-  ```
-
-  @method resolve
-  @static
-  @param {Any} value value that the returned promise will be resolved with
-  Useful for tooling.
-  @return {Promise} a promise that will become fulfilled with the given
-  `value`
-*/
 function resolve$1(object) {
   /*jshint validthis:true */
   var Constructor = this;
@@ -742,108 +691,11 @@ var Enumerator = function () {
   return Enumerator;
 }();
 
-/**
-  `Promise.all` accepts an array of promises, and returns a new promise which
-  is fulfilled with an array of fulfillment values for the passed promises, or
-  rejected with the reason of the first passed promise to be rejected. It casts all
-  elements of the passed iterable to promises as it runs this algorithm.
 
-  Example:
-
-  ```javascript
-  let promise1 = resolve(1);
-  let promise2 = resolve(2);
-  let promise3 = resolve(3);
-  let promises = [ promise1, promise2, promise3 ];
-
-  Promise.all(promises).then(function(array){
-    // The array here would be [ 1, 2, 3 ];
-  });
-  ```
-
-  If any of the `promises` given to `all` are rejected, the first promise
-  that is rejected will be given as an argument to the returned promises's
-  rejection handler. For example:
-
-  Example:
-
-  ```javascript
-  let promise1 = resolve(1);
-  let promise2 = reject(new Error("2"));
-  let promise3 = reject(new Error("3"));
-  let promises = [ promise1, promise2, promise3 ];
-
-  Promise.all(promises).then(function(array){
-    // Code here never runs because there are rejected promises!
-  }, function(error) {
-    // error.message === "2"
-  });
-  ```
-
-  @method all
-  @static
-  @param {Array} entries array of promises
-  @param {String} label optional string for labeling the promise.
-  Useful for tooling.
-  @return {Promise} promise that is fulfilled when all `promises` have been
-  fulfilled, or rejected if any of them become rejected.
-  @static
-*/
 function all(entries) {
   return new Enumerator(this, entries).promise;
 }
 
-/**
-  `Promise.race`
-
-  Example:
-
-  let promise1 = new Promise(function(resolve, reject){
-    setTimeout(function(){
-      resolve('promise 1');
-    }, 200);
-  });
-
-  let promise2 = new Promise(function(resolve, reject){
-    setTimeout(function(){
-      resolve('promise 2');
-    }, 100);
-  });
-
-  Promise.race([promise1, promise2]).then(function(result){
-    // result === 'promise 2' because it was resolved before promise1
-    // was resolved.
-  });
-
-  let promise1 = new Promise(function(resolve, reject){
-    setTimeout(function(){
-      resolve('promise 1');
-    }, 200);
-  });
-
-  let promise2 = new Promise(function(resolve, reject){
-    setTimeout(function(){
-      reject(new Error('promise 2'));
-    }, 100);
-  });
-
-  Promise.race([promise1, promise2]).then(function(result){
-    // Code here never runs
-  }, function(reason){
-    // reason.message === 'promise 2' because promise 2 became rejected before
-    // promise 1 became fulfilled
-  });
-
-  An example real-world use case is implementing timeouts:
-
-  Promise.race([ajax('foo.json'), timeout(5000)])
-
-
-  @method race
-  @static
-  @param {Array} 入参必须是数组或为iterable对象，否则抛出 类型错误
-  @return {Promise} 返回 第一个完成的promise对象，不管第一个是resolve还是reject
-*/
 function race(entries) {
   /*jshint validthis:true */
   var Constructor = this;
@@ -862,40 +714,7 @@ function race(entries) {
   }
 }
 
-/**
-  `Promise.reject` returns a promise rejected with the passed `reason`.
-  It is shorthand for the following:
 
-  ```javascript
-  let promise = new Promise(function(resolve, reject){
-    reject(new Error('WHOOPS'));
-  });
-
-  promise.then(function(value){
-    // Code here doesn't run because the promise is rejected!
-  }, function(reason){
-    // reason.message === 'WHOOPS'
-  });
-  ```
-
-  Instead of writing the above, your code now simply becomes the following:
-
-  ```javascript
-  let promise = Promise.reject(new Error('WHOOPS'));
-
-  promise.then(function(value){
-    // Code here doesn't run because the promise is rejected!
-  }, function(reason){
-    // reason.message === 'WHOOPS'
-  });
-  ```
-
-  @method reject
-  @static
-  @param {Any} reason value that the returned promise will be rejected with.
-  Useful for tooling.
-  @return {Promise} a promise rejected with the given `reason`.
-*/
 function reject$1(reason) {
   /*jshint validthis:true */
   var Constructor = this;
@@ -903,118 +722,16 @@ function reject$1(reason) {
   reject(promise, reason);
   return promise;
 }
-
+// resolver函数 必须作为第一个参数，传递给Promise构造函数。否则抛出错误
 function needsResolver() {
   throw new TypeError('You must pass a resolver function as the first argument to the promise constructor');
 }
 
+// Promise是对象构造函数，不能作为函数调用。调用时使用 `new`操作符
 function needsNew() {
   throw new TypeError("Failed to construct 'Promise': Please use the 'new' operator, this object constructor cannot be called as a function.");
 }
 
-/**
-  Promise objects represent the eventual result of an asynchronous operation. The
-  primary way of interacting with a promise is through its `then` method, which
-  registers callbacks to receive either a promise's eventual value or the reason
-  why the promise cannot be fulfilled.
-
-  Terminology
-  -----------
-
-  - `promise` is an object or function with a `then` method whose behavior conforms to this specification.
-  - `thenable` is an object or function that defines a `then` method.
-  - `value` is any legal JavaScript value (including undefined, a thenable, or a promise).
-  - `exception` is a value that is thrown using the throw statement.
-  - `reason` is a value that indicates why a promise was rejected.
-  - `settled` the final resting state of a promise, fulfilled or rejected.
-
-  A promise can be in one of three states: pending, fulfilled, or rejected.
-
-  Promises that are fulfilled have a fulfillment value and are in the fulfilled
-  state.  Promises that are rejected have a rejection reason and are in the
-  rejected state.  A fulfillment value is never a thenable.
-
-  Promises can also be said to *resolve* a value.  If this value is also a
-  promise, then the original promise's settled state will match the value's
-  settled state.  So a promise that *resolves* a promise that rejects will
-  itself reject, and a promise that *resolves* a promise that fulfills will
-  itself fulfill.
-
-
-  Basic Usage:
-  ------------
-
-  ```js
-  let promise = new Promise(function(resolve, reject) {
-    // on success
-    resolve(value);
-
-    // on failure
-    reject(reason);
-  });
-
-  promise.then(function(value) {
-    // on fulfillment
-  }, function(reason) {
-    // on rejection
-  });
-  ```
-
-  Advanced Usage:
-  ---------------
-
-  Promises shine when abstracting away asynchronous interactions such as
-  `XMLHttpRequest`s.
-
-  ```js
-  function getJSON(url) {
-    return new Promise(function(resolve, reject){
-      let xhr = new XMLHttpRequest();
-
-      xhr.open('GET', url);
-      xhr.onreadystatechange = handler;
-      xhr.responseType = 'json';
-      xhr.setRequestHeader('Accept', 'application/json');
-      xhr.send();
-
-      function handler() {
-        if (this.readyState === this.DONE) {
-          if (this.status === 200) {
-            resolve(this.response);
-          } else {
-            reject(new Error('getJSON: `' + url + '` failed with status: [' + this.status + ']'));
-          }
-        }
-      };
-    });
-  }
-
-  getJSON('/posts.json').then(function(json) {
-    // on fulfillment
-  }, function(reason) {
-    // on rejection
-  });
-  ```
-
-  Unlike callbacks, promises are great composable primitives.
-
-  ```js
-  Promise.all([
-    getJSON('/posts'),
-    getJSON('/comments')
-  ]).then(function(values){
-    values[0] // => postsJSON
-    values[1] // => commentsJSON
-
-    return values;
-  });
-  ```
-
-  @class Promise
-  @param {Function} resolver
-  Useful for tooling.
-  @constructor
-*/
 
 var Promise$1 = function () {
 	// 定义promise函数
@@ -1034,132 +751,6 @@ var Promise$1 = function () {
       this instanceof Promise ? initializePromise(this, resolver) : needsNew();
     }
   }
-
-  /**
-  The primary way of interacting with a promise is through its `then` method,
-  which registers callbacks to receive either a promise's eventual value or the
-  reason why the promise cannot be fulfilled.
-   ```js
-  findUser().then(function(user){
-    // user is available
-  }, function(reason){
-    // user is unavailable, and you are given the reason why
-  });
-  ```
-   Chaining
-  --------
-   The return value of `then` is itself a promise.  This second, 'downstream'
-  promise is resolved with the return value of the first promise's fulfillment
-  or rejection handler, or rejected if the handler throws an exception.
-   ```js
-  findUser().then(function (user) {
-    return user.name;
-  }, function (reason) {
-    return 'default name';
-  }).then(function (userName) {
-    // If `findUser` fulfilled, `userName` will be the user's name, otherwise it
-    // will be `'default name'`
-  });
-   findUser().then(function (user) {
-    throw new Error('Found user, but still unhappy');
-  }, function (reason) {
-    throw new Error('`findUser` rejected and we're unhappy');
-  }).then(function (value) {
-    // never reached
-  }, function (reason) {
-    // if `findUser` fulfilled, `reason` will be 'Found user, but still unhappy'.
-    // If `findUser` rejected, `reason` will be '`findUser` rejected and we're unhappy'.
-  });
-  ```
-  If the downstream promise does not specify a rejection handler, rejection reasons will be propagated further downstream.
-   ```js
-  findUser().then(function (user) {
-    throw new PedagogicalException('Upstream error');
-  }).then(function (value) {
-    // never reached
-  }).then(function (value) {
-    // never reached
-  }, function (reason) {
-    // The `PedgagocialException` is propagated all the way down to here
-  });
-  ```
-   Assimilation
-  ------------
-   Sometimes the value you want to propagate to a downstream promise can only be
-  retrieved asynchronously. This can be achieved by returning a promise in the
-  fulfillment or rejection handler. The downstream promise will then be pending
-  until the returned promise is settled. This is called *assimilation*.
-   ```js
-  findUser().then(function (user) {
-    return findCommentsByAuthor(user);
-  }).then(function (comments) {
-    // The user's comments are now available
-  });
-  ```
-   If the assimliated promise rejects, then the downstream promise will also reject.
-   ```js
-  findUser().then(function (user) {
-    return findCommentsByAuthor(user);
-  }).then(function (comments) {
-    // If `findCommentsByAuthor` fulfills, we'll have the value here
-  }, function (reason) {
-    // If `findCommentsByAuthor` rejects, we'll have the reason here
-  });
-  ```
-   Simple Example
-  --------------
-   Synchronous Example
-   ```javascript
-  let result;
-   try {
-    result = findResult();
-    // success
-  } catch(reason) {
-    // failure
-  }
-  ```
-   Errback Example
-   ```js
-  findResult(function(result, err){
-    if (err) {
-      // failure
-    } else {
-      // success
-    }
-  });
-  ```
-   Promise Example;
-   ```javascript
-  findResult().then(function(result){
-    // success
-  }, function(reason){
-    // failure
-  });
-  ```
-   Advanced Example
-  --------------
-   Synchronous Example
-   ```javascript
-  let author, books;
-   try {
-    author = findAuthor();
-    books  = findBooksByAuthor(author);
-    // success
-  } catch(reason) {
-    // failure
-  }
-  ```
-   Errback Example
-
-   Promise Example;
-
-   @method then
-  @param {Function} onFulfilled
-  @param {Function} onRejected
-  Useful for tooling.
-  @return {Promise}
-  */
-
   /**
   `catch` is simply sugar for `then(undefined, onRejection)` which makes it the same
   as the catch block of a try/catch statement.
@@ -1266,6 +857,42 @@ return Promise$1;
 
 })));
 ```
+
+
+
+#### forEach 复制对象
+
+``` js
+function copy(obj) {
+  const copy = Object.create(Object.getPrototypeOf(obj));
+  const propNames = Object.getOwnPropertyNames(obj);
+
+  propNames.forEach(function(name) {
+    const desc = Object.getOwnPropertyDescriptor(obj, name);
+    Object.defineProperty(copy, name, desc);
+  });
+
+  return copy;
+}
+
+const obj1 = { a: 1, b: 2 };
+const obj2 = copy(obj1);
+```
+
+#### 面试注意点
+
++ 如果`promise`对象状态没有改变是不会进入`then`方法
++ 进入到`then`方法以后 状态改为`pending`
++ `.then` 或者 `.catch` 的参数期望是函数，传入非函数则会发生值透传。
+
+
+### 书写
+excutor[ig 再 k te]
+status[s dei 特 s]
+polyfill [pao 李 费 o]
+
+### 手写
+![部分promise解析](../.vuepress/public/assets/img/promise-1.jpg)
 
 
 
