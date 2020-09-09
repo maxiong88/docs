@@ -1513,3 +1513,167 @@ BFC里的元素与外面的元素不会发生影响
 2.BFC的区域不会与float box重叠
 
 3.同一个BFC中两个相邻的box的上下margin会重叠
+
+## 声明一个函数fn,对其使用typeof,结果返回什么？然后我给fn添加一个属性，请问会报错吗？为什么？
+
+返回 "function", 不会报错，函数是第一类对象（first-class objects），或者说它们被称作一等公民（first-class citizens）。函数与对象共存，函数也可以被视为其他任意类型的JavaScript对象。函数和那些更普通的JavaScript数据类型一样，它能被变量引用，能以字面量形式声明，甚至能被作为函数参数进行传递。<br />
+对象能做的任何一件事，函数也都能做。函数也是对象，唯一的特殊之处在于它是可调用的（invokable），即函数会被调用以便执行某项动作。
+
+## ES6中，promise能实现异步的原理是什么？我new一个promise,然后对这个promise实例使用typeof，结果是什么？promise实例接收的参数是一个函数，函数接收两个参数一个resolve,一个reject,为什么resolve后可以实现继续执行后续代码？
+
+promise表示异步操作的最终结果，他有三种状态但是不可逆的。
+resolve返回一个新的peomise对象
+
+
+## css 单行文本居中显示，多行文本左对齐
+
+父级 `text-align:center;`
+子级 `text-align:left;display:inline-block;`
+或
+当前文本元素 `display: flex;justify-content: center;`
+
+## 为什么你老是讲不清楚js的继承模式
+
++ 原型链继承
+关键：把子类的原型指向父类的实例，从而继承父类的私有属性和原型属性
+	``` js
+		function Parent (sex) {
+			this.sex = sex
+		}
+
+		Parent.prototype.setSex = function () {}
+
+		function Son (name) {
+			this.name = name
+		}
+
+		Son.prototype = new Parent()
+		var s1 = new Son('DBCDouble')
+		console.log(s1)
+	```
+	- 优点：父类新增原型属性和方法，子类实例都能访问到。简单、易用
+	- 缺点：无法实现多继承。创建子类实例的时候，无法向父类构造函数传参。有子类实例共享父类引用属性的问题
++ 借用父类构造函数继承
+关键：在子类构造函数中使用call或者apply调用父类构造函数实现父类私有属性继承（函数复用）
+	``` js
+	function Parent (sex) {
+		this.sex = sex
+	}
+
+	Parent.prototype.setSex = function () {}
+
+	function Son (name, age, sex) {
+		Parent.call(this, sex)
+		this.name = name
+		this.age = age
+	}
+	var s1 = new Son('DBCdouble', 25, '男')
+	console.log(s1)
+	```
+	- 优点：可以实现多继承。解决了原型链继承中子类实例共享父类引用属性的问题。创建子类实例时，可以向父类传递参数。
+	- 缺点：只继承父类的实例属性(私有属性)，没有继承父类的原型属性。每次创建子类实例时，都要调用一次父类构造函数，影响性能
++ 组合式继承(原型链继承 + 借用构造函数继承)
+关键：通过调用父类构造函数，继承父类的属性并保留传参的优点，并通过Object.create(Parent.prototype)来创建继承了父类原型属性的对象，并把这个对象赋给子类的原型，这样的话，既能保证父类构造函数不用执行两次，又能让子类能继承到父类的原型方法
+	``` js
+	function Parent (sex) {
+		this.sex = sex
+	}
+
+	Parent.prototype.setSex = function () {}
+
+	function Son (name, age, sex) {
+		Parent.call(this, sex)
+		this.name = name
+		this.age = age
+	}
+	Son.prototype = Object.create(Parent.prototype)
+	Son.prototype.constructor = Son
+	var s1 = new Son('DBCdouble', 25, '男')
+	console.log(s1)
+	```
+	- 优点：创建子类实例时，可以向父类传递参数。可以实现多继承。解决了原型链继承中子类实例共享父类引用属性的问题。父类构造函数只用执行一次。
++ ES6的class继承
+ES6中引入了class关键字，class可以通过extends关键字实现继承，还可以通过static关键字定义类的静态方法，这比 ES5 的通过修改原型链实现继承，要清晰和方便很多。
+关键：使用extends关键字继承父类的原型属性，调用super来继承父类的实例属性，且保留向父类构造函数传参的优点
+	``` js
+	class A {
+	constructor (sex) {
+		this.sex = sex
+	}
+	showSex () {
+		console.log('这里是父类的方法')
+	}
+	}
+
+	class B extends A {
+	constructor (name, age, sex) {
+		super(sex);
+		this.name = name;
+		this.age = age;
+	}
+
+	showSex () {
+		console.log('这里是子类的方法')
+	}
+	}
+
+	const b = new B('DBCDOUBLE', 25, '男')
+	console.log(b);
+	// super指的就是父类构造函数
+	// 子类继承父类的实例属性最终还是通过call或者apply来实现继承的
+	// 通过extends方法的调用来修改子类和父类的原型链关系
+
+	// extends做了以下几件事：
+
+	// 定义了一个function __() {}函数，并把该函数的constructor指向了子类
+	// 紧接着，把function __() {} 函数的原型指向了父类的原型
+	// 最后再把function () {} 函数的实例赋给了子类函数，就这样子类的实例就能沿着proto.proto获取到父类的原型属性了，这种继承模式俗称圣杯模式
+
+	```
+	- 优点：简单易用，不用自己来修改原型链来完成继承
+
+## 面向对象
+多态：不同类可以定义相同的方法或属性。
+继承：一个类可以继承另一个类的特征
+封装：一种把数据和相关的方法绑定在一起使用的方法。
+命名空间：
+构造函数：
+
+## vue理解
+
+## add(1)(2)(3)
+
++ 柯理化 参考 https://ramdajs.com/
+``` js
+function add(n){
+  var sum = n;
+  var tmp = function(m){
+    sum += m;
+    return tmp;
+  }
+	//   tmp.toString = function(){return sum};
+  return tmp;
+}
+function add() {
+    // 第一次执行时，定义一个数组专门用来存储所有的参数
+    var _args = Array.prototype.slice.call(arguments);
+
+    // 在内部声明一个函数，利用闭包的特性保存_args并收集所有的参数值
+    var _adder = function() {
+        _args.push(...arguments);
+        return _adder;
+    };
+
+    // 利用toString隐式转换的特性，当最后执行时隐式转换，并计算最终的值返回
+    _adder.toString = function () {
+        return _args.reduce(function (a, b) {
+            return a + b;
+        });
+    }
+    return _adder;
+}
+```
+
+
++ 链接：https://juejin.im/post/6869628880538468359
++ 链接：https://juejin.im/post/6869689622676471816
