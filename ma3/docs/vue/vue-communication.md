@@ -9,8 +9,7 @@ next: ''
 
 ## vue.observable({})
 
-返回的对象可以直接用于渲染函数和计算属性内，并且会在发生改变时触发相应的更新。简易版vuex
-
+返回的对象可以直接用于渲染函数和计算属性内，并且会在发生改变时触发相应的更新。简易版vuex    
 ``` js
 // store/store.js
 import Vue from 'vue';

@@ -896,7 +896,20 @@ function debounce(func, timeout) {
 
 ```
 
-## js 克隆、拷贝
+## js 克隆
+
+### 深克隆
+``` js
+let obj = {...obj}
+Object.assign({}.obj)
+let arr = [...obj]
+let arr = [].comcat(arr)
+
+
+
+
+```
+
 
 `Object.assign({},)` 无法实现多层深拷贝
 
@@ -910,9 +923,9 @@ function _cloneRegExp(pattern){
     return new RegExp(pattern.source, 
         (pattern.global ? 'g' : '') + 
         (pattern.ignoreCase ? 'i' : '') +
-        (pattern.multiline ? 'm' : '') +
-		(pattern.sticky ? 'y' : '') +
-		(pattern.unicode ? 'u' : '')
+        // (pattern.multiline ? 'm' : '') +
+		// (pattern.sticky ? 'y' : '') +
+		// (pattern.unicode ? 'u' : '')
     );
 }
 /**
@@ -938,7 +951,8 @@ function _clone(value, refFrom, refTo, deep){
 		refFrom[idx + 1] = value;
 		refTo[idx + 1] = copiedValue;
 		for(var key in value){
-			copiedValue[key] = deep ? _clone(value[key], refFrom, refTo, true) : value[key]
+			// copiedValue[key] = deep ? _clone(value[key], refFrom, refTo, true) : value[key]
+			copiedValue[key] = _clone(value[key], refFrom, refTo, true)
 		}
 		return copiedValue;
 		
@@ -1673,6 +1687,65 @@ function add() {
     return _adder;
 }
 ```
+
+
+## 深浅拷贝 递归
+
+递归
+
+## 缓存
+Web 缓存减少了等待时间和网络流量，因此减少了显示资源表示形式所需的时间。通过使用 HTTP缓存，变得更加响应性。
+一般只有GET请求才会被缓存
+浏览器缓存策略分为两种：强缓存和协商缓存
+
+相同点：如果命中，都是从客户端缓存中加载资源，而不是从服务器加载资源数据
+不同点：强缓存不发请求到服务器，协商缓存会发请求到服务器
+
+### 基本原理
+1).浏览器在加载资源时，根据请求头的expires（绝对时间、由服务器返回，下次请求如果在这个时间之前则命中缓存）和cache-control（相对缓存、利用max-ages如果在生命周期内命中缓存，优先级高于expires）判断是否命中强缓存，是则直接从缓存读取资源，不会发请求到服务器
+2）如果没有命中强缓存，浏览器一定会发送一个请求到服务器，通过last-modified（表示本地文件最后修改日期，询问服务器在改日气候资源是否有更新有更新就发送新资源）和etag（询问该资源的Etag是否有更新，有变动就会发送新的资源回来）验证资源是否命中协商缓存，如果命中，服务器会将这个请求返回，但是不会返回这个资源的数据，依然是从缓存中读取资源
+3）如果前面两者都没有命中，直接从服务器加载资源
+
+
+
+作者：ほうこう
+链接：https://juejin.im/post/6847902216200650760
+来源：掘金
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+
+
+
+## vuex 流程
+
+在组件内通过store.dispath触发action动作，action(可以异步)通过commit提交（触发）mutation（同步的）
+mutation内是唯一可以修改store中的状态的，也可以做直接在组件内通过store.commit触发mutation
+
+
+## vue-router 路由模式
+
+addroute 动态添加路由，
+router.beforeEach 前置守卫判断用户登录态信息
+
+hash模式:
+是基于location.hash来实现的,当hash改变时，页面不会因此刷新，浏览器也不会请求服务器。
+当hash路由发生跳转，便会触发hashchange事件，此事件会处理`#`后面参数一些兼容问题`decodeURI`转码
+
+history模式：
+这种模式充分利用 history.pushState API 来完成 URL 跳转而无须重新加载页面。
+
+
+
+
+## url 
+
+## cookie sessionStorage localstroage Web storage API 
+
+cookie是服务器种在用户浏览器中的小块数据，它会在浏览器下次向同一服务器发起请求时，带到服务器上
+
+为每一个给定的源（given origin）维持一个独立的存储区域
+sessionStorage该存储区域在页面会话期间可用
+localStorage但是在浏览器关闭，然后重新打开后数据仍然存在
+
 
 
 + 链接：https://juejin.im/post/6869628880538468359
