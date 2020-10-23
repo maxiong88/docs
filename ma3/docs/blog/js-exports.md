@@ -1,6 +1,6 @@
 ---
 title: es6模块 or commonjs模块
-description: '再看axios源码的时候看到了 module.exports module.exports.default export export default'
+description: 'module.exports module.exports.default export export default'
 sidebar: 'auto'
 time: '2015-01-03'
 prev: ''

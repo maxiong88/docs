@@ -1,0 +1,25 @@
+{
+  "name": "maxiongweb",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "dependencies": {
+    "@vuepress/plugin-medium-zoom": "^1.7.1",
+    "css-doodle": "^0.8.5",
+    "element-ui": "^2.13.2",
+    "lodash-es": "^4.17.15",
+    "markdown-it-ins": "^3.0.0"
+  },
+  "devDependencies": {
+    "vuepress": "^1.7.1"
+  },
+  "scripts": {
+    "docs:dev": "vuepress dev docs",
+    "docs:build": "vuepress build docs"
+  },
+  "author": "",
+  "license": "ISC"
+}

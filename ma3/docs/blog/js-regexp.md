@@ -723,3 +723,24 @@ String(参数) 可以将null和undefined转换为字符窜，但没法转进制
 var a = '5555[222]333'
 
 a.match(/[(.+?)]/g)  匹配中括号文字
+
+
+``` js
+
+export function limitFloat(val){
+  let sNum = val.toString(); //先转换成字符串类型
+  if (sNum.indexOf('.') == 0) {//第一位就是 .
+    console.log('first str is .')
+    sNum = '0' + sNum
+  }
+  sNum = sNum.replace(/[^\d.]/g,"");  //清除“数字”和“.”以外的字符
+  sNum = sNum.replace(/\.{2,}/g,"."); //只保留第一个. 清除多余的
+  sNum = sNum.replace(".","$#$").replace(/\./g,"").replace("$#$",".");
+  sNum = sNum.replace(/^(\-)*(\d+)\.(\d\d).*$/,'$1$2.$3');//只能输入两个小数
+  //以上已经过滤，此处控制的是如果没有小数点，首位不能为类似于 01、02的金额
+  if(sNum.indexOf(".")< 0 && sNum !=""){
+    sNum = parseFloat(sNum);
+  }
+  return sNum
+
+```
