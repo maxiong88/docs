@@ -19,7 +19,7 @@ ES6模块存储在文件中。每个文件只有一个模块，每个模块只�
 ### 16.1.1 Multiple named exports 多命名导出
 
 There can be multiple named exports:
-可以有多少命名导出
+可以导出多个命名
 
 ``` js
 //------ lib.js ------
