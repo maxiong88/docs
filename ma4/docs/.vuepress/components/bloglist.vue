@@ -6,9 +6,18 @@
                     <router-link
                     :to="item.path" 
                     >
-                        <h3>{{item.title}}</h3>
-                        <p>{{item.frontmatter.description}}</p>
-                        <p class="conreading">继续阅读......</p>
+                        <div class="a-list">
+                            <div class="a-list-left">
+                                <h3>{{item.title}}</h3>
+                                <p>{{item.frontmatter.description}}</p>
+                                <p class="conreading">继续阅读......</p>
+                            </div>
+                            <div class="a-list-right">
+                                <img :src="item.frontmatter.imgPIc"/>
+                            </div>
+                        </div>
+                        
+                        
                         <!-- <p>作者：光头强</p> -->
                         <!-- <p>发布时间：{{item.frontmatter.time}}</p> -->
                     </router-link>
@@ -53,6 +62,7 @@ export default {
         console.log(this.$site, '==========1')
         console.log(this.$page, '===========2')
         console.log(this.$pagination, '============3')
+        console.log(this.$frontmatter,'=====4')
         const {pages} = this.$site;
         let {
             pageSize
@@ -61,6 +71,7 @@ export default {
         // var re = new RegExp("^\/"+this.tab+"\/(\w+\-*\w+)*\.html$", "")
         // /^\/blog\/(\w+\-*\w+)*\.html$/gi
         pages.forEach(element => {
+            console.log(element.frontmatter,'element.frontmatter')
 			if(element.frontmatter.roof){
 				roofArr.push(element)
 			}else if((new RegExp(this.tab+"\/[a-zA-Z0-9\-]*\.html$")).test(element.path) && element.frontmatter.time){
@@ -123,6 +134,19 @@ export default {
             background-color #f8f8f8
             padding 15px
             margin 0 -15px  
+        }
+        .a-list{
+            display flex
+            .a-list-left{
+                flex 1
+            }
+            .a-list-right{
+                flex-basis 17%
+                align-self center
+                img{
+                    display block
+                }
+            }
         }
     }
     a{
