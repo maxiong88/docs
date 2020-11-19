@@ -5,6 +5,7 @@ sidebar: 'auto'
 time: '2019-01-01'
 prev: ''
 next: ''
+imgPIc: '../assets/img/17.jpg'
 ---
 
 
@@ -24,8 +25,11 @@ next: ''
 
 + 使用keep-alive出现传值的问题
     - 如果是基本数据类型，只会在初始创建的时候触API，反复点击不会触发任何API
-    - 如果是Object（除去null），在初始创建的时候触API，反复点击会触发`watch` `computed`
-+ 不使用keep-alive
+    - 如果是Object（除去null），在初始创建的时候触API，反复点击会触发`watch` `computed` `activated` `deactivated`
+    - 一旦你使用了 keep-alive，那么你就可以访问另外两个生命周期钩子：activated 和 deactivated。如果你想要在一个 keep-alive 组件被移除的时候进行清理或改变数据，可以使用 deactivated 钩子。
+        + activated 被 keep-alive 缓存的组件激活时调用
+        + deacti
++ 不使用keep-alive 
     - 初始创建的时候是先销毁上一个在创建下一个
     - 如果点击创建好的会先执行新的`created`，再去执行旧的`beforeDestroy`
 
