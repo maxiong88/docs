@@ -4,9 +4,6 @@ description: ''
 time: '2020-10-27'
 prev: ''
 next: ''
-tags:
-    - 'javascript'
-    - '浏览器'
 ---
 
 ::: TIP MDN
