@@ -40,10 +40,13 @@ for(var i = 0; i < 3; i += 1){
 ```
 
 ## forEach((item, index) => {})
+对每个元素执行一次给定的函数。
+除了抛出异常以外，没有办法中止或跳出 forEach() 循环。如果你需要中止或跳出循环，forEach() 方法不是应当使用的工具。
 
-+ return 结束本地循环，进入下一次循环
++ return 结束本次循环，进入下一次循环
 + break、continue 语法错误
 + 返回值：无返回值
++ 不会改变原对象
 
 ``` js
 var arr = [1,2,3];
@@ -58,7 +61,7 @@ arr.forEach(function(value,index) {
 ```
 
 ## map((item, index) => {})
-
+map 不修改调用它的原数组本身（当然可以在 callback 执行时改变原数组）
 + return 返回新数组当前元素的值
 + break、continue 语法错误
 + 返回值：新数组

@@ -393,27 +393,27 @@ async function axios(urls){
   let arr = [];
 	for(i of urls){
 		try{
-            arr.push(
-                await new Promise((resolve, reject) => {
-                    console.log(i,'===')
-                    if(i === 1 || i === 4 || i === 8){
-                        setTimeout(() => {reject(i+'@@'+Date.now())}, 1000)
-                    }else{
-                        setTimeout(() => {resolve(i+'@@@'+Date.now())}, 1000)
-                    }
-                    
-                })
-            );
-        }catch(err){
-            num ++;
-            console.log(err,num)
-            if(num >= 3){
+      arr.push(
+          await new Promise((resolve, reject) => {
+              console.log(i,'===')
+              if(i === 1 || i === 4 || i === 8){
+                  setTimeout(() => {reject(i+'@@'+Date.now())}, 1000)
+              }else{
+                  setTimeout(() => {resolve(i+'@@@'+Date.now())}, 1000)
+              }
+              
+          })
+      );
+    }catch(err){
+      num ++;
+      console.log(err,num)
+      if(num >= 3){
 				throw('错误了三弟')
 			}
-        }
+    }
 	}
-    console.log(arr, num)
-    return arr;
+  console.log(arr, num)
+  return arr;
 }
 axios([1,2,3,4,5,6,7,8,9,19,23])
 
@@ -434,31 +434,31 @@ VM32383:29 Uncaught (in promise) 错误了三弟
 ``` js
 // 并发操作
 async function logInOrder(urls) {
-    let response;
-    let num = 0;
-    const textPromises = urls.map(async url => {
-        response = await new Promise((resolve,reject) => {
-            if(url === 1 || url === 4 || url === 8){
-                setTimeout(() => {reject(url+'@@@'+Date.now())}, url*1000)
-            }else{
-                setTimeout(() => {resolve(url+'@@'+Date.now())}, url*1000)
-            }
-        });
-    return response;
-    });
-	console.log(textPromises, '=======11111')
-    // 按次序输出
-    for (const textPromise of textPromises) {
-        try{
-            console.log(await textPromise);
-        }catch(w){
-            num++;
-            console.log(num);
-            if(num >=3){
-                throw('抛出3次错误');
-            }
+  let response;
+  let num = 0;
+  const textPromises = urls.map(async url => {
+    response = await new Promise((resolve,reject) => {
+        if(url === 1 || url === 4 || url === 8){
+            setTimeout(() => {reject(url+'@@@'+Date.now())}, url*1000)
+        }else{
+            setTimeout(() => {resolve(url+'@@'+Date.now())}, url*1000)
         }
+    });
+    return response;
+  });
+  console.log(textPromises, '=======11111')
+  // 按次序输出
+  for (const textPromise of textPromises) {
+    try{
+        console.log(await textPromise);
+    }catch(w){
+      num++;
+      console.log(num);
+      if(num >=3){
+          throw('抛出3次错误');
+      }
     }
+  }
 }
 logInOrder([1,3,2,4,7,6,5,8])
 
