@@ -16,11 +16,6 @@ imgPIc: '../assets/img/fullcalendar.png'
     - 事件：loading
 
 
-未解决
-+ 不明白 Events 与 Resources区别
-
-
-
 组件
 
 ```vue
