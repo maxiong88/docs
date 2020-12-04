@@ -1,6 +1,6 @@
 ---
-title: es6模块 or commonjs模块
-description: '在review代码的时候，提了一句export与export default是否可以共存'
+title: [精]es6模块 or commonjs模块
+description: '在review代码的时候，提了一句export与export default是否可以共存;在模块中导入是导出的什么（副本-拷贝、视图）'
 sidebar: 'auto'
 time: '2018-01-03'
 prev: ''
