@@ -1,6 +1,6 @@
 ---
 title: [精] 工作中antdv遇到的问题
-description: '深入响应式原理、'
+description: '深入响应式原理、form表单提交'
 sidebar: 'auto'
 time: '2018-01-03'
 prev: ''
@@ -60,3 +60,99 @@ export default{
 
 
 ## vue中使用纯函数
+
+
+## form表单提交
+
+#### 表单数据对象时嵌套的，重置数据可能会失效
+
+出现下面的问题还是说明没有仔细去阅读官方文档
+:::tip
+prop--->是：`表单域 model 字段`，在使用 validate、resetFields 方法的情况下，该属性是必填的
+需要v-model模式下
+:::
+``` vue
+<template>
+<!--/ 比如这样时错误的/-->
+    <a-form-model ref="formmodel" :model="formmodel" :rules="rules">
+        <a-form-item prop="age">
+            <a-input v-model="formmodel.params1.age">
+        </a-form-item>
+        <a-form-item prop="age">
+            <a-input v-model="formmodel.params2.age">
+        </a-form-item>
+    </a-form-model>
+</template>
+<script>
+    export default {
+        name:"formmodel",
+        data(){
+            return {
+                formmodel:{
+                    params1:{
+                        age:''
+                    },
+                    params2:{
+                        age:''
+                    }
+                },
+                rules:{
+                    "age":[{required:true}],
+                }
+            }
+        },
+        methods:{
+            reset(){
+                this.$refs.formmodel.resetFields();// 不会是表单数据还原
+            },
+            submit(){
+                this.$refs.formmodel.validate(valid =>{
+
+                })
+            }
+        }
+    }
+</script>
+
+<template>
+<!--/ 比如这样是对的/-->
+    <a-form-model ref="formmodel" :model="formmodel" :rules="rules">
+        <a-form-item prop="params1.age">
+            <a-input v-model="formmodel.params1.age">
+        </a-form-item>
+        <a-form-item prop="params2.age">
+            <a-input v-model="formmodel.params2.age">
+        </a-form-item>
+    </a-form-model>
+</template>
+<script>
+    export default {
+        name:"formmodel",
+        data(){
+            return {
+                formmodel:{
+                    params1:{
+                        age:''
+                    },
+                    params2:{
+                        age:''
+                    }
+                },
+                rules:{
+                    "params1.age":[{required:true}],
+                }
+            }
+        },
+        methods:{
+            reset(){
+                this.$refs.formmodel.resetFields();// 会是表单数据还原
+            },
+            submit(){
+                this.$refs.formmodel.validate(valid =>{
+
+                })
+            }
+        }
+    }
+</script>
+```
