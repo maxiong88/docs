@@ -114,6 +114,7 @@ git 问题
 	* git push origin --delete "xxxx" 删除远程分支
 	* git push origin :"分支" 删除远程分支
 	* git checkout -b "xxx" origin/"xxxx" 检出远程分支到本地
+	* git clone -b "xxx" "url" "本地路径" clone远程分支到本地
 
 ###### 储藏
 

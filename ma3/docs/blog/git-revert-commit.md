@@ -47,6 +47,12 @@ fatal: revert failed
 ## 合并多个commit
 
 
+git worktree add 本地文件 远程分支名
+
+## ls-remote -h -t git://github.com/adobe-webplatform/eve.git
+
+解决方法：
+git config --global url."https://".insteadOf git://
 
 
 

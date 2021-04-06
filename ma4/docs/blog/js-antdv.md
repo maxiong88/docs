@@ -1,18 +1,20 @@
 ---
-title: [精] 工作中antdv遇到的问题
+title: '[精]工作中antdv遇到的问题'
 description: '深入响应式原理、form表单提交'
 sidebar: 'auto'
-time: '2018-01-03'
+time: '2020-01-03'
 prev: ''
 next: ''
 imgPIc: '../assets/img/17.jpg'
 ---
 
+
+
 ## 没有深入响应式原理-遇到的问题
 
 ### select 遇到的问题
 
-``` vue
+```vue
 <template>
     <div>
         <a-select
@@ -71,7 +73,8 @@ export default{
 prop--->是：`表单域 model 字段`，在使用 validate、resetFields 方法的情况下，该属性是必填的
 需要v-model模式下
 :::
-``` vue
+
+```vue
 <template>
 <!--/ 比如这样时错误的/-->
     <a-form-model ref="formmodel" :model="formmodel" :rules="rules">

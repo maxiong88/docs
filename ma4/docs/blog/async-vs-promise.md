@@ -1,5 +1,5 @@
 ---
-title: async vs promise
+title: 'async vs promise'
 description: '了解为什么async/await是处理js中异步函数调用（保持良好性能）最佳方法'
 sidebar: 'auto'
 time: '2020-03-01'
