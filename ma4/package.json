@@ -10,7 +10,7 @@
     "@vuepress/plugin-medium-zoom": "^1.7.1",
     "css-doodle": "^0.8.5",
     "element-ui": "^2.13.2",
-    "lodash-es": "^4.17.15",
+    "lodash-es": "^4.17.21",
     "markdown-it-ins": "^3.0.0"
   },
   "devDependencies": {
